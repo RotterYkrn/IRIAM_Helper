@@ -1,0 +1,50 @@
+{
+  "version": "2.0.0",
+  "tasks": [
+    {
+      "label": "Start Supabase (local)",
+      "type": "shell",
+      "command": "supabase start",
+      "problemMatcher": [],
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "close": true
+      }
+    },
+    {
+      "label": "Stop Supabase (local)",
+      "type": "shell",
+      "command": "supabase stop",
+      "problemMatcher": [],
+      "presentation": {
+        "close": true
+      }
+    },
+    {
+      "label": "Start Vite",
+      "type": "shell",
+      "command": "npm run dev",
+      "options": {
+        "cwd": "${workspaceFolder}/frontend"
+      },
+      "problemMatcher": [],
+      "isBackground": true,
+      "presentation": {
+        "reveal": "silent",
+        "panel": "dedicated"
+      }
+    },
+    {
+      "label": "Dev: Start All",
+      "dependsOn": ["Start Supabase (local)", "Start Vite"],
+      "dependsOrder": "sequence",
+      "problemMatcher": []
+    },
+    {
+      "label": "Dev: Stop All",
+      "dependsOn": ["Stop Supabase (local)"],
+      "problemMatcher": []
+    }
+  ]
+}
