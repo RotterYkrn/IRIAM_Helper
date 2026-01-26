@@ -1,4 +1,4 @@
-import NewProjectButton from "./NewProjectButton";
+import CreateProjectButton from "./CreateProjectButton";
 import ProjectGroup from "./ProjectGroup";
 
 type SideBarProps = {
@@ -9,9 +9,9 @@ type SideBarProps = {
 const SideBar = ({ open, onToggle }: SideBarProps) => {
     return (
         <aside
-            className={`fixed top-0 left-0 h-screen overflow-hidden rounded-md
-                border-r border-black transition-[width] duration-300
-                ease-in-out ${open ? "w-70" : "w-0"} `}
+            className={`fixed top-0 left-0 h-screen overflow-hidden border-r
+                border-black transition-[width] duration-300 ease-in-out
+                ${open ? "w-70" : "w-0"} `}
         >
             <div>
                 <div
@@ -28,7 +28,7 @@ const SideBar = ({ open, onToggle }: SideBarProps) => {
                 </div>
 
                 <div className="h-full w-70 flex-1 space-y-4 p-2">
-                    <NewProjectButton />
+                    <CreateProjectButton />
 
                     <>
                         <ProjectGroup

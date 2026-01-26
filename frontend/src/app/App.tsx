@@ -1,28 +1,30 @@
 import "../index.css";
-import { useState } from "react";
+import { Routes, Route } from "react-router-dom";
 
-import MainHeader from "./MainHeader";
-import SideBar from "./SideBar";
+import Layout from "./Layout";
+import CreateEndurancePage from "./pages/CreateEndurancePage";
+import TopPage from "./pages/TopPage";
 
 const App = () => {
-    const [open, setOpen] = useState(false);
-
     return (
-        <>
-            <SideBar
-                open={open}
-                onToggle={() => setOpen((prev) => !prev)}
-            />
+        <Routes>
+            <Route element={<Layout />}>
+                <Route
+                    path="/"
+                    element={<TopPage />}
+                />
 
-            <main
-                className={` transition-[margin-left] duration-300 ease-in-out
-                    ${open ? "ml-70" : "ml-0"} `}
-            >
-                <MainHeader onToggle={() => setOpen((prev) => !prev)} />
+                <Route
+                    path="/projects/create/endurance"
+                    element={<CreateEndurancePage />}
+                />
 
-                <h1 className="text-xl font-bold">メインコンテンツ</h1>
-            </main>
-        </>
+                <Route
+                    path="*"
+                    element={<div>404 - Not Found</div>}
+                />
+            </Route>
+        </Routes>
     );
 };
 
