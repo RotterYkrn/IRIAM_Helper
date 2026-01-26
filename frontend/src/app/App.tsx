@@ -1,18 +1,29 @@
-import { createClient } from "@supabase/supabase-js";
-import { useEffect, useState } from "react";
+import "../index.css";
+import { useState } from "react";
 
-const supabase = createClient(
-    import.meta.env.VITE_SUPABASE_URL,
-    import.meta.env.VITE_SUPABASE_PUBLISHABLE_KEY,
-);
+import MainHeader from "./MainHeader";
+import SideBar from "./SideBar";
 
-function App() {
-    const [time, setTime] = useState("");
+const App = () => {
+    const [open, setOpen] = useState(false);
 
-    useEffect(() => {
-        supabase.rpc("now").then(({ data }) => setTime(data));
-    }, []);
+    return (
+        <>
+            <SideBar
+                open={open}
+                onToggle={() => setOpen((prev) => !prev)}
+            />
 
-    return <div>Supabase time: {time}</div>;
-}
+            <main
+                className={` transition-[margin-left] duration-300 ease-in-out
+                    ${open ? "ml-70" : "ml-0"} `}
+            >
+                <MainHeader onToggle={() => setOpen((prev) => !prev)} />
+
+                <h1 className="text-xl font-bold">メインコンテンツ</h1>
+            </main>
+        </>
+    );
+};
+
 export default App;
