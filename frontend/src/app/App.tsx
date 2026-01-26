@@ -9,7 +9,10 @@ const App = () => {
 
     return (
         <>
-            <SideBar open={open} />
+            <SideBar
+                open={open}
+                onToggle={() => setOpen((prev) => !prev)}
+            />
 
             <main
                 className={` transition-[margin-left] duration-300 ease-in-out
