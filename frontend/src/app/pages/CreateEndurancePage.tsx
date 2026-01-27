@@ -1,17 +1,18 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { createEnduranceProject } from "@/use-cases/createEnduranceProject";
+import { useCreateEnduranceProject } from "@/hooks/useCreateEnduranceProject";
 
 const CreateEndurancePage = () => {
     const [title, setTitle] = useState("");
     const [targetCount, setTargetCount] = useState(100);
 
     const navigate = useNavigate();
+    const createMutation = useCreateEnduranceProject();
 
     const handleCreate = async () => {
         try {
-            const projectId = await createEnduranceProject({
+            const projectId = await createMutation.mutateAsync({
                 title,
                 targetCount,
             });
@@ -37,7 +38,12 @@ const CreateEndurancePage = () => {
                 onChange={(e) => setTargetCount(Number(e.target.value))}
             />
 
-            <button onClick={handleCreate}>作成</button>
+            <button
+                onClick={handleCreate}
+                disabled={createMutation.isPending}
+            >
+                作成
+            </button>
         </div>
     );
 };

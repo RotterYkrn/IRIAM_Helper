@@ -5,6 +5,7 @@ create table endurance_progress (
   current_count integer not null default 0
     check (current_count >= 0),
   
+  created_at timestamp with time zone default now(),
   updated_at timestamp with time zone default now(),
 
   constraint fk_endurance_progress_project

@@ -1,14 +1,9 @@
-import { useState, useEffect } from "react";
+import { useQuery } from "@tanstack/react-query";
 
 import CreateProjectButton from "./CreateProjectButton";
 import ProjectGroup from "./ProjectGroup";
 
 import { fetchProjectsByStatus } from "@/use-cases/fetchProjectByStatus";
-
-type Project = {
-    id: string;
-    title: string;
-};
 
 type SideBarProps = {
     open: boolean;
@@ -16,25 +11,20 @@ type SideBarProps = {
 };
 
 const SideBar = ({ open, onToggle }: SideBarProps) => {
-    const [scheduled, setScheduled] = useState<Project[]>([]);
-    const [active, setActive] = useState<Project[]>([]);
-    const [finished, setFinished] = useState<Project[]>([]);
+    const { data, isLoading } = useQuery({
+        queryKey: ["projects"],
+        queryFn: fetchProjectsByStatus,
+    });
 
-    useEffect(() => {
-        const loadProjects = async () => {
-            try {
-                const result = await fetchProjectsByStatus();
+    if (isLoading) {
+        return <div>loading...</div>;
+    }
 
-                setScheduled(result.scheduled);
-                setActive(result.active);
-                setFinished(result.finished);
-            } catch (e) {
-                console.error(e);
-            }
-        };
+    if (!data) {
+        return <div>error</div>;
+    }
 
-        loadProjects();
-    }, []);
+    const { active, scheduled, finished } = data;
 
     return (
         <aside

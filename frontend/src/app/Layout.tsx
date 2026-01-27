@@ -19,7 +19,7 @@ const Layout = () => {
                     ${open ? "ml-70" : "ml-0"}`}
             >
                 <MainHeader onToggle={() => setOpen((prev) => !prev)} />
-                <main className="flex py-4 justify-center">
+                <main className="flex p-4 justify-center">
                     <Outlet />
                 </main>
             </div>
