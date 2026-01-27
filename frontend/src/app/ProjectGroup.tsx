@@ -1,8 +1,14 @@
 import { useState } from "react";
+import { Link } from "react-router-dom";
+
+type Project = {
+    id: string;
+    title: string;
+};
 
 type ProjectGroupProps = {
     title: string;
-    projects: string[];
+    projects: Project[];
 };
 
 const ProjectGroup = ({ title, projects }: ProjectGroupProps) => {
@@ -25,9 +31,9 @@ const ProjectGroup = ({ title, projects }: ProjectGroupProps) => {
             >
                 <ul className="space-y-1 pl-5">
                     {projects.map((p) => (
-                        <li key={p}>
+                        <li key={p.id}>
                             <button className="text-left hover:underline">
-                                {p}
+                                <Link to={`/projects/${p.id}`}>{p.title}</Link>
                             </button>
                         </li>
                     ))}

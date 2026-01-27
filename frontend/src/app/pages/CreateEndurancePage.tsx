@@ -1,10 +1,13 @@
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import { createEnduranceProject } from "@/use-cases/createEnduranceProject";
 
 const CreateEndurancePage = () => {
     const [title, setTitle] = useState("");
     const [targetCount, setTargetCount] = useState(100);
+
+    const navigate = useNavigate();
 
     const handleCreate = async () => {
         try {
@@ -13,8 +16,7 @@ const CreateEndurancePage = () => {
                 targetCount,
             });
 
-            // 作成後に編集ページへ
-            console.log("created:", projectId);
+            navigate(`/projects/${projectId}`);
         } catch (e) {
             console.error(e);
             alert("作成に失敗しました");

@@ -1,3 +1,4 @@
-alter table projects
-add constraint projects_title_not_empty
-check (length(trim(title)) > 0);
+drop table endurance_settings;
+drop table endurance_progress;
+
+drop table projects;

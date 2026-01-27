@@ -7,11 +7,7 @@ language plpgsql
 as $$
 begin
   update endurance_progress
-  set
-    current_count = least(
-      current_count + p_increment,
-      target_count
-    )
+  set current_count = current_count + p_increment
   where project_id = p_project_id;
 end;
 $$;

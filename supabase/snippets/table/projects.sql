@@ -6,8 +6,8 @@ create table projects (
   type text not null
     check (type in ('endurance','gacha','panel_open')),
   
-  status text not null default 'draft'
-    check (status in ('draft','active','finished')),
+  status text not null default 'scheduled'
+    check (status in ('scheduled','active','finished')),
   
   created_at timestamp with time zone default now(),
   updated_at timestamp with time zone default now()

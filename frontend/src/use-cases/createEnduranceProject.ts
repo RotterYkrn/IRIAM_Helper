@@ -14,7 +14,7 @@ export const createEnduranceProject = async ({
         .insert({
             title,
             type: "endurance",
-            status: "draft",
+            status: "scheduled",
         })
         .select()
         .single();
