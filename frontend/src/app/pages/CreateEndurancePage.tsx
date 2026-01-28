@@ -11,17 +11,21 @@ const CreateEndurancePage = () => {
     const createMutation = useCreateEnduranceProject();
 
     const handleCreate = async () => {
-        try {
-            const projectId = await createMutation.mutateAsync({
+        createMutation.mutate(
+            {
                 title,
                 targetCount,
-            });
-
-            navigate(`/projects/${projectId}`);
-        } catch (e) {
-            console.error(e);
-            alert("作成に失敗しました");
-        }
+            },
+            {
+                onSuccess: (projectId) => {
+                    navigate(`/projects/${projectId}`);
+                },
+                onError: (error) => {
+                    console.error(error);
+                    alert("作成に失敗しました。");
+                },
+            },
+        );
     };
 
     return (

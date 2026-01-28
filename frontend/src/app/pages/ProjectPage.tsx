@@ -1,22 +1,28 @@
 import { useQueryClient } from "@tanstack/react-query";
-import { useParams } from "react-router-dom";
+import { useNavigate, useParams } from "react-router-dom";
 
 import EnduranceProjectLayout from "../EnduranceProjectLayout";
 
-import { useActivateProject } from "@/hooks/useActivateProject";
+import ActivateProjectButton from "@/components/projects/ActivateProjectButton";
+import DeleteProjectButton from "@/components/projects/DeleteProjectButton";
+import FinishProjectButton from "@/components/projects/FinishProjectButton";
+import { useDeleteProject } from "@/hooks/useDeleteProject";
 import { useEnduranceData } from "@/hooks/useEnduranceProject";
-import { useFinishProject } from "@/hooks/useFinishProject";
 import { supabase } from "@/lib/supabase";
 
 const ProjectPage = () => {
     const { projectId } = useParams<{ projectId: string }>();
 
     const queryClient = useQueryClient();
+    const navigate = useNavigate();
 
     const [projectQuery, settingsQuery, progressQuery] =
         useEnduranceData(projectId);
-    const activateMutation = useActivateProject(projectId!);
-    const finishMutation = useFinishProject(projectId!);
+    const deleteMutation = useDeleteProject();
+
+    if (!projectId) {
+        return <div>Project ID is required.</div>;
+    }
 
     if (
         projectQuery.isLoading ||
@@ -49,28 +55,14 @@ const ProjectPage = () => {
 
     return (
         <>
-            {/* active 以外のときだけ表示 */}
             {projectStatus === "scheduled" && (
-                <button
-                    onClick={() => activateMutation.mutate()}
-                    disabled={activateMutation.isPending}
-                    className="rounded bg-green-600 px-6 py-2 text-white
-                        hover:bg-green-700 disabled:opacity-50"
-                >
-                    配信開始
-                </button>
+                <DeleteProjectButton projectId={projectId} />
             )}
-
-            {/* 終了ボタン */}
+            {projectStatus === "scheduled" && (
+                <ActivateProjectButton projectId={projectId} />
+            )}
             {projectStatus === "active" && (
-                <button
-                    onClick={() => finishMutation.mutate()}
-                    disabled={finishMutation.isPending}
-                    className="rounded bg-red-600 px-6 py-2 text-white
-                        hover:bg-red-700"
-                >
-                    配信終了
-                </button>
+                <FinishProjectButton projectId={projectId} />
             )}
 
             <EnduranceProjectLayout

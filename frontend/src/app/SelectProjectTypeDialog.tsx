@@ -31,6 +31,9 @@ const SelectProjectTypeDialog = ({
                     <Dialog.Title className="text-lg font-bold mb-4">
                         企画の種類を選択
                     </Dialog.Title>
+                    <Dialog.DialogDescription>
+                        新しく作成する企画の種類を選択してください。
+                    </Dialog.DialogDescription>
 
                     <div className="flex flex-col gap-3">
                         <button

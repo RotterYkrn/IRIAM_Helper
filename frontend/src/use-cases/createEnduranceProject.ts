@@ -9,42 +9,14 @@ export const createEnduranceProject = async ({
     title,
     targetCount,
 }: CreateEnduranceProjectParams) => {
-    const { data: project, error: projectError } = await supabase
-        .from("projects")
-        .insert({
-            title,
-            type: "endurance",
-            status: "scheduled",
-        })
-        .select()
-        .single();
+    const { data, error } = await supabase.rpc("create_endurance_project", {
+        p_title: title,
+        p_target_count: targetCount,
+    });
 
-    if (projectError) {
-        throw projectError;
+    if (error) {
+        throw error;
     }
 
-    const { error: settingsError } = await supabase
-        .from("endurance_settings")
-        .insert({
-            project_id: project.id,
-            target_count: targetCount,
-            increment_per_action: 1,
-        });
-
-    if (settingsError) {
-        throw settingsError;
-    }
-
-    const { error: progressError } = await supabase
-        .from("endurance_progress")
-        .insert({
-            project_id: project.id,
-            current_count: 0,
-        });
-
-    if (progressError) {
-        throw progressError;
-    }
-
-    return project.id;
+    return data as string;
 };
