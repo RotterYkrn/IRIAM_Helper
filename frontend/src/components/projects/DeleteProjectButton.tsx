@@ -1,5 +1,7 @@
 import { useNavigate } from "react-router-dom";
 
+import ProjectButton from "./ProjectButton";
+
 import { useDeleteProject } from "@/hooks/useDeleteProject";
 
 interface DeleteProjectButtonProps {
@@ -20,13 +22,12 @@ const DeleteProjectButton = ({ projectId }: DeleteProjectButtonProps) => {
     };
 
     return (
-        <button
+        <ProjectButton
             onClick={onClick}
-            className="rounded bg-gray-500 px-4 py-2 text-white
-                hover:bg-gray-600"
+            className="bg-gray-500 hover:bg-red-600"
         >
             削除
-        </button>
+        </ProjectButton>
     );
 };
 

@@ -15,12 +15,21 @@ const Layout = () => {
             />
 
             <div
-                className={`transition-[margin-left] duration-300 ease-in-out
-                    ${open ? "ml-70" : "ml-0"}`}
+                className={`min-h-screen bg-pink-50 transition-[margin-left]
+                    duration-300 ease-in-out ${open ? "ml-70" : "ml-0"} flex
+                    flex-col`}
             >
                 <MainHeader onToggle={() => setOpen((prev) => !prev)} />
-                <main className="flex p-4 justify-center">
-                    <Outlet />
+                <main
+                    className="flex-1 p-4 md:p-8 flex justify-center
+                        items-start"
+                >
+                    <div
+                        className="w-full max-w-4xl bg-white rounded-xl border
+                            border-slate-200 shadow-sm p-6"
+                    >
+                        <Outlet />
+                    </div>
                 </main>
             </div>
         </>

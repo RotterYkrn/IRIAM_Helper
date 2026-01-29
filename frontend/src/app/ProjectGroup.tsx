@@ -4,6 +4,7 @@ import { Link } from "react-router-dom";
 type Project = {
     id: string;
     title: string;
+    type: "endurance" | "gacha" | "panel_open";
 };
 
 type ProjectGroupProps = {
@@ -33,7 +34,9 @@ const ProjectGroup = ({ title, projects }: ProjectGroupProps) => {
                     {projects.map((p) => (
                         <li key={p.id}>
                             <button className="text-left hover:underline">
-                                <Link to={`/projects/${p.id}`}>{p.title}</Link>
+                                <Link to={`/projects/${p.type}/${p.id}`}>
+                                    {p.title}
+                                </Link>
                             </button>
                         </li>
                     ))}

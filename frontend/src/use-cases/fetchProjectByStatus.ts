@@ -3,7 +3,7 @@ import { supabase } from "@/lib/supabase";
 export const fetchProjectsByStatus = async () => {
     const { data, error } = await supabase
         .from("projects")
-        .select("id, title, status")
+        .select("id, title, type, status")
         .order("created_at", { ascending: false });
 
     if (error) {

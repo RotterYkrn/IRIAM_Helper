@@ -1,3 +1,5 @@
+import ProjectButton from "./ProjectButton";
+
 import { useFinishProject } from "@/hooks/useFinishProject";
 
 interface FinishProjectButtonProps {
@@ -8,13 +10,13 @@ const FinishProjectButton = ({ projectId }: FinishProjectButtonProps) => {
     const finishMutation = useFinishProject();
 
     return (
-        <button
+        <ProjectButton
             onClick={() => finishMutation.mutate(projectId)}
             disabled={finishMutation.isPending}
-            className="rounded bg-red-600 px-6 py-2 text-white hover:bg-red-700"
+            className="bg-red-600 hover:bg-red-700"
         >
             配信終了
-        </button>
+        </ProjectButton>
     );
 };
 
