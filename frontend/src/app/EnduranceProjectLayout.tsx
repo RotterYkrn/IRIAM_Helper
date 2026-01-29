@@ -1,12 +1,14 @@
 import { useQueryClient } from "@tanstack/react-query";
-import { useAtomValue } from "jotai";
-import { useState } from "react";
+import { useAtomValue, useSetAtom } from "jotai";
+import { useMemo, useState } from "react";
 
 import Endurance from "./Endurance";
 import ProjectLayout from "./ProjectLayout";
 
 import { editEnduranceAtom } from "@/atoms/EditEnduranceAtom";
-import { useEnduranceData } from "@/hooks/useEnduranceProject";
+import { editEnduranceSettingsAtom } from "@/atoms/EditEnduranceSettingsAtom";
+import { editProjectAtom } from "@/atoms/EditProjectAtom";
+import { enduranceProjectAtom } from "@/atoms/enduranceProjectAtom";
 import { supabase } from "@/lib/supabase";
 
 type Props = {
@@ -16,16 +18,20 @@ type Props = {
 const EnduranceProjectLayout = ({ projectId }: Props) => {
     const [isEdit, setIsEdit] = useState(false);
 
-    const [projectQuery, settingsQuery, progressQuery] =
-        useEnduranceData(projectId);
+    const atom = useMemo(() => enduranceProjectAtom(projectId), [projectId]);
+    const projectQuery = useAtomValue(atom);
 
     const queryClient = useQueryClient();
 
     const editState = useAtomValue(editEnduranceAtom);
+    const initEditProject = useSetAtom(editProjectAtom);
+    const initEditEnduranceSettings = useSetAtom(editEnduranceSettingsAtom);
 
-    if (!projectQuery.data || !settingsQuery.data || !progressQuery.data) {
+    if (!projectQuery.data) {
         return null;
     }
+
+    const project = projectQuery.data;
 
     const onIncrement = async () => {
         try {
@@ -44,24 +50,37 @@ const EnduranceProjectLayout = ({ projectId }: Props) => {
 
     const isActive = projectQuery.data.status === "active";
 
+    const onEdit = () => {
+        initEditProject(project);
+        initEditEnduranceSettings({
+            targetCount: project.target_count,
+        });
+        setIsEdit(true);
+    };
+
     const onSave = async () => {
         await supabase.rpc("update_endurance_project", {
             p_project_id: projectId,
             p_title: editState.title,
             p_target_count: editState.targetCount,
         });
+
+        setIsEdit(false);
     };
+
+    console.log("再レンダリング実行！");
 
     return (
         <ProjectLayout
-            project={projectQuery.data}
+            project={project}
             isEdit={isEdit}
             setIsEdit={setIsEdit}
+            onEdit={onEdit}
             onSave={onSave}
         >
             <Endurance
-                currentCount={progressQuery.data.current_count}
-                targetCount={settingsQuery.data.target_count}
+                currentCount={project.current_count}
+                targetCount={project.target_count}
                 isActive={isActive}
                 isEdit={isEdit}
                 onIncrement={onIncrement}

@@ -1,10 +1,7 @@
-import { useAtom, useSetAtom } from "jotai";
-import { createContext, useContext, useEffect } from "react";
+import { useAtom } from "jotai";
+import { createContext, useContext } from "react";
 
-import {
-    editEnduranceSettingsAtom,
-    initializeEditEnduranceSettingsAtom,
-} from "@/atoms/EditEnduranceSettingsAtom";
+import { editEnduranceSettingsAtom } from "@/atoms/EditEnduranceSettingsAtom";
 
 type EnduranceContextType = {
     currentCount: number;
@@ -47,16 +44,8 @@ const Count = () => {
 };
 
 const Editor = () => {
-    const { targetCount, isEdit } = useEndurance();
-
+    const { isEdit } = useEndurance();
     const [state, setState] = useAtom(editEnduranceSettingsAtom);
-    const initEdit = useSetAtom(initializeEditEnduranceSettingsAtom);
-
-    useEffect(() => {
-        initEdit({
-            targetCount: targetCount,
-        });
-    }, [initEdit, targetCount]);
 
     if (!isEdit) {
         return null;
