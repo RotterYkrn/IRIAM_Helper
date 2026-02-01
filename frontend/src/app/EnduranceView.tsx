@@ -4,11 +4,8 @@ import { createContext, useContext } from "react";
 import { editEnduranceSettingsAtom } from "@/atoms/EditEnduranceSettingsAtom";
 
 type EnduranceContextType = {
-    currentCount: number;
-    targetCount: number;
     isActive: boolean;
     isEdit: boolean;
-    onIncrement: () => void;
 };
 
 const EnduranceContext = createContext<EnduranceContextType | null>(null);
@@ -31,8 +28,13 @@ const EnduranceView = ({ children, ...contextValue }: Props) => {
     return <EnduranceContext value={contextValue}>{children}</EnduranceContext>;
 };
 
-const Count = () => {
-    const { isEdit, currentCount, targetCount } = useEndurance();
+type CountProps = {
+    currentCount: number;
+    targetCount: number;
+};
+
+const Count = ({ currentCount, targetCount }: CountProps) => {
+    const { isEdit } = useEndurance();
 
     if (isEdit) {
         return null;
@@ -71,8 +73,12 @@ const Editor = () => {
     );
 };
 
-const IncrementButton = () => {
-    const { isActive, onIncrement } = useEndurance();
+type IncrementButtonProps = {
+    onIncrement: () => void;
+};
+
+const IncrementButton = ({ onIncrement }: IncrementButtonProps) => {
+    const { isActive } = useEndurance();
     return (
         <button
             onClick={onIncrement}

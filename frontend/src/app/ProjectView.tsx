@@ -1,18 +1,12 @@
 import { useAtom } from "jotai";
 import { createContext, useContext } from "react";
-import { useNavigate } from "react-router-dom";
 
 import { editProjectAtom } from "@/atoms/EditProjectAtom";
 import ProjectButton from "@/components/projects/ProjectButton";
-import { useActivateProject } from "@/hooks/useActivateProject";
-import { useDeleteProject } from "@/hooks/useDeleteProject";
-import { useFinishProject } from "@/hooks/useFinishProject";
 
 type ProjectContextType = {
-    projectId: string;
     projectStatus: "scheduled" | "active" | "finished";
     isEdit: boolean;
-    setIsEdit: (v: boolean) => void;
 };
 
 const ProjectContext = createContext<ProjectContextType | null>(null);
@@ -54,11 +48,7 @@ const Action = ({ children }: ChildrenProps) => {
     );
 };
 
-type HeaderProps = {
-    children: React.ReactNode;
-};
-
-const Header = ({ children }: HeaderProps) => {
+const Header = ({ children }: ChildrenProps) => {
     return (
         <div className="flex flex-col w-full items-center justify-center gap-2">
             {children}
@@ -140,8 +130,12 @@ const SaveButton = ({ onSave }: SaveButtonProps) => {
     );
 };
 
-const CancelButton = () => {
-    const { isEdit, setIsEdit } = useProject();
+type CancelButtonProps = {
+    onCancel: () => void;
+};
+
+const CancelButton = ({ onCancel }: CancelButtonProps) => {
+    const { isEdit } = useProject();
 
     if (!isEdit) {
         return null;
@@ -149,7 +143,7 @@ const CancelButton = () => {
 
     return (
         <ProjectButton
-            onClick={() => setIsEdit(false)}
+            onClick={onCancel}
             className="bg-gray-500 hover:bg-gray-600"
         >
             キャンセル
@@ -157,30 +151,20 @@ const CancelButton = () => {
     );
 };
 
-const DeleteButton = () => {
-    const { projectId, projectStatus, isEdit } = useProject();
-    const deleteMutation = useDeleteProject();
-    const navigate = useNavigate();
+type DeleteButtonProps = {
+    onDelete: () => void;
+};
+
+const DeleteButton = ({ onDelete }: DeleteButtonProps) => {
+    const { projectStatus, isEdit } = useProject();
 
     if (projectStatus !== "scheduled" || isEdit) {
         return null;
     }
 
-    const onClick = () => {
-        if (!confirm("この企画を削除しますか？")) return;
-        deleteMutation.mutate(
-            { p_project_id: projectId },
-            {
-                onSuccess: () => {
-                    navigate("/");
-                },
-            },
-        );
-    };
-
     return (
         <ProjectButton
-            onClick={onClick}
+            onClick={onDelete}
             className="bg-gray-500 hover:bg-red-600"
         >
             削除
@@ -188,9 +172,12 @@ const DeleteButton = () => {
     );
 };
 
-const ActivateButton = () => {
-    const { projectId, projectStatus, isEdit } = useProject();
-    const activateMutation = useActivateProject();
+type ActivateButtonProps = {
+    onActivate: () => void;
+};
+
+const ActivateButton = ({ onActivate }: ActivateButtonProps) => {
+    const { projectStatus, isEdit } = useProject();
 
     if (projectStatus !== "scheduled" || isEdit) {
         return null;
@@ -198,8 +185,7 @@ const ActivateButton = () => {
 
     return (
         <ProjectButton
-            onClick={() => activateMutation.mutate({ p_project_id: projectId })}
-            disabled={activateMutation.isPending}
+            onClick={onActivate}
             className="bg-green-600 hover:bg-green-700 disabled:opacity-50"
         >
             企画開始
@@ -207,9 +193,12 @@ const ActivateButton = () => {
     );
 };
 
-const FinishButton = () => {
-    const { projectId, projectStatus, isEdit } = useProject();
-    const finishMutation = useFinishProject();
+type FinishButtonProps = {
+    onFinish: () => void;
+};
+
+const FinishButton = ({ onFinish }: FinishButtonProps) => {
+    const { projectStatus, isEdit } = useProject();
 
     if (projectStatus !== "active" || isEdit) {
         return null;
@@ -217,8 +206,7 @@ const FinishButton = () => {
 
     return (
         <ProjectButton
-            onClick={() => finishMutation.mutate({ p_project_id: projectId })}
-            disabled={finishMutation.isPending}
+            onClick={onFinish}
             className="bg-red-600 hover:bg-red-700"
         >
             企画終了

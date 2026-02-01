@@ -1,6 +1,11 @@
+import { useNavigate } from "react-router-dom";
+
 import ProjectView from "./ProjectView";
 
 import type { Project } from "@/domain/projects/Project";
+import { useActivateProject } from "@/hooks/useActivateProject";
+import { useDeleteProject } from "@/hooks/useDeleteProject";
+import { useFinishProject } from "@/hooks/useFinishProject";
 
 type ProjectLayoutProps = {
     children: React.ReactNode;
@@ -19,22 +24,49 @@ const ProjectLayout = ({
     onEdit,
     onSave,
 }: ProjectLayoutProps) => {
+    const navigate = useNavigate();
+    const deleteMutation = useDeleteProject();
+    const activateMutation = useActivateProject();
+    const finishMutation = useFinishProject();
+
+    const onCancel = () => {
+        setIsEdit(false);
+    };
+
+    const onDelete = () => {
+        if (!confirm("この企画を削除しますか？")) return;
+        deleteMutation.mutate(
+            { p_project_id: project.id },
+            {
+                onSuccess: () => {
+                    navigate("/");
+                },
+            },
+        );
+    };
+
+    const onActivate = () => {
+        activateMutation.mutate({ p_project_id: project.id });
+    };
+
+    const onFinish = () => {
+        finishMutation.mutate({ p_project_id: project.id });
+    };
+
     return (
         <ProjectView
-            projectId={project.id}
             projectStatus={project.status}
             isEdit={isEdit}
-            setIsEdit={setIsEdit}
         >
             <ProjectView.Action>
                 <ProjectView.EditButton onEdit={onEdit} />
-                <ProjectView.CancelButton />
+                <ProjectView.CancelButton onCancel={onCancel} />
                 <ProjectView.SaveButton onSave={onSave} />
 
-                <ProjectView.DeleteButton />
+                <ProjectView.DeleteButton onDelete={onDelete} />
 
-                <ProjectView.ActivateButton />
-                <ProjectView.FinishButton />
+                <ProjectView.ActivateButton onActivate={onActivate} />
+                <ProjectView.FinishButton onFinish={onFinish} />
             </ProjectView.Action>
 
             <ProjectView.Header>

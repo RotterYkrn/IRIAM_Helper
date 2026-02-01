@@ -73,18 +73,20 @@ const EnduranceProjectLayout = ({ projectId }: Props) => {
             onSave={onSave}
         >
             <EnduranceView
-                currentCount={project.current_count}
-                targetCount={project.target_count}
                 isActive={isActive}
                 isEdit={isEdit}
-                onIncrement={onIncrement}
             >
                 {isEdit ? (
                     <EnduranceView.Editor />
                 ) : (
                     <>
-                        <EnduranceView.Count />
-                        <EnduranceView.IncrementButton />
+                        <EnduranceView.Count
+                            currentCount={project.current_count}
+                            targetCount={project.target_count}
+                        />
+                        <EnduranceView.IncrementButton
+                            onIncrement={onIncrement}
+                        />
                     </>
                 )}
             </EnduranceView>
