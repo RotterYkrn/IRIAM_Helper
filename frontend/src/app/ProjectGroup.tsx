@@ -10,7 +10,7 @@ type ProjectGroupProps = {
 };
 
 const ProjectGroup = ({ title, projects }: ProjectGroupProps) => {
-    const [open, setOpen] = useState(false);
+    const [open, setOpen] = useState(true);
 
     return (
         <div>
