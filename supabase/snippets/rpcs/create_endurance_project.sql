@@ -4,6 +4,7 @@ create or replace function create_endurance_project(
 )
 returns uuid
 language plpgsql
+SET search_path = public
 as $$
 declare
   v_project_id uuid;

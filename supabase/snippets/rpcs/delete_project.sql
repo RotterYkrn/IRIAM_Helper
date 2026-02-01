@@ -3,6 +3,7 @@ create or replace function delete_project(
 )
 returns void
 language plpgsql
+SET search_path = public
 as $$
 declare
   v_status text;

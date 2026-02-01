@@ -5,6 +5,7 @@ create or replace function update_endurance_project(
 )
 returns void
 language plpgsql
+SET search_path = public
 as $$
 begin
     -- projects

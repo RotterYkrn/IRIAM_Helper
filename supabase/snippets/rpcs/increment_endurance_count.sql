@@ -4,6 +4,7 @@ create or replace function increment_endurance_count(
 )
 returns void
 language plpgsql
+SET search_path = public
 as $$
 declare
   v_status text;
