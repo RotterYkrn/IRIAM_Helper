@@ -36,25 +36,25 @@ export type Database = {
     Tables: {
       endurance_progress: {
         Row: {
-          created_at: string | null
+          created_at: string
           current_count: number
           id: string
           project_id: string
-          updated_at: string | null
+          updated_at: string
         }
         Insert: {
-          created_at?: string | null
+          created_at?: string
           current_count?: number
           id?: string
           project_id: string
-          updated_at?: string | null
+          updated_at?: string
         }
         Update: {
-          created_at?: string | null
+          created_at?: string
           current_count?: number
           id?: string
           project_id?: string
-          updated_at?: string | null
+          updated_at?: string
         }
         Relationships: [
           {
@@ -75,28 +75,28 @@ export type Database = {
       }
       endurance_settings: {
         Row: {
-          created_at: string | null
+          created_at: string
           id: string
           increment_per_action: number
           project_id: string
           target_count: number
-          updated_at: string | null
+          updated_at: string
         }
         Insert: {
-          created_at?: string | null
+          created_at?: string
           id?: string
           increment_per_action?: number
           project_id: string
           target_count: number
-          updated_at?: string | null
+          updated_at?: string
         }
         Update: {
-          created_at?: string | null
+          created_at?: string
           id?: string
           increment_per_action?: number
           project_id?: string
           target_count?: number
-          updated_at?: string | null
+          updated_at?: string
         }
         Relationships: [
           {
@@ -117,28 +117,28 @@ export type Database = {
       }
       projects: {
         Row: {
-          created_at: string | null
+          created_at: string
           id: string
           status: string
           title: string
           type: string
-          updated_at: string | null
+          updated_at: string
         }
         Insert: {
-          created_at?: string | null
+          created_at?: string
           id?: string
           status?: string
           title: string
           type: string
-          updated_at?: string | null
+          updated_at?: string
         }
         Update: {
-          created_at?: string | null
+          created_at?: string
           id?: string
           status?: string
           title?: string
           type?: string
-          updated_at?: string | null
+          updated_at?: string
         }
         Relationships: []
       }
@@ -164,7 +164,7 @@ export type Database = {
       delete_project: { Args: { p_project_id: string }; Returns: undefined }
       finish_project: { Args: { p_project_id: string }; Returns: undefined }
       increment_endurance_count: {
-        Args: { p_increment?: number; p_project_id: string }
+        Args: { p_increment: number; p_project_id: string }
         Returns: undefined
       }
       update_endurance_project: {

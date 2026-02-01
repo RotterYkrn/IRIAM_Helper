@@ -1,15 +1,12 @@
+import { Chunk } from "effect";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
-type Project = {
-    id: string;
-    title: string;
-    type: "endurance" | "gacha" | "panel_open";
-};
+import type { ProjectForSideBer } from "@/domain/projects/Project";
 
 type ProjectGroupProps = {
     title: string;
-    projects: Project[];
+    projects: Chunk.Chunk<ProjectForSideBer>;
 };
 
 const ProjectGroup = ({ title, projects }: ProjectGroupProps) => {
@@ -31,7 +28,7 @@ const ProjectGroup = ({ title, projects }: ProjectGroupProps) => {
                     ${open ? "mt-2 max-h-96" : "max-h-0"} `}
             >
                 <ul className="space-y-1 pl-5">
-                    {projects.map((p) => (
+                    {Chunk.map(projects, (p) => (
                         <li key={p.id}>
                             <button className="text-left hover:underline">
                                 <Link to={`/projects/${p.type}/${p.id}`}>

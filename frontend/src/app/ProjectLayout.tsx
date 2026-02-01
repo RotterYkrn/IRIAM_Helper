@@ -1,8 +1,10 @@
-import Project from "./Project";
+import ProjectView from "./ProjectView";
+
+import type { Project } from "@/domain/projects/Project";
 
 type ProjectLayoutProps = {
     children: React.ReactNode;
-    project: any;
+    project: Omit<Project, "type" | "created_at" | "updated_at">;
     isEdit: boolean;
     setIsEdit: (v: boolean) => void;
     onEdit: () => void;
@@ -18,29 +20,29 @@ const ProjectLayout = ({
     onSave,
 }: ProjectLayoutProps) => {
     return (
-        <Project
+        <ProjectView
             projectId={project.id}
             projectStatus={project.status}
             isEdit={isEdit}
             setIsEdit={setIsEdit}
         >
-            <Project.Action>
-                <Project.EditButton onEdit={onEdit} />
-                <Project.CancelButton />
-                <Project.SaveButton onSave={onSave} />
+            <ProjectView.Action>
+                <ProjectView.EditButton onEdit={onEdit} />
+                <ProjectView.CancelButton />
+                <ProjectView.SaveButton onSave={onSave} />
 
-                <Project.DeleteButton />
+                <ProjectView.DeleteButton />
 
-                <Project.ActivateButton />
-                <Project.FinishButton />
-            </Project.Action>
+                <ProjectView.ActivateButton />
+                <ProjectView.FinishButton />
+            </ProjectView.Action>
 
-            <Project.Header>
-                <Project.Title title={project.title} />
-            </Project.Header>
+            <ProjectView.Header>
+                <ProjectView.Title title={project.title} />
+            </ProjectView.Header>
 
-            <Project.Body>{children}</Project.Body>
-        </Project>
+            <ProjectView.Body>{children}</ProjectView.Body>
+        </ProjectView>
     );
 };
 

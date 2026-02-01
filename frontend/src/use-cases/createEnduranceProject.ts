@@ -1,18 +1,24 @@
+import { Either, Schema } from "effect";
+
+import {
+    CreateEnduranceProjectArgsSchema,
+    type CreateEnduranceProjectArgsEncoded,
+} from "@/domain/endurances/rpc";
 import { supabase } from "@/lib/supabase";
 
-type CreateEnduranceProjectParams = {
-    title: string;
-    targetCount: number;
-};
+export const createEnduranceProject = async (
+    args: CreateEnduranceProjectArgsEncoded,
+) => {
+    const decoded = Schema.decodeEither(CreateEnduranceProjectArgsSchema)(args);
 
-export const createEnduranceProject = async ({
-    title,
-    targetCount,
-}: CreateEnduranceProjectParams) => {
-    const { data, error } = await supabase.rpc("create_endurance_project", {
-        p_title: title,
-        p_target_count: targetCount,
-    });
+    if (Either.isLeft(decoded)) {
+        throw decoded.left;
+    }
+
+    const { data, error } = await supabase.rpc(
+        "create_endurance_project",
+        Schema.encodeSync(CreateEnduranceProjectArgsSchema)(decoded.right),
+    );
 
     if (error) {
         throw error;

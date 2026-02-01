@@ -20,7 +20,7 @@ const ProjectContext = createContext<ProjectContextType | null>(null);
 const useProject = () => {
     const ctx = useContext(ProjectContext);
     if (!ctx) {
-        throw new Error("Project components must be used within Project");
+        throw new Error("Project components must be used within ProjectView");
     }
     return ctx;
 };
@@ -29,7 +29,7 @@ type Props = ProjectContextType & {
     children: React.ReactNode;
 };
 
-const Project = ({ children, ...contextValue }: Props) => {
+const ProjectView = ({ children, ...contextValue }: Props) => {
     return (
         <ProjectContext value={contextValue}>
             <div
@@ -103,9 +103,9 @@ type EditButtonProps = {
 };
 
 const EditButton = ({ onEdit }: EditButtonProps) => {
-    const { isEdit } = useProject();
+    const { projectStatus, isEdit } = useProject();
 
-    if (isEdit) {
+    if (projectStatus === "finished" || isEdit) {
         return null;
     }
 
@@ -168,11 +168,14 @@ const DeleteButton = () => {
 
     const onClick = () => {
         if (!confirm("この企画を削除しますか？")) return;
-        deleteMutation.mutate(projectId, {
-            onSuccess: () => {
-                navigate("/");
+        deleteMutation.mutate(
+            { p_project_id: projectId },
+            {
+                onSuccess: () => {
+                    navigate("/");
+                },
             },
-        });
+        );
     };
 
     return (
@@ -195,11 +198,11 @@ const ActivateButton = () => {
 
     return (
         <ProjectButton
-            onClick={() => activateMutation.mutate(projectId)}
+            onClick={() => activateMutation.mutate({ p_project_id: projectId })}
             disabled={activateMutation.isPending}
             className="bg-green-600 hover:bg-green-700 disabled:opacity-50"
         >
-            配信開始
+            企画開始
         </ProjectButton>
     );
 };
@@ -214,25 +217,25 @@ const FinishButton = () => {
 
     return (
         <ProjectButton
-            onClick={() => finishMutation.mutate(projectId)}
+            onClick={() => finishMutation.mutate({ p_project_id: projectId })}
             disabled={finishMutation.isPending}
             className="bg-red-600 hover:bg-red-700"
         >
-            配信終了
+            企画終了
         </ProjectButton>
     );
 };
 
-Project.Action = Action;
-Project.Header = Header;
-Project.Title = Title;
-Project.Body = Body;
+ProjectView.Action = Action;
+ProjectView.Header = Header;
+ProjectView.Title = Title;
+ProjectView.Body = Body;
 
-Project.EditButton = EditButton;
-Project.SaveButton = SaveButton;
-Project.CancelButton = CancelButton;
-Project.DeleteButton = DeleteButton;
-Project.ActivateButton = ActivateButton;
-Project.FinishButton = FinishButton;
+ProjectView.EditButton = EditButton;
+ProjectView.SaveButton = SaveButton;
+ProjectView.CancelButton = CancelButton;
+ProjectView.DeleteButton = DeleteButton;
+ProjectView.ActivateButton = ActivateButton;
+ProjectView.FinishButton = FinishButton;
 
-export default Project;
+export default ProjectView;

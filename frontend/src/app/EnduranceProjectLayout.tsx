@@ -1,16 +1,15 @@
-import { useQueryClient } from "@tanstack/react-query";
 import { useAtomValue, useSetAtom } from "jotai";
 import { useState } from "react";
 
-import Endurance from "./Endurance";
+import EnduranceView from "./EnduranceView";
 import ProjectLayout from "./ProjectLayout";
 
 import { editEnduranceAtom } from "@/atoms/EditEnduranceAtom";
 import { editEnduranceSettingsAtom } from "@/atoms/EditEnduranceSettingsAtom";
 import { editProjectAtom } from "@/atoms/EditProjectAtom";
-import { enduranceProjectAtom } from "@/atoms/enduranceProjectAtom";
+import { useFetchEnduranceData as useFetchEnduranceProject } from "@/hooks/useFetchEnduranceProject";
+import { useIncrementEnduranceCount } from "@/hooks/useIncrementEnduranceCount";
 import { useUpdateEnduranceProject } from "@/hooks/useUpdateEnduranceProject";
-import { supabase } from "@/lib/supabase";
 
 type Props = {
     projectId: string;
@@ -19,10 +18,9 @@ type Props = {
 const EnduranceProjectLayout = ({ projectId }: Props) => {
     const [isEdit, setIsEdit] = useState(false);
 
-    const projectQuery = useAtomValue(enduranceProjectAtom);
-
-    const queryClient = useQueryClient();
+    const projectQuery = useFetchEnduranceProject(projectId);
     const updateEnduranceProject = useUpdateEnduranceProject();
+    const incrementEnduranceCount = useIncrementEnduranceCount();
 
     const editState = useAtomValue(editEnduranceAtom);
     const initEditProject = useSetAtom(editProjectAtom);
@@ -34,19 +32,11 @@ const EnduranceProjectLayout = ({ projectId }: Props) => {
 
     const project = projectQuery.data;
 
-    const onIncrement = async () => {
-        try {
-            await supabase.rpc("increment_endurance_count", {
-                p_project_id: projectId,
-                p_increment: 1,
-            });
-
-            queryClient.invalidateQueries({
-                queryKey: ["enduranceProgress", projectId],
-            });
-        } catch (e: any) {
-            alert(e.message ?? "カウントできません");
-        }
+    const onIncrement = () => {
+        incrementEnduranceCount.mutate({
+            p_project_id: project.id,
+            p_increment: 1,
+        });
     };
 
     const isActive = projectQuery.data.status === "active";
@@ -62,9 +52,9 @@ const EnduranceProjectLayout = ({ projectId }: Props) => {
     const onSave = () => {
         updateEnduranceProject.mutate(
             {
-                projectId: project.id,
-                title: editState.title,
-                targetCount: editState.targetCount,
+                p_project_id: project.id,
+                p_title: editState.title,
+                p_target_count: editState.targetCount,
             },
             {
                 onSuccess: () => {
@@ -82,7 +72,7 @@ const EnduranceProjectLayout = ({ projectId }: Props) => {
             onEdit={onEdit}
             onSave={onSave}
         >
-            <Endurance
+            <EnduranceView
                 currentCount={project.current_count}
                 targetCount={project.target_count}
                 isActive={isActive}
@@ -90,14 +80,14 @@ const EnduranceProjectLayout = ({ projectId }: Props) => {
                 onIncrement={onIncrement}
             >
                 {isEdit ? (
-                    <Endurance.Editor />
+                    <EnduranceView.Editor />
                 ) : (
                     <>
-                        <Endurance.Count />
-                        <Endurance.IncrementButton />
+                        <EnduranceView.Count />
+                        <EnduranceView.IncrementButton />
                     </>
                 )}
-            </Endurance>
+            </EnduranceView>
         </ProjectLayout>
     );
 };

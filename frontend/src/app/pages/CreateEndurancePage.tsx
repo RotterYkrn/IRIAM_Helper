@@ -13,8 +13,8 @@ const CreateEndurancePage = () => {
     const handleCreate = async () => {
         createMutation.mutate(
             {
-                title,
-                targetCount,
+                p_title: title,
+                p_target_count: targetCount,
             },
             {
                 onSuccess: (projectId) => {

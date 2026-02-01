@@ -1,15 +1,15 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import { activateProject } from "@/use-cases/activateProject";
+import { incrementEnduranceCount } from "@/use-cases/incrementEnduranceCount";
 
-export const useActivateProject = () => {
+export const useIncrementEnduranceCount = () => {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: activateProject,
+        mutationFn: incrementEnduranceCount,
+
         onSuccess: (projectId) => {
             queryClient.invalidateQueries({ queryKey: ["project", projectId] });
-            queryClient.invalidateQueries({ queryKey: ["projects"] }); // sidebar
         },
     });
 };

@@ -16,7 +16,9 @@ const EnduranceContext = createContext<EnduranceContextType | null>(null);
 const useEndurance = () => {
     const ctx = useContext(EnduranceContext);
     if (!ctx) {
-        throw new Error("Endurance components must be used within Endurance");
+        throw new Error(
+            "Endurance components must be used within EnduranceView",
+        );
     }
     return ctx;
 };
@@ -25,7 +27,7 @@ type Props = EnduranceContextType & {
     children: React.ReactNode;
 };
 
-const Endurance = ({ children, ...contextValue }: Props) => {
+const EnduranceView = ({ children, ...contextValue }: Props) => {
     return <EnduranceContext value={contextValue}>{children}</EnduranceContext>;
 };
 
@@ -86,8 +88,8 @@ const IncrementButton = () => {
     );
 };
 
-Endurance.Count = Count;
-Endurance.Editor = Editor;
-Endurance.IncrementButton = IncrementButton;
+EnduranceView.Count = Count;
+EnduranceView.Editor = Editor;
+EnduranceView.IncrementButton = IncrementButton;
 
-export default Endurance;
+export default EnduranceView;

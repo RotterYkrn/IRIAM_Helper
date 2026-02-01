@@ -1,0 +1,1 @@
+DROP FUNCTION increment_endurance_count(uuid,integer)

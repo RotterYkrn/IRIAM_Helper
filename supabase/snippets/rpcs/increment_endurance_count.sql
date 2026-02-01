@@ -1,6 +1,6 @@
 create or replace function increment_endurance_count(
   p_project_id uuid,
-  p_increment integer default 1
+  p_increment integer
 )
 returns void
 language plpgsql

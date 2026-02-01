@@ -1,6 +1,18 @@
+import { Chunk, Either, Schema } from "effect";
+
+import {
+    ProjectForSideBerSchema,
+    type ProjectForSideBer,
+} from "@/domain/projects/Project";
 import { supabase } from "@/lib/supabase";
 
-export const fetchProjectsByStatus = async () => {
+type Return = {
+    scheduled: Chunk.Chunk<ProjectForSideBer>;
+    active: Chunk.Chunk<ProjectForSideBer>;
+    finished: Chunk.Chunk<ProjectForSideBer>;
+};
+
+export const fetchProjectsByStatus = async (): Promise<Return> => {
     const { data, error } = await supabase
         .from("projects")
         .select("id, title, type, status")
@@ -10,9 +22,19 @@ export const fetchProjectsByStatus = async () => {
         throw error;
     }
 
+    const decoded = Schema.decodeEither(Schema.Chunk(ProjectForSideBerSchema))(
+        data,
+    );
+
+    if (Either.isLeft(decoded)) {
+        throw decoded.left;
+    }
+
     return {
-        scheduled: data.filter((p) => p.status === "scheduled") ?? [],
-        active: data.filter((p) => p.status === "active") ?? [],
-        finished: data.filter((p) => p.status === "finished") ?? [],
+        scheduled:
+            Chunk.filter(decoded.right, (p) => p.status === "scheduled") ?? [],
+        active: Chunk.filter(decoded.right, (p) => p.status === "active") ?? [],
+        finished:
+            Chunk.filter(decoded.right, (p) => p.status === "finished") ?? [],
     };
 };
