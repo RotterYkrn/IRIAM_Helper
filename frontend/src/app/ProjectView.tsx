@@ -84,7 +84,7 @@ const Title = ({ title }: TitleProps) => {
 
 const Body = ({ children }: ChildrenProps) => {
     return (
-        <div className="mt-10 flex flex-col items-center gap-6">{children}</div>
+        <div className="mt-5 flex flex-col items-center gap-6">{children}</div>
     );
 };
 

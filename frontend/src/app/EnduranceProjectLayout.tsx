@@ -32,15 +32,6 @@ const EnduranceProjectLayout = ({ projectId }: Props) => {
 
     const project = projectQuery.data;
 
-    const onIncrement = () => {
-        incrementEnduranceCount.mutate({
-            p_project_id: project.id,
-            p_increment: 1,
-        });
-    };
-
-    const isActive = projectQuery.data.status === "active";
-
     const onEdit = () => {
         initEditProject(project);
         initEditEnduranceSettings({
@@ -62,6 +53,15 @@ const EnduranceProjectLayout = ({ projectId }: Props) => {
                 },
             },
         );
+    };
+
+    const isActive = projectQuery.data.status === "active";
+
+    const onIncrement = () => {
+        incrementEnduranceCount.mutate({
+            p_project_id: project.id,
+            p_increment: 1,
+        });
     };
 
     return (
