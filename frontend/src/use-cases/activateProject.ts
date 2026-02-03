@@ -1,9 +1,9 @@
 import { Schema, Either } from "effect";
 
 import {
-    ActivateProjectArgsSchema,
     type ActivateProjectArgsEncoded,
-} from "@/domain/projects/rpc";
+    ActivateProjectArgsSchema,
+} from "@/domain/projects/rpcs/ActivateProject";
 import { supabase } from "@/lib/supabase";
 
 export const activateProject = async (args: ActivateProjectArgsEncoded) => {

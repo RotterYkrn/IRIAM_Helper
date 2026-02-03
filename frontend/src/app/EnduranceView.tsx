@@ -2,7 +2,7 @@ import { useAtom } from "jotai";
 import { createContext, useContext } from "react";
 
 import { editEnduranceSettingsAtom } from "@/atoms/EditEnduranceSettingsAtom";
-import type { ProjectSchema } from "@/domain/projects/Project";
+import type { ProjectSchema } from "@/domain/projects/tables/Project";
 
 type EnduranceContextType = {
     projectStatus: typeof ProjectSchema.Type.status;

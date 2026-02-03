@@ -3,7 +3,7 @@ import { Either, Schema } from "effect";
 import {
     DeleteProjectArgsSchema,
     type DeleteProjectArgsEncoded,
-} from "@/domain/projects/rpc";
+} from "@/domain/projects/rpcs/DeleteProject";
 import { supabase } from "@/lib/supabase";
 
 export const deleteProject = async (args: DeleteProjectArgsEncoded) => {

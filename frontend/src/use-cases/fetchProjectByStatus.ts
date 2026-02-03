@@ -3,7 +3,7 @@ import { Chunk, Either, Schema } from "effect";
 import {
     ProjectForSideBerSchema,
     type ProjectForSideBer,
-} from "@/domain/projects/Project";
+} from "@/domain/projects/tables/Project";
 import { supabase } from "@/lib/supabase";
 
 type Return = {

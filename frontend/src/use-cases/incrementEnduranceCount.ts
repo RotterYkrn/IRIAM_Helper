@@ -3,7 +3,7 @@ import { Schema, Either } from "effect";
 import {
     type IncrementEnduranceCountArgsEncoded,
     IncrementEnduranceCountArgsSchema,
-} from "@/domain/endurances/rpc";
+} from "@/domain/endurances/rpcs/IncrementEnduranceCount";
 import { supabase } from "@/lib/supabase";
 
 export const incrementEnduranceCount = async (

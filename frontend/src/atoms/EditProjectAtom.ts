@@ -1,6 +1,6 @@
 import { atom } from "jotai";
 
-import type { ProjectSchema } from "@/domain/projects/Project";
+import type { ProjectSchema } from "@/domain/projects/tables/Project";
 
 export type EditProjectState = {
     title: typeof ProjectSchema.Type.title;

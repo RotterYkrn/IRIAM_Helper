@@ -1,6 +1,6 @@
 import { Schema } from "effect";
 
-import { ProjectIdSchema, ProjectSchema } from "../projects/Project";
+import { ProjectIdSchema, ProjectSchema } from "../../projects/tables/Project";
 
 import type { Database } from "@/lib/database.types";
 

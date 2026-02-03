@@ -3,7 +3,7 @@ import { Schema, Either } from "effect";
 import {
     FinishProjectArgsSchema,
     type FinishProjectArgsEncoded,
-} from "@/domain/projects/rpc";
+} from "@/domain/projects/rpcs/FinishProject";
 import { supabase } from "@/lib/supabase";
 
 export const finishProject = async (args: FinishProjectArgsEncoded) => {

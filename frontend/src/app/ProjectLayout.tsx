@@ -2,7 +2,7 @@ import { useNavigate } from "react-router-dom";
 
 import ProjectView from "./ProjectView";
 
-import type { Project } from "@/domain/projects/Project";
+import type { Project } from "@/domain/projects/tables/Project";
 import { useActivateProject } from "@/hooks/useActivateProject";
 import { useDeleteProject } from "@/hooks/useDeleteProject";
 import { useFinishProject } from "@/hooks/useFinishProject";

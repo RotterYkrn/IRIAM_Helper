@@ -2,7 +2,7 @@ import { Chunk } from "effect";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
-import type { ProjectForSideBer } from "@/domain/projects/Project";
+import type { ProjectForSideBer } from "@/domain/projects/tables/Project";
 
 type ProjectGroupProps = {
     title: string;

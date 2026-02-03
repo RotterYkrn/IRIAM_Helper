@@ -1,6 +1,6 @@
 import { atom } from "jotai";
 
-import type { EnduranceSettingsSchema } from "@/domain/endurances/EnduranceSettings";
+import type { EnduranceSettingsSchema } from "@/domain/endurances/tables/EnduranceSettings";
 
 export type EditEnduranceSettingsState = {
     targetCount: typeof EnduranceSettingsSchema.Type.target_count;

@@ -1,6 +1,6 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 
-import type { EnduranceProjectView } from "@/domain/endurances/EnduranceProjectView";
+import type { EnduranceProjectView } from "@/domain/endurances/views/EnduranceProjectView";
 import { updateEnduranceProject } from "@/use-cases/updateEnduranceProject";
 
 export const useUpdateEnduranceProject = () => {

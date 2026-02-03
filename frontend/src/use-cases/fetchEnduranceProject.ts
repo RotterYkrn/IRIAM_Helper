@@ -3,11 +3,11 @@ import { Either, Schema } from "effect";
 import {
     EnduranceProjectViewSchema,
     type EnduranceProjectView,
-} from "@/domain/endurances/EnduranceProjectView";
+} from "@/domain/endurances/views/EnduranceProjectView";
 import {
     ProjectIdSchema,
     type ProjectIdEncoded,
-} from "@/domain/projects/Project";
+} from "@/domain/projects/tables/Project";
 import { supabase } from "@/lib/supabase";
 
 export const fetchEnduranceProject = async (

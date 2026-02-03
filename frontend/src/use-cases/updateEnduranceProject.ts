@@ -3,7 +3,7 @@ import { Schema, Either } from "effect";
 import {
     type UpdateEnduranceProjectArgsEncoded,
     UpdateEnduranceProjectArgsSchema,
-} from "@/domain/endurances/rpc";
+} from "@/domain/endurances/rpcs/UpdateEnduranceProject";
 import { supabase } from "@/lib/supabase";
 
 export const updateEnduranceProject = async (

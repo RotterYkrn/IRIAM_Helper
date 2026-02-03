@@ -4,10 +4,9 @@ import {
     ProjectIdSchema,
     ProjectStatus,
     type Project,
-} from "../projects/Project";
-
-import { type EnduranceProgress } from "./EnduranceProgress";
-import { type EnduranceSettings } from "./EnduranceSettings";
+} from "../../projects/tables/Project";
+import { type EnduranceProgress } from "../tables/EnduranceProgress";
+import { type EnduranceSettings } from "../tables/EnduranceSettings";
 
 import type { Database } from "@/lib/database.types";
 import { withNullAs as withStrictNullCheck } from "@/utils/schema";
