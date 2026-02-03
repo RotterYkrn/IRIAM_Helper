@@ -1,9 +1,7 @@
-import { useQuery } from "@tanstack/react-query";
-
 import CreateProjectButton from "./CreateProjectButton";
 import ProjectGroup from "./ProjectGroup";
 
-import { fetchProjectsByStatus } from "@/use-cases/fetchProjectByStatus";
+import { useFetchProjectForSideBar } from "@/hooks/useFetchProjectForSideBar";
 
 type SideBarProps = {
     open: boolean;
@@ -11,10 +9,7 @@ type SideBarProps = {
 };
 
 const SideBar = ({ open, onToggle }: SideBarProps) => {
-    const { data, isLoading } = useQuery({
-        queryKey: ["projects"],
-        queryFn: fetchProjectsByStatus,
-    });
+    const { data, isLoading } = useFetchProjectForSideBar();
 
     if (isLoading) {
         return <div>loading...</div>;

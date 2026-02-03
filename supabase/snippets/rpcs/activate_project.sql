@@ -1,7 +1,7 @@
 create or replace function activate_project(
   p_project_id uuid
 )
-returns void
+returns uuid
 language plpgsql
 SET search_path = public
 as $$
@@ -25,5 +25,7 @@ begin
   update projects
   set status = 'active'
   where id = p_project_id;
+
+  return p_project_id;
 end;
 $$;

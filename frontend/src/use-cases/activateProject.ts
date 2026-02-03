@@ -1,24 +1,28 @@
-import { Schema, Either } from "effect";
+import { Effect, pipe, Schema } from "effect";
 
 import {
-    type ActivateProjectArgsEncoded,
     ActivateProjectArgsSchema,
+    ActivateProjectReturnsSchema,
+    type ActivateProjectArgsEncoded,
 } from "@/domain/projects/rpcs/ActivateProject";
 import { supabase } from "@/lib/supabase";
 
-export const activateProject = async (args: ActivateProjectArgsEncoded) => {
-    const decoded = Schema.decodeEither(ActivateProjectArgsSchema)(args);
-
-    if (Either.isLeft(decoded)) {
-        throw decoded.left;
-    }
-
-    const { error } = await supabase.rpc(
-        "activate_project",
-        Schema.encodeSync(ActivateProjectArgsSchema)(decoded.right),
+export const activateProject = (args: ActivateProjectArgsEncoded) =>
+    pipe(
+        args,
+        Schema.decodeEither(ActivateProjectArgsSchema),
+        Effect.tryMapPromise({
+            try: (args) =>
+                supabase.rpc(
+                    "activate_project",
+                    Schema.encodeSync(ActivateProjectArgsSchema)(args),
+                ),
+            catch: (error) => error,
+        }),
+        Effect.flatMap(({ data, error }) =>
+            error ? Effect.fail(error) : Effect.succeed(data),
+        ),
+        Effect.flatMap(
+            Schema.decodeUnknownEither(ActivateProjectReturnsSchema),
+        ),
     );
-
-    if (error) throw error;
-
-    return decoded.right.id;
-};

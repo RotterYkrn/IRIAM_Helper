@@ -1,40 +1,34 @@
-import { Chunk, Either, Schema } from "effect";
+import { Chunk, Effect, pipe, Schema } from "effect";
 
-import {
-    ProjectForSideBerSchema,
-    type ProjectForSideBer,
-} from "@/domain/projects/tables/Project";
+import { ProjectForSideBerSchema } from "@/domain/projects/tables/Project";
 import { supabase } from "@/lib/supabase";
 
-type Return = {
-    scheduled: Chunk.Chunk<ProjectForSideBer>;
-    active: Chunk.Chunk<ProjectForSideBer>;
-    finished: Chunk.Chunk<ProjectForSideBer>;
-};
-
-export const fetchProjectsByStatus = async (): Promise<Return> => {
-    const { data, error } = await supabase
-        .from("projects")
-        .select("id, title, type, status")
-        .order("created_at", { ascending: false });
-
-    if (error) {
-        throw error;
-    }
-
-    const decoded = Schema.decodeEither(Schema.Chunk(ProjectForSideBerSchema))(
-        data,
+export const fetchProjectsByStatus = () =>
+    pipe(
+        Effect.tryPromise({
+            try: () =>
+                supabase
+                    .from("projects")
+                    .select("id, title, type, status")
+                    .order("created_at", { ascending: false }),
+            catch: (error) => error,
+        }),
+        Effect.flatMap(({ data, error }) =>
+            error ? Effect.fail(error) : Effect.succeed(data),
+        ),
+        Effect.flatMap(
+            Schema.decodeUnknownEither(Schema.Chunk(ProjectForSideBerSchema)),
+        ),
+        Effect.map((projects) => {
+            return {
+                scheduled:
+                    Chunk.filter(projects, (p) => p.status === "scheduled") ??
+                    [],
+                active:
+                    Chunk.filter(projects, (p) => p.status === "active") ?? [],
+                finished:
+                    Chunk.filter(projects, (p) => p.status === "finished") ??
+                    [],
+            };
+        }),
     );
-
-    if (Either.isLeft(decoded)) {
-        throw decoded.left;
-    }
-
-    return {
-        scheduled:
-            Chunk.filter(decoded.right, (p) => p.status === "scheduled") ?? [],
-        active: Chunk.filter(decoded.right, (p) => p.status === "active") ?? [],
-        finished:
-            Chunk.filter(decoded.right, (p) => p.status === "finished") ?? [],
-    };
-};

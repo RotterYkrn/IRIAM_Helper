@@ -1,30 +1,30 @@
-import { Schema, Either } from "effect";
+import { Effect, pipe, Schema } from "effect";
 
 import {
-    type IncrementEnduranceCountArgsEncoded,
     IncrementEnduranceCountArgsSchema,
+    IncrementEnduranceCountReturnsSchema,
+    type IncrementEnduranceCountArgsEncoded,
 } from "@/domain/endurances/rpcs/IncrementEnduranceCount";
 import { supabase } from "@/lib/supabase";
 
-export const incrementEnduranceCount = async (
+export const incrementEnduranceCount = (
     args: IncrementEnduranceCountArgsEncoded,
-) => {
-    const decoded = Schema.decodeEither(IncrementEnduranceCountArgsSchema)(
+) =>
+    pipe(
         args,
+        Schema.decodeEither(IncrementEnduranceCountArgsSchema),
+        Effect.tryMapPromise({
+            try: (args) =>
+                supabase.rpc(
+                    "increment_endurance_count",
+                    Schema.encodeSync(IncrementEnduranceCountArgsSchema)(args),
+                ),
+            catch: (error) => error,
+        }),
+        Effect.flatMap(({ data, error }) =>
+            error ? Effect.fail(error) : Effect.succeed(data),
+        ),
+        Effect.flatMap(
+            Schema.decodeUnknownEither(IncrementEnduranceCountReturnsSchema),
+        ),
     );
-
-    if (Either.isLeft(decoded)) {
-        throw decoded.left;
-    }
-
-    const { error } = await supabase.rpc(
-        "increment_endurance_count",
-        Schema.encodeSync(IncrementEnduranceCountArgsSchema)(decoded.right),
-    );
-
-    if (error) {
-        throw error;
-    }
-
-    return decoded.right.id;
-};

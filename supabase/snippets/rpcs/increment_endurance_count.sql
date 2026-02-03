@@ -2,7 +2,7 @@ create or replace function increment_endurance_count(
   p_project_id uuid,
   p_increment integer
 )
-returns void
+returns uuid
 language plpgsql
 SET search_path = public
 as $$
@@ -32,5 +32,7 @@ begin
      where project_id = p_project_id)
   )
   where project_id = p_project_id;
+
+  return p_project_id;
 end;
 $$;

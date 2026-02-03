@@ -156,20 +156,20 @@ export type Database = {
       }
     }
     Functions: {
-      activate_project: { Args: { p_project_id: string }; Returns: undefined }
+      activate_project: { Args: { p_project_id: string }; Returns: string }
       create_endurance_project: {
         Args: { p_target_count: number; p_title: string }
         Returns: string
       }
       delete_project: { Args: { p_project_id: string }; Returns: undefined }
-      finish_project: { Args: { p_project_id: string }; Returns: undefined }
+      finish_project: { Args: { p_project_id: string }; Returns: string }
       increment_endurance_count: {
         Args: { p_increment: number; p_project_id: string }
-        Returns: undefined
+        Returns: string
       }
       update_endurance_project: {
         Args: { p_project_id: string; p_target_count: number; p_title: string }
-        Returns: undefined
+        Returns: Json
       }
     }
     Enums: {

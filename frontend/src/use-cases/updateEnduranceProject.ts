@@ -1,28 +1,31 @@
-import { Schema, Either } from "effect";
+import { Schema, Effect, pipe } from "effect";
 
 import {
     type UpdateEnduranceProjectArgsEncoded,
     UpdateEnduranceProjectArgsSchema,
+    type UpdateEnduranceProjectReturns,
+    UpdateEnduranceProjectReturnsSchema,
 } from "@/domain/endurances/rpcs/UpdateEnduranceProject";
 import { supabase } from "@/lib/supabase";
 
-export const updateEnduranceProject = async (
+export const updateEnduranceProject = (
     args: UpdateEnduranceProjectArgsEncoded,
-) => {
-    const decoded = Schema.decodeEither(UpdateEnduranceProjectArgsSchema)(args);
-
-    if (Either.isLeft(decoded)) {
-        throw decoded.left;
-    }
-
-    const { error } = await supabase.rpc(
-        "update_endurance_project",
-        Schema.encodeSync(UpdateEnduranceProjectArgsSchema)(decoded.right),
+): Effect.Effect<UpdateEnduranceProjectReturns, unknown> =>
+    pipe(
+        args,
+        Schema.decodeEither(UpdateEnduranceProjectArgsSchema),
+        Effect.tryMapPromise({
+            try: (args) =>
+                supabase.rpc(
+                    "update_endurance_project",
+                    Schema.encodeSync(UpdateEnduranceProjectArgsSchema)(args),
+                ),
+            catch: (error) => error,
+        }),
+        Effect.flatMap(({ data, error }) =>
+            error ? Effect.fail(error) : Effect.succeed(data),
+        ),
+        Effect.flatMap(
+            Schema.decodeUnknownEither(UpdateEnduranceProjectReturnsSchema),
+        ),
     );
-
-    if (error) {
-        throw error;
-    }
-
-    return decoded.right;
-};

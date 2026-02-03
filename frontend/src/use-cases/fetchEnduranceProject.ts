@@ -1,37 +1,27 @@
-import { Either, Schema } from "effect";
+import { Effect, pipe, Schema } from "effect";
 
-import {
-    EnduranceProjectViewSchema,
-    type EnduranceProjectView,
-} from "@/domain/endurances/views/EnduranceProjectView";
+import { EnduranceProjectViewSchema } from "@/domain/endurances/views/EnduranceProjectView";
 import {
     ProjectIdSchema,
     type ProjectIdEncoded,
 } from "@/domain/projects/tables/Project";
 import { supabase } from "@/lib/supabase";
 
-export const fetchEnduranceProject = async (
-    projectId: ProjectIdEncoded,
-): Promise<EnduranceProjectView> => {
-    const decodedId = Schema.decodeEither(ProjectIdSchema)(projectId);
-
-    if (Either.isLeft(decodedId)) {
-        throw decodedId.left;
-    }
-
-    const { data, error } = await supabase
-        .from("endurance_project_view")
-        .select("*")
-        .eq("id", decodedId.right)
-        .single();
-
-    if (error) throw error;
-
-    const decoded = Schema.decodeEither(EnduranceProjectViewSchema)(data);
-
-    if (Either.isLeft(decoded)) {
-        throw decoded.left;
-    }
-
-    return decoded.right;
-};
+export const fetchEnduranceProject = (projectId: ProjectIdEncoded) =>
+    pipe(
+        projectId,
+        Schema.decodeEither(ProjectIdSchema),
+        Effect.tryMapPromise({
+            try: (id) =>
+                supabase
+                    .from("endurance_project_view")
+                    .select("*")
+                    .eq("id", id)
+                    .single(),
+            catch: (error) => error,
+        }),
+        Effect.flatMap(({ data, error }) =>
+            error ? Effect.fail(error) : Effect.succeed(data),
+        ),
+        Effect.flatMap(Schema.decodeUnknownEither(EnduranceProjectViewSchema)),
+    );
