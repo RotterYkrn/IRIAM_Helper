@@ -3,9 +3,9 @@ import { useNavigate } from "react-router-dom";
 import ProjectView from "./ProjectView";
 
 import type { Project } from "@/domain/projects/tables/Project";
-import { useActivateProject } from "@/hooks/useActivateProject";
-import { useDeleteProject } from "@/hooks/useDeleteProject";
-import { useFinishProject } from "@/hooks/useFinishProject";
+import { useActivateProject } from "@/hooks/projects/useActivateProject";
+import { useDeleteProject } from "@/hooks/projects/useDeleteProject";
+import { useFinishProject } from "@/hooks/projects/useFinishProject";
 
 type ProjectLayoutProps = {
     children: React.ReactNode;

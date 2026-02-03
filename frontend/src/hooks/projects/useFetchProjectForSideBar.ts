@@ -1,7 +1,7 @@
 import { useQuery } from "@tanstack/react-query";
 import { Effect } from "effect";
 
-import { fetchProjectsByStatus } from "@/use-cases/fetchProjectByStatus";
+import { fetchProjectsByStatus } from "@/use-cases/projects/fetchProjectByStatus";
 
 export const useFetchProjectForSideBar = () => {
     return useQuery({

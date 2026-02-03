@@ -7,9 +7,9 @@ import ProjectLayout from "./ProjectLayout";
 import { editEnduranceAtom } from "@/atoms/EditEnduranceAtom";
 import { editEnduranceSettingsAtom } from "@/atoms/EditEnduranceSettingsAtom";
 import { editProjectAtom } from "@/atoms/EditProjectAtom";
-import { useFetchEnduranceData as useFetchEnduranceProject } from "@/hooks/useFetchEnduranceProject";
-import { useIncrementEnduranceCount } from "@/hooks/useIncrementEnduranceCount";
-import { useUpdateEnduranceProject } from "@/hooks/useUpdateEnduranceProject";
+import { useFetchEnduranceData as useFetchEnduranceProject } from "@/hooks/endurances/useFetchEnduranceProject";
+import { useIncrementEnduranceCount } from "@/hooks/endurances/useIncrementEnduranceCount";
+import { useUpdateEnduranceProject } from "@/hooks/endurances/useUpdateEnduranceProject";
 
 type Props = {
     projectId: string;

@@ -1,7 +1,7 @@
 import CreateProjectButton from "./CreateProjectButton";
 import ProjectGroup from "./ProjectGroup";
 
-import { useFetchProjectForSideBar } from "@/hooks/useFetchProjectForSideBar";
+import { useFetchProjectForSideBar } from "@/hooks/projects/useFetchProjectForSideBar";
 
 type SideBarProps = {
     open: boolean;

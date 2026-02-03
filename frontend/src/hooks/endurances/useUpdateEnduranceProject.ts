@@ -3,7 +3,7 @@ import { Effect } from "effect";
 
 import type { UpdateEnduranceProjectArgsEncoded } from "@/domain/endurances/rpcs/UpdateEnduranceProject";
 import type { EnduranceProjectView } from "@/domain/endurances/views/EnduranceProjectView";
-import { updateEnduranceProject } from "@/use-cases/updateEnduranceProject";
+import { updateEnduranceProject } from "@/use-cases/endurances/updateEnduranceProject";
 
 export const useUpdateEnduranceProject = () => {
     const queryClient = useQueryClient();

@@ -2,7 +2,7 @@ import { useQuery } from "@tanstack/react-query";
 import { Effect } from "effect";
 
 import type { ProjectIdEncoded } from "@/domain/projects/tables/Project";
-import { fetchEnduranceProject } from "@/use-cases/fetchEnduranceProject";
+import { fetchEnduranceProject } from "@/use-cases/endurances/fetchEnduranceProject";
 
 export const useFetchEnduranceData = (projectId: ProjectIdEncoded) => {
     return useQuery({

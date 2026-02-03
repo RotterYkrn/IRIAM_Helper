@@ -1,7 +1,7 @@
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
-import { useCreateEnduranceProject } from "@/hooks/useCreateEnduranceProject";
+import { useCreateEnduranceProject } from "@/hooks/endurances/useCreateEnduranceProject";
 
 const CreateEndurancePage = () => {
     const [title, setTitle] = useState("");

@@ -1,16 +1,16 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Effect } from "effect";
 
-import type { ActivateProjectArgsEncoded } from "@/domain/projects/rpcs/ActivateProject";
-import { activateProject } from "@/use-cases/activateProject";
+import type { FinishProjectArgsEncoded } from "@/domain/projects/rpcs/FinishProject";
+import { finishProject } from "@/use-cases/projects/finishProject";
 
-export const useActivateProject = () => {
+export const useFinishProject = () => {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: async (args: ActivateProjectArgsEncoded) => {
+        mutationFn: async (args: FinishProjectArgsEncoded) => {
             try {
-                const result = await Effect.runPromise(activateProject(args));
+                const result = await Effect.runPromise(finishProject(args));
                 return result;
             } catch (error) {
                 console.error(error);
