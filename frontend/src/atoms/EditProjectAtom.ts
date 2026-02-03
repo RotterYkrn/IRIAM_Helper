@@ -1,7 +1,9 @@
 import { atom } from "jotai";
 
+import type { ProjectSchema } from "@/domain/projects/Project";
+
 export type EditProjectState = {
-    title: string;
+    title: typeof ProjectSchema.Type.title;
 };
 
 export const editProjectAtom = atom<EditProjectState>({
