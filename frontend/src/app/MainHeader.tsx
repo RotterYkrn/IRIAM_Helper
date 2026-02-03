@@ -6,7 +6,7 @@ const MainHeader = ({ onToggle }: MainHeaderProps) => {
     return (
         <header
             className="sticky top-0 z-10 w-full flex h-12 items-center gap-2
-                border-b bg-pink-200 px-4"
+                bg-pink-200 px-4"
         >
             <button
                 onClick={onToggle}

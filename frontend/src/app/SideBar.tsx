@@ -34,8 +34,8 @@ const SideBar = ({ open, onToggle }: SideBarProps) => {
         >
             <div>
                 <div
-                    className="flex h-12 border-b bg-pink-200 items-center
-                        justify-start px-2"
+                    className="flex h-12 bg-pink-200 items-center justify-start
+                        px-2"
                 >
                     <button
                         onClick={onToggle}

@@ -2,9 +2,10 @@ import { useAtom } from "jotai";
 import { createContext, useContext } from "react";
 
 import { editEnduranceSettingsAtom } from "@/atoms/EditEnduranceSettingsAtom";
+import type { ProjectSchema } from "@/domain/projects/Project";
 
 type EnduranceContextType = {
-    isActive: boolean;
+    projectStatus: typeof ProjectSchema.Type.status;
     isEdit: boolean;
 };
 
@@ -35,9 +36,24 @@ type CountProps = {
 
 const Count = ({ currentCount, targetCount }: CountProps) => {
     const { isEdit } = useEndurance();
+    const [state, setState] = useAtom(editEnduranceSettingsAtom);
 
     if (isEdit) {
-        return null;
+        return (
+            <input
+                type="text"
+                className="text-4xl font-mono w-1/4 text-center outline-none
+                    border-b-2 border-gray-300 focus:border-gray-500
+                    transition-colors"
+                defaultValue={state.targetCount}
+                onChange={(e) =>
+                    setState({
+                        ...state,
+                        targetCount: Number(e.target.value),
+                    })
+                }
+            />
+        );
     }
 
     return (
@@ -78,7 +94,10 @@ type IncrementButtonProps = {
 };
 
 const IncrementButton = ({ onIncrement }: IncrementButtonProps) => {
-    const { isActive } = useEndurance();
+    const { projectStatus } = useEndurance();
+
+    const isActive = projectStatus === "active";
+
     return (
         <button
             onClick={onIncrement}

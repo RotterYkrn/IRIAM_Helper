@@ -67,8 +67,10 @@ const Title = ({ title }: TitleProps) => {
     if (isEdit) {
         return (
             <input
-                className="text-3xl font-bold text-center w-full"
-                value={state.title}
+                className="text-3xl font-bold text-center w-1/2 outline-none
+                    border-b-2 border-gray-300 focus:border-gray-500
+                    transition-colors"
+                defaultValue={state.title}
                 onChange={(e) =>
                     setState({
                         ...state,

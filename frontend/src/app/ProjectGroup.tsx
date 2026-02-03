@@ -16,7 +16,7 @@ const ProjectGroup = ({ title, projects }: ProjectGroupProps) => {
         <div>
             <button
                 onClick={() => setOpen((prev) => !prev)}
-                className="flex items-center gap-2 font-medium
+                className="flex w-full rounded items-center gap-2 font-medium
                     hover:bg-neutral-300"
             >
                 <span className="text-xs">{open ? "▼" : "▶"}</span>

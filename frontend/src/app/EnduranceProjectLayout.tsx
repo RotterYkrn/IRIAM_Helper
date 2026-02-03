@@ -55,8 +55,6 @@ const EnduranceProjectLayout = ({ projectId }: Props) => {
         );
     };
 
-    const isActive = projectQuery.data.status === "active";
-
     const onIncrement = () => {
         incrementEnduranceCount.mutate({
             p_project_id: project.id,
@@ -73,22 +71,14 @@ const EnduranceProjectLayout = ({ projectId }: Props) => {
             onSave={onSave}
         >
             <EnduranceView
-                isActive={isActive}
+                projectStatus={project.status}
                 isEdit={isEdit}
             >
-                {isEdit ? (
-                    <EnduranceView.Editor />
-                ) : (
-                    <>
-                        <EnduranceView.Count
-                            currentCount={project.current_count}
-                            targetCount={project.target_count}
-                        />
-                        <EnduranceView.IncrementButton
-                            onIncrement={onIncrement}
-                        />
-                    </>
-                )}
+                <EnduranceView.Count
+                    currentCount={project.current_count}
+                    targetCount={project.target_count}
+                />
+                <EnduranceView.IncrementButton onIncrement={onIncrement} />
             </EnduranceView>
         </ProjectLayout>
     );
