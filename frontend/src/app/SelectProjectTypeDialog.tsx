@@ -21,10 +21,10 @@ const SelectProjectTypeDialog = ({
             onOpenChange={onOpenChange}
         >
             <Dialog.Portal>
-                <Dialog.Overlay className="fixed inset-0 bg-black/50" />
+                <Dialog.Overlay className="fixed z-9 inset-0 bg-black/50" />
 
                 <Dialog.Content
-                    className="fixed left-1/2 top-1/2 w-[90vw] max-w-md
+                    className="fixed z-10 left-1/2 top-1/2 w-[90vw] max-w-md
                         -translate-x-1/2 -translate-y-1/2 rounded-lg bg-white
                         p-6 shadow-lg"
                 >

@@ -6,6 +6,7 @@ import type { Project } from "@/domain/projects/tables/Project";
 import { useActivateProject } from "@/hooks/projects/useActivateProject";
 import { useDeleteProject } from "@/hooks/projects/useDeleteProject";
 import { useFinishProject } from "@/hooks/projects/useFinishProject";
+import { errorToast, successToast } from "@/utils/toast";
 
 type ProjectLayoutProps = {
     children: React.ReactNode;
@@ -32,27 +33,73 @@ const ProjectLayout = ({
     const finishMutation = useFinishProject();
 
     const onCancel = () => {
+        if (!confirm("変更を破棄しますか？")) {
+            return;
+        }
         setIsEdit(false);
     };
 
     const onDelete = () => {
-        if (!confirm("この企画を削除しますか？")) return;
+        if (!confirm("この企画を削除しますか？")) {
+            return;
+        }
         deleteMutation.mutate(
             { p_project_id: project.id },
             {
                 onSuccess: () => {
+                    successToast(`「${project.title}」が削除されました`);
                     navigate("/");
+                },
+                onError: (error) => {
+                    console.error(error);
+                    errorToast(`「${project.title}」の削除に失敗しました`);
                 },
             },
         );
     };
 
     const onActivate = () => {
-        activateMutation.mutate({ p_project_id: project.id });
+        if (
+            !confirm(
+                "企画を開催しますか？（開催すると、開催前に戻せなくなります。）",
+            )
+        ) {
+            return;
+        }
+        activateMutation.mutate(
+            { p_project_id: project.id },
+            {
+                onSuccess: () => {
+                    successToast("企画が開催されました");
+                },
+                onError: (error) => {
+                    console.error(error);
+                    errorToast("企画の開催に失敗しました");
+                },
+            },
+        );
     };
 
     const onFinish = () => {
-        finishMutation.mutate({ p_project_id: project.id });
+        if (
+            !confirm(
+                "企画を終了しますか？（終了すると、終了前に戻せなくなります。）",
+            )
+        ) {
+            return;
+        }
+        finishMutation.mutate(
+            { p_project_id: project.id },
+            {
+                onSuccess: () => {
+                    successToast("企画が終了しました");
+                },
+                onError: (error) => {
+                    console.error(error);
+                    errorToast("企画の終了に失敗しました");
+                },
+            },
+        );
     };
 
     return (
@@ -60,7 +107,7 @@ const ProjectLayout = ({
             projectStatus={project.status}
             isEdit={isEdit}
         >
-            <ProjectView.Action>
+            <ProjectView.Action pageName="">
                 <ProjectView.EditButton onEdit={onEdit} />
                 <ProjectView.CancelButton onCancel={onCancel} />
                 <ProjectView.SaveButton

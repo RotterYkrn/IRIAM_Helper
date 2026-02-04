@@ -44,17 +44,25 @@ type ChildrenProps = {
     children: React.ReactNode;
 };
 
-const Action = ({ children }: ChildrenProps) => {
+type ActionProps = {
+    children: React.ReactNode;
+    pageName: string;
+};
+
+const Action = ({ children, pageName }: ActionProps) => {
     return (
-        <div className="flex w-full items-start justify-end gap-2">
-            {children}
+        <div className="flex w-full items-start justify-between gap-2">
+            <div className="flex flex-col gap-2">
+                <span className="text-2xl font-bold">{pageName}</span>
+            </div>
+            <div className="flex gap-2">{children}</div>
         </div>
     );
 };
 
 const Header = ({ children }: ChildrenProps) => {
     return (
-        <div className="flex flex-col w-full items-center justify-center gap-2">
+        <div className="flex flex-col w-full items-center justify-between gap-2">
             {children}
         </div>
     );

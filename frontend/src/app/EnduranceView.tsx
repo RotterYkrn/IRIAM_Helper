@@ -1,4 +1,4 @@
-import { useAtom, useAtomValue } from "jotai";
+import { useAtomValue, useSetAtom } from "jotai";
 import { createContext, useContext } from "react";
 
 import {
@@ -39,7 +39,7 @@ type CountProps = {
 
 const Count = ({ currentCount, targetCount }: CountProps) => {
     const { isEdit } = useEndurance();
-    const [state, setState] = useAtom(editTargetCountAtom);
+    const setState = useSetAtom(editTargetCountAtom);
     const error = useAtomValue(editTargetCountErrorAtom);
 
     if (isEdit) {
@@ -63,7 +63,7 @@ const Count = ({ currentCount, targetCount }: CountProps) => {
                             className="text-4xl font-mono w-30 text-center
                                 outline-none border-b-2 border-gray-300
                                 focus:border-gray-500 transition-colors"
-                            defaultValue={state}
+                            defaultValue={targetCount}
                             onChange={(e) => setState(Number(e.target.value))}
                         />
                         {error && <p className="text-red-500">{error}</p>}

@@ -12,6 +12,7 @@ import { isEnduranceValidAtom } from "@/atoms/endurances/isEditEnduranceValidAto
 import { useFetchEnduranceData as useFetchEnduranceProject } from "@/hooks/endurances/useFetchEnduranceProject";
 import { useIncrementEnduranceCount } from "@/hooks/endurances/useIncrementEnduranceCount";
 import { useUpdateEnduranceProject } from "@/hooks/endurances/useUpdateEnduranceProject";
+import { errorToast, successToast } from "@/utils/toast";
 
 type Props = {
     projectId: string;
@@ -51,7 +52,12 @@ const EnduranceProjectLayout = ({ projectId }: Props) => {
             },
             {
                 onSuccess: () => {
+                    successToast("更新しました");
                     setIsEdit(false);
+                },
+                onError: (error) => {
+                    console.error(error);
+                    errorToast("更新に失敗しました");
                 },
             },
         );

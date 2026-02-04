@@ -26,7 +26,7 @@ const CreateProjectLayout = ({
             projectStatus={"scheduled" as typeof ProjectSchema.Type.status}
             isEdit={true}
         >
-            <ProjectView.Action>
+            <ProjectView.Action pageName={"企画新規作成"}>
                 <ProjectView.CancelButton onCancel={onCancel} />
                 <ProjectView.SaveButton
                     disabled={disabled}
