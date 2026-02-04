@@ -74,8 +74,18 @@ const Count = ({ currentCount, targetCount }: CountProps) => {
     }
 
     return (
-        <div className="text-4xl font-mono">
-            {currentCount} / {targetCount}
+        <div
+            className="grid grid-cols-[1fr_auto_1fr] items-center gap-4 text-4xl
+                font-mono w-full"
+        >
+            {/* 左側：右寄せにする */}
+            <div className="text-right">{currentCount}</div>
+
+            {/* 中央：スラッシュ（動かない） */}
+            <div className="text-5xl text-gray-400">/</div>
+
+            {/* 右側：左寄せにする */}
+            <div className="text-left">{targetCount}</div>
         </div>
     );
 };
@@ -93,7 +103,7 @@ const IncrementButton = ({ onIncrement }: IncrementButtonProps) => {
         <button
             onClick={onIncrement}
             disabled={!isActive}
-            className={` rounded-full px-10 py-4 text-xl font-bold transition ${
+            className={` rounded-full px-8 py-3 text-xl font-bold transition ${
                 isActive
                     ? "bg-blue-500 hover:bg-blue-600 active:scale-95 text-white"
                     : "bg-gray-400 cursor-not-allowed"
