@@ -1,24 +1,45 @@
-import { useState } from "react";
+import { useAtomValue, useSetAtom } from "jotai";
+import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
+import CreateProjectLayout from "../CreateProjectLayout";
+import EnduranceView from "../EnduranceView";
+
+import {
+    editEnduranceAtom,
+    initEditEnduranceAtom,
+} from "@/atoms/endurances/EditEnduranceAtom";
+import { isEnduranceValidAtom } from "@/atoms/endurances/isEditEnduranceValidAtom";
+import type { EnduranceSettingsSchema } from "@/domain/endurances/tables/EnduranceSettings";
+import type { ProjectSchema } from "@/domain/projects/tables/Project";
 import { useCreateEnduranceProject } from "@/hooks/endurances/useCreateEnduranceProject";
 
 const CreateEndurancePage = () => {
-    const [title, setTitle] = useState("");
-    const [targetCount, setTargetCount] = useState(100);
-
     const navigate = useNavigate();
+
+    const editState = useAtomValue(editEnduranceAtom);
+    const initEditEndurance = useSetAtom(initEditEnduranceAtom);
+    const disabled = !useAtomValue(isEnduranceValidAtom);
+
     const createMutation = useCreateEnduranceProject();
 
-    const handleCreate = async () => {
+    useEffect(() => {
+        initEditEndurance({
+            title: "○○耐久" as typeof ProjectSchema.Type.title,
+            target_count:
+                100 as typeof EnduranceSettingsSchema.Type.target_count,
+        });
+    }, [initEditEndurance]);
+
+    const onSave = async () => {
         createMutation.mutate(
             {
-                p_title: title,
-                p_target_count: targetCount,
+                p_title: editState.title,
+                p_target_count: editState.target_count,
             },
             {
                 onSuccess: (projectId) => {
-                    navigate(`/projects/${projectId}`);
+                    navigate(`/projects/endurance/${projectId}`);
                 },
                 onError: (error) => {
                     console.error(error);
@@ -29,26 +50,20 @@ const CreateEndurancePage = () => {
     };
 
     return (
-        <div>
-            <input
-                value={title}
-                onChange={(e) => setTitle(e.target.value)}
-                placeholder="耐久タイトル"
-            />
-
-            <input
-                type="number"
-                value={targetCount}
-                onChange={(e) => setTargetCount(Number(e.target.value))}
-            />
-
-            <button
-                onClick={handleCreate}
-                disabled={createMutation.isPending}
+        <CreateProjectLayout
+            disabled={disabled}
+            onSave={onSave}
+        >
+            <EnduranceView
+                projectStatus={"scheduled" as typeof ProjectSchema.Type.status}
+                isEdit={true}
             >
-                作成
-            </button>
-        </div>
+                <EnduranceView.Count
+                    currentCount={0}
+                    targetCount={100}
+                />
+            </EnduranceView>
+        </CreateProjectLayout>
     );
 };
 

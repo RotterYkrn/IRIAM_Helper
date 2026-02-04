@@ -47,7 +47,7 @@ const Count = ({ currentCount, targetCount }: CountProps) => {
             <>
                 <input
                     type="text"
-                    className="text-4xl font-mono w-1/4 text-center outline-none
+                    className="text-4xl font-mono w-30 text-center outline-none
                         border-b-2 border-gray-300 focus:border-gray-500
                         transition-colors"
                     defaultValue={state}

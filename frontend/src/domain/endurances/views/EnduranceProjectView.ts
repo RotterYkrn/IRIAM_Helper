@@ -2,7 +2,7 @@ import { Schema } from "effect";
 
 import {
     ProjectIdSchema,
-    ProjectStatus,
+    ProjectStatusSchema,
     ProjectTitleSchema,
     type Project,
 } from "../../projects/tables/Project";
@@ -32,7 +32,7 @@ export const EnduranceProjectViewSchema: Schema.Schema<
 > = Schema.Struct({
     id: withStrictNullCheck(ProjectIdSchema),
     title: withStrictNullCheck(ProjectTitleSchema),
-    status: withStrictNullCheck(ProjectStatus),
+    status: withStrictNullCheck(ProjectStatusSchema),
     target_count: withStrictNullCheck(EnduranceTargetCountSchema),
     current_count: withStrictNullCheck(EnduranceCurrentCountSchema),
 });

@@ -6,9 +6,10 @@ import {
     editTitleErrorAtom,
 } from "@/atoms/projects/EditTitleAtom";
 import ProjectButton from "@/components/projects/ProjectButton";
+import type { ProjectSchema } from "@/domain/projects/tables/Project";
 
 type ProjectContextType = {
-    projectStatus: "scheduled" | "active" | "finished";
+    projectStatus: typeof ProjectSchema.Type.status;
     isEdit: boolean;
 };
 
@@ -72,7 +73,7 @@ const Title = ({ title }: TitleProps) => {
         return (
             <>
                 <input
-                    className="text-3xl font-bold text-center w-1/2 outline-none
+                    className="text-3xl font-bold text-center outline-none
                         border-b-2 border-gray-300 focus:border-gray-500
                         transition-colors"
                     defaultValue={state}
