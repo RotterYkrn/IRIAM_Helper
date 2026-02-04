@@ -8,7 +8,8 @@ const ProjectButton = ({
     return (
         <button
             {...props}
-            className={`rounded px-4 py-2 text-white ${className ?? ""}`}
+            className={`rounded px-4 py-2 text-white cursor-pointer
+                ${className ?? ""}`}
         >
             {children}
         </button>

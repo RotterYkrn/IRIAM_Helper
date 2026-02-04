@@ -114,10 +114,11 @@ const EditButton = ({ onEdit }: EditButtonProps) => {
 };
 
 interface SaveButtonProps {
+    disabled: boolean;
     onSave: () => void;
 }
 
-const SaveButton = ({ onSave }: SaveButtonProps) => {
+const SaveButton = ({ disabled, onSave }: SaveButtonProps) => {
     const { isEdit } = useProject();
 
     if (!isEdit) {
@@ -126,8 +127,13 @@ const SaveButton = ({ onSave }: SaveButtonProps) => {
 
     return (
         <ProjectButton
+            disabled={disabled}
             onClick={onSave}
-            className="bg-gray-500 hover:bg-gray-600"
+            className={
+                disabled
+                    ? "bg-gray-500 opacity-50"
+                    : "bg-gray-500 hover:bg-gray-600"
+            }
         >
             保存
         </ProjectButton>

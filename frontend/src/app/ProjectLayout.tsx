@@ -12,6 +12,7 @@ type ProjectLayoutProps = {
     project: Omit<Project, "type" | "created_at" | "updated_at">;
     isEdit: boolean;
     setIsEdit: (v: boolean) => void;
+    disabled: boolean;
     onEdit: () => void;
     onSave: () => void;
 };
@@ -21,6 +22,7 @@ const ProjectLayout = ({
     project,
     isEdit,
     setIsEdit,
+    disabled,
     onEdit,
     onSave,
 }: ProjectLayoutProps) => {
@@ -61,7 +63,10 @@ const ProjectLayout = ({
             <ProjectView.Action>
                 <ProjectView.EditButton onEdit={onEdit} />
                 <ProjectView.CancelButton onCancel={onCancel} />
-                <ProjectView.SaveButton onSave={onSave} />
+                <ProjectView.SaveButton
+                    disabled={disabled}
+                    onSave={onSave}
+                />
 
                 <ProjectView.DeleteButton onDelete={onDelete} />
 

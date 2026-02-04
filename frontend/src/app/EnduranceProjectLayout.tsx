@@ -8,6 +8,7 @@ import {
     editEnduranceAtom,
     initEditEnduranceAtom,
 } from "@/atoms/endurances/EditEnduranceAtom";
+import { isEnduranceValidAtom } from "@/atoms/endurances/isEditEnduranceValidAtom";
 import { useFetchEnduranceData as useFetchEnduranceProject } from "@/hooks/endurances/useFetchEnduranceProject";
 import { useIncrementEnduranceCount } from "@/hooks/endurances/useIncrementEnduranceCount";
 import { useUpdateEnduranceProject } from "@/hooks/endurances/useUpdateEnduranceProject";
@@ -25,6 +26,7 @@ const EnduranceProjectLayout = ({ projectId }: Props) => {
 
     const editState = useAtomValue(editEnduranceAtom);
     const initEditEndurance = useSetAtom(initEditEnduranceAtom);
+    const disabled = !useAtomValue(isEnduranceValidAtom);
 
     if (!projectQuery.data) {
         return null;
@@ -68,6 +70,7 @@ const EnduranceProjectLayout = ({ projectId }: Props) => {
             isEdit={isEdit}
             setIsEdit={setIsEdit}
             onEdit={onEdit}
+            disabled={disabled}
             onSave={onSave}
         >
             <EnduranceView
