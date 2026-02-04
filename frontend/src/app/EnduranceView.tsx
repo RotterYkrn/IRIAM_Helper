@@ -45,15 +45,30 @@ const Count = ({ currentCount, targetCount }: CountProps) => {
     if (isEdit) {
         return (
             <>
-                <input
-                    type="text"
-                    className="text-4xl font-mono w-30 text-center outline-none
-                        border-b-2 border-gray-300 focus:border-gray-500
-                        transition-colors"
-                    defaultValue={state}
-                    onChange={(e) => setState(Number(e.target.value))}
-                />
-                {error && <p className="text-red-500">{error}</p>}
+                <label
+                    htmlFor="project-title"
+                    className="relative flex flex-col items-center"
+                >
+                    {/* 左上に配置されるキャプション */}
+                    <span
+                        className="absolute -top-6 -left-6 text-md font-medium
+                            text-gray-600"
+                    >
+                        目標数
+                    </span>
+
+                    <div className="flex items-center">
+                        <input
+                            type="text"
+                            className="text-4xl font-mono w-30 text-center
+                                outline-none border-b-2 border-gray-300
+                                focus:border-gray-500 transition-colors"
+                            defaultValue={state}
+                            onChange={(e) => setState(Number(e.target.value))}
+                        />
+                        {error && <p className="text-red-500">{error}</p>}
+                    </div>
+                </label>
             </>
         );
     }

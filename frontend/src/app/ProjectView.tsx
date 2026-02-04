@@ -72,14 +72,29 @@ const Title = ({ title }: TitleProps) => {
     if (isEdit) {
         return (
             <>
-                <input
-                    className="text-3xl font-bold text-center outline-none
-                        border-b-2 border-gray-300 focus:border-gray-500
-                        transition-colors"
-                    defaultValue={state}
-                    onChange={(e) => setState(e.target.value)}
-                />
-                {error && <p className="text-red-500">{error}</p>}
+                <label
+                    htmlFor="project-title"
+                    className="relative flex flex-col items-center"
+                >
+                    {/* 左上に配置されるキャプション */}
+                    <span
+                        className="absolute -top-6 left-0 text-md font-medium
+                            text-gray-600"
+                    >
+                        企画タイトル
+                    </span>
+
+                    <div className="flex items-center">
+                        <input
+                            className="text-3xl font-bold text-center
+                                outline-none border-b-2 border-gray-300
+                                focus:border-gray-500 transition-colors"
+                            defaultValue={state}
+                            onChange={(e) => setState(e.target.value)}
+                        />
+                        {error && <p className="text-red-500">{error}</p>}
+                    </div>
+                </label>
             </>
         );
     }
