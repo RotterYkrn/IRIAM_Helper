@@ -5,6 +5,7 @@ import importPlugin from "eslint-plugin-import";
 import react from "eslint-plugin-react";
 import reactHooks from "eslint-plugin-react-hooks";
 import reactRefresh from "eslint-plugin-react-refresh";
+import unusedImports from "eslint-plugin-unused-imports";
 import globals from "globals";
 import tseslint from "typescript-eslint";
 
@@ -20,6 +21,7 @@ export default defineConfig([
             js,
             import: importPlugin,
             react,
+            "unused-imports": unusedImports,
         },
         extends: ["js/recommended"],
         languageOptions: { globals: globals.browser },
@@ -43,13 +45,15 @@ export default defineConfig([
             "no-undef": "off",
             "no-unused-vars": "off",
             "@typescript-eslint/no-explicit-any": "warn",
-            "@typescript-eslint/no-unused-vars": [
-                "error",
+            "@typescript-eslint/no-unused-vars": "off",
+            "unused-imports/no-unused-imports": "error",
+            "unused-imports/no-unused-vars": [
+                "warn",
                 {
-                    // インターフェースや型定義での引数を無視するように設定
-                    args: "after-used",
-                    argsIgnorePattern: "^_", // _ で始まる引数は無視
+                    vars: "all",
                     varsIgnorePattern: "^_",
+                    args: "after-used",
+                    argsIgnorePattern: "^_",
                 },
             ],
             "react/react-in-jsx-scope": "off",

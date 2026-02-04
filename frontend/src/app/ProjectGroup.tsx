@@ -1,18 +1,22 @@
+import { Chunk } from "effect";
 import { useState } from "react";
+import { Link } from "react-router-dom";
+
+import type { ProjectForSideBer } from "@/domain/projects/tables/Project";
 
 type ProjectGroupProps = {
     title: string;
-    projects: string[];
+    projects: Chunk.Chunk<ProjectForSideBer>;
 };
 
 const ProjectGroup = ({ title, projects }: ProjectGroupProps) => {
-    const [open, setOpen] = useState(false);
+    const [open, setOpen] = useState(true);
 
     return (
         <div>
             <button
                 onClick={() => setOpen((prev) => !prev)}
-                className="flex items-center gap-2 font-medium
+                className="flex w-full rounded items-center gap-2 font-medium
                     hover:bg-neutral-300"
             >
                 <span className="text-xs">{open ? "▼" : "▶"}</span>
@@ -24,10 +28,12 @@ const ProjectGroup = ({ title, projects }: ProjectGroupProps) => {
                     ${open ? "mt-2 max-h-96" : "max-h-0"} `}
             >
                 <ul className="space-y-1 pl-5">
-                    {projects.map((p) => (
-                        <li key={p}>
+                    {Chunk.map(projects, (p) => (
+                        <li key={p.id}>
                             <button className="text-left hover:underline">
-                                {p}
+                                <Link to={`/projects/${p.type}/${p.id}`}>
+                                    {p.title}
+                                </Link>
                             </button>
                         </li>
                     ))}

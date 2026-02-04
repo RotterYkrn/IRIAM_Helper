@@ -1,5 +1,7 @@
-import NewProjectButton from "./NewProjectButton";
+import CreateProjectButton from "./CreateProjectButton";
 import ProjectGroup from "./ProjectGroup";
+
+import { useFetchProjectForSideBar } from "@/hooks/projects/useFetchProjectForSideBar";
 
 type SideBarProps = {
     open: boolean;
@@ -7,16 +9,28 @@ type SideBarProps = {
 };
 
 const SideBar = ({ open, onToggle }: SideBarProps) => {
+    const { data, isLoading } = useFetchProjectForSideBar();
+
+    if (isLoading) {
+        return <div>loading...</div>;
+    }
+
+    if (!data) {
+        return <div>error</div>;
+    }
+
+    const { active, scheduled, finished } = data;
+
     return (
         <aside
-            className={`fixed top-0 left-0 h-screen overflow-hidden rounded-md
-                border-r border-black transition-[width] duration-300
-                ease-in-out ${open ? "w-70" : "w-0"} `}
+            className={`fixed top-0 left-0 h-screen overflow-hidden border-r
+                border-black transition-[width] duration-300 ease-in-out
+                ${open ? "w-70" : "w-0"} `}
         >
             <div>
                 <div
-                    className="flex h-12 border-b bg-pink-200 items-center
-                        justify-start px-2"
+                    className="flex h-12 bg-pink-200 items-center justify-start
+                        px-2"
                 >
                     <button
                         onClick={onToggle}
@@ -28,20 +42,20 @@ const SideBar = ({ open, onToggle }: SideBarProps) => {
                 </div>
 
                 <div className="h-full w-70 flex-1 space-y-4 p-2">
-                    <NewProjectButton />
+                    <CreateProjectButton />
 
                     <>
                         <ProjectGroup
                             title="開催中の企画"
-                            projects={["耐久A", "ガチャB"]}
+                            projects={active}
                         />
                         <ProjectGroup
                             title="開催予定の企画"
-                            projects={["耐久C"]}
+                            projects={scheduled}
                         />
                         <ProjectGroup
                             title="過去の企画"
-                            projects={["耐久X"]}
+                            projects={finished}
                         />
                     </>
                 </div>
