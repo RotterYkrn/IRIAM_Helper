@@ -3,10 +3,17 @@ import { Schema } from "effect";
 import {
     ProjectIdSchema,
     ProjectStatus,
+    ProjectTitleSchema,
     type Project,
 } from "../../projects/tables/Project";
-import { type EnduranceProgress } from "../tables/EnduranceProgress";
-import { type EnduranceSettings } from "../tables/EnduranceSettings";
+import {
+    EnduranceCurrentCountSchema,
+    type EnduranceProgress,
+} from "../tables/EnduranceProgress";
+import {
+    EnduranceTargetCountSchema,
+    type EnduranceSettings,
+} from "../tables/EnduranceSettings";
 
 import type { Database } from "@/lib/database.types";
 import { withNullAs as withStrictNullCheck } from "@/utils/schema";
@@ -24,8 +31,8 @@ export const EnduranceProjectViewSchema: Schema.Schema<
     EnduranceProjectViewEncoded
 > = Schema.Struct({
     id: withStrictNullCheck(ProjectIdSchema),
-    title: withStrictNullCheck(Schema.String),
+    title: withStrictNullCheck(ProjectTitleSchema),
     status: withStrictNullCheck(ProjectStatus),
-    target_count: withStrictNullCheck(Schema.Number),
-    current_count: withStrictNullCheck(Schema.Number),
+    target_count: withStrictNullCheck(EnduranceTargetCountSchema),
+    current_count: withStrictNullCheck(EnduranceCurrentCountSchema),
 });

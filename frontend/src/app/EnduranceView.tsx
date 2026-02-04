@@ -1,7 +1,10 @@
-import { useAtom } from "jotai";
+import { useAtom, useAtomValue } from "jotai";
 import { createContext, useContext } from "react";
 
-import { editEnduranceSettingsAtom } from "@/atoms/EditEnduranceSettingsAtom";
+import {
+    editTargetCountAtom,
+    editTargetCountErrorAtom,
+} from "@/atoms/endurances/EditTargetCountAtom";
 import type { ProjectSchema } from "@/domain/projects/tables/Project";
 
 type EnduranceContextType = {
@@ -36,23 +39,22 @@ type CountProps = {
 
 const Count = ({ currentCount, targetCount }: CountProps) => {
     const { isEdit } = useEndurance();
-    const [state, setState] = useAtom(editEnduranceSettingsAtom);
+    const [state, setState] = useAtom(editTargetCountAtom);
+    const error = useAtomValue(editTargetCountErrorAtom);
 
     if (isEdit) {
         return (
-            <input
-                type="text"
-                className="text-4xl font-mono w-1/4 text-center outline-none
-                    border-b-2 border-gray-300 focus:border-gray-500
-                    transition-colors"
-                defaultValue={state.targetCount}
-                onChange={(e) =>
-                    setState({
-                        ...state,
-                        targetCount: Number(e.target.value),
-                    })
-                }
-            />
+            <>
+                <input
+                    type="text"
+                    className="text-4xl font-mono w-1/4 text-center outline-none
+                        border-b-2 border-gray-300 focus:border-gray-500
+                        transition-colors"
+                    defaultValue={state}
+                    onChange={(e) => setState(Number(e.target.value))}
+                />
+                {error && <p className="text-red-500">{error}</p>}
+            </>
         );
     }
 
@@ -60,32 +62,6 @@ const Count = ({ currentCount, targetCount }: CountProps) => {
         <div className="text-4xl font-mono">
             {currentCount} / {targetCount}
         </div>
-    );
-};
-
-const Editor = () => {
-    const { isEdit } = useEndurance();
-    const [state, setState] = useAtom(editEnduranceSettingsAtom);
-
-    if (!isEdit) {
-        return null;
-    }
-
-    return (
-        <label className="flex flex-col gap-2">
-            目標数
-            <input
-                type="number"
-                className="border px-3 py-2"
-                value={state.targetCount}
-                onChange={(e) =>
-                    setState({
-                        ...state,
-                        targetCount: Number(e.target.value),
-                    })
-                }
-            />
-        </label>
     );
 };
 
@@ -114,7 +90,6 @@ const IncrementButton = ({ onIncrement }: IncrementButtonProps) => {
 };
 
 EnduranceView.Count = Count;
-EnduranceView.Editor = Editor;
 EnduranceView.IncrementButton = IncrementButton;
 
 export default EnduranceView;

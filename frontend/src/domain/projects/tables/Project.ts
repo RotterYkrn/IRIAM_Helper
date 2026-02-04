@@ -20,11 +20,18 @@ export const ProjectStatus = Schema.String.pipe(
     Schema.brand("ProjectStatus"),
 );
 
+export const ProjectTitleSchema = Schema.String.pipe(
+    Schema.minLength(1, {
+        message: () => "1文字以上入力してください",
+    }),
+    Schema.brand("ProjectTitle"),
+);
+
 export type Project = Readonly<{
     id: typeof ProjectIdSchema.Type;
     type: typeof ProjectType.Type;
     status: typeof ProjectStatus.Type;
-    title: string;
+    title: typeof ProjectTitleSchema.Type;
     created_at: Date;
     updated_at: Date;
 }>;
@@ -32,7 +39,7 @@ export type Project = Readonly<{
 export const ProjectSchema: Schema.Schema<Project, ProjectEncoded> =
     Schema.Struct({
         id: ProjectIdSchema,
-        title: Schema.String,
+        title: ProjectTitleSchema,
         type: ProjectType,
         status: ProjectStatus,
         created_at: Schema.Date,

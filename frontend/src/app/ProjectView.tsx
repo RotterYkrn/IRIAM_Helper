@@ -1,7 +1,10 @@
-import { useAtom } from "jotai";
+import { useAtom, useAtomValue } from "jotai";
 import { createContext, useContext } from "react";
 
-import { editProjectAtom } from "@/atoms/EditProjectAtom";
+import {
+    editTitleAtom,
+    editTitleErrorAtom,
+} from "@/atoms/projects/EditTitleAtom";
 import ProjectButton from "@/components/projects/ProjectButton";
 
 type ProjectContextType = {
@@ -62,22 +65,21 @@ type TitleProps = {
 
 const Title = ({ title }: TitleProps) => {
     const { isEdit } = useProject();
-    const [state, setState] = useAtom(editProjectAtom);
+    const [state, setState] = useAtom(editTitleAtom);
+    const error = useAtomValue(editTitleErrorAtom);
 
     if (isEdit) {
         return (
-            <input
-                className="text-3xl font-bold text-center w-1/2 outline-none
-                    border-b-2 border-gray-300 focus:border-gray-500
-                    transition-colors"
-                defaultValue={state.title}
-                onChange={(e) =>
-                    setState({
-                        ...state,
-                        title: e.target.value,
-                    })
-                }
-            />
+            <>
+                <input
+                    className="text-3xl font-bold text-center w-1/2 outline-none
+                        border-b-2 border-gray-300 focus:border-gray-500
+                        transition-colors"
+                    defaultValue={state}
+                    onChange={(e) => setState(e.target.value)}
+                />
+                {error && <p className="text-red-500">{error}</p>}
+            </>
         );
     }
 

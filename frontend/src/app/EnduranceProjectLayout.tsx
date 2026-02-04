@@ -4,9 +4,10 @@ import { useState } from "react";
 import EnduranceView from "./EnduranceView";
 import ProjectLayout from "./ProjectLayout";
 
-import { editEnduranceAtom } from "@/atoms/EditEnduranceAtom";
-import { editEnduranceSettingsAtom } from "@/atoms/EditEnduranceSettingsAtom";
-import { editProjectAtom } from "@/atoms/EditProjectAtom";
+import {
+    editEnduranceAtom,
+    initEditEnduranceAtom,
+} from "@/atoms/endurances/EditEnduranceAtom";
 import { useFetchEnduranceData as useFetchEnduranceProject } from "@/hooks/endurances/useFetchEnduranceProject";
 import { useIncrementEnduranceCount } from "@/hooks/endurances/useIncrementEnduranceCount";
 import { useUpdateEnduranceProject } from "@/hooks/endurances/useUpdateEnduranceProject";
@@ -23,8 +24,7 @@ const EnduranceProjectLayout = ({ projectId }: Props) => {
     const incrementEnduranceCount = useIncrementEnduranceCount();
 
     const editState = useAtomValue(editEnduranceAtom);
-    const initEditProject = useSetAtom(editProjectAtom);
-    const initEditEnduranceSettings = useSetAtom(editEnduranceSettingsAtom);
+    const initEditEndurance = useSetAtom(initEditEnduranceAtom);
 
     if (!projectQuery.data) {
         return null;
@@ -33,9 +33,9 @@ const EnduranceProjectLayout = ({ projectId }: Props) => {
     const project = projectQuery.data;
 
     const onEdit = () => {
-        initEditProject(project);
-        initEditEnduranceSettings({
-            targetCount: project.target_count,
+        initEditEndurance({
+            title: project.title,
+            target_count: project.target_count,
         });
         setIsEdit(true);
     };
@@ -45,7 +45,7 @@ const EnduranceProjectLayout = ({ projectId }: Props) => {
             {
                 p_project_id: project.id,
                 p_title: editState.title,
-                p_target_count: editState.targetCount,
+                p_target_count: editState.target_count,
             },
             {
                 onSuccess: () => {

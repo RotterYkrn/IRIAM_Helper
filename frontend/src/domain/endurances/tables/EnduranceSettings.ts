@@ -12,11 +12,27 @@ const EnduranceSettingsId = Schema.UUID.pipe(
     Schema.brand("EnduranceSettingsId"),
 );
 
+export const EnduranceTargetCountSchema = Schema.Number.pipe(
+    Schema.int({ message: () => "整数で入力してください" }),
+    Schema.greaterThanOrEqualTo(1, {
+        message: () => "1以上の数を入力してください",
+    }),
+    Schema.brand("EnduranceTargetCount"),
+);
+
+export const EnduranceIncrementPerActionSchema = Schema.Number.pipe(
+    Schema.int({ message: () => "整数で入力してください" }),
+    Schema.greaterThanOrEqualTo(1, {
+        message: () => "1以上の数を入力してください",
+    }),
+    Schema.brand("EnduranceIncrementPerAction"),
+);
+
 export type EnduranceSettings = Readonly<{
     id: typeof EnduranceSettingsId.Type;
     project_id: typeof ProjectSchema.Type.id;
-    target_count: number;
-    increment_per_action: number;
+    target_count: typeof EnduranceTargetCountSchema.Type;
+    increment_per_action: typeof EnduranceIncrementPerActionSchema.Type;
     created_at: Date;
     updated_at: Date;
 }>;
@@ -27,8 +43,8 @@ export const EnduranceSettingsSchema: Schema.Schema<
 > = Schema.Struct({
     id: EnduranceSettingsId,
     project_id: ProjectIdSchema,
-    target_count: Schema.Number,
-    increment_per_action: Schema.Number,
+    target_count: EnduranceTargetCountSchema,
+    increment_per_action: EnduranceIncrementPerActionSchema,
     created_at: Schema.Date,
     updated_at: Schema.Date,
 });

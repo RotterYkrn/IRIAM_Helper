@@ -1,6 +1,9 @@
 import { Schema } from "effect";
 
-import type { EnduranceSettings } from "../tables/EnduranceSettings";
+import {
+    EnduranceIncrementPerActionSchema,
+    type EnduranceSettings,
+} from "../tables/EnduranceSettings";
 
 import {
     type Project,
@@ -20,7 +23,9 @@ export const IncrementEnduranceCountArgsSchema: Schema.Schema<
     IncrementEnduranceCountArgsEncoded
 > = Schema.Struct({
     id: ProjectIdSchema.pipe(mapFrom("p_project_id")),
-    increment_per_action: Schema.Number.pipe(mapFrom("p_increment")),
+    increment_per_action: EnduranceIncrementPerActionSchema.pipe(
+        mapFrom("p_increment"),
+    ),
 });
 
 export type IncrementEnduranceCountReturnsEncoded = Readonly<

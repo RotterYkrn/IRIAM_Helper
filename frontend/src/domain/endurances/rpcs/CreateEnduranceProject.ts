@@ -1,9 +1,13 @@
 import { Schema } from "effect";
 
-import type { EnduranceSettings } from "../tables/EnduranceSettings";
+import {
+    EnduranceTargetCountSchema,
+    type EnduranceSettings,
+} from "../tables/EnduranceSettings";
 
 import {
     ProjectIdSchema,
+    ProjectTitleSchema,
     type Project,
     type ProjectSchema,
 } from "@/domain/projects/tables/Project";
@@ -19,8 +23,8 @@ export const CreateEnduranceProjectArgsSchema: Schema.Schema<
     CreateEnduranceProjectArgs,
     CreateEnduranceProjectArgsEncoded
 > = Schema.Struct({
-    title: Schema.String.pipe(mapFrom("p_title")),
-    target_count: Schema.Number.pipe(mapFrom("p_target_count")),
+    title: ProjectTitleSchema.pipe(mapFrom("p_title")),
+    target_count: EnduranceTargetCountSchema.pipe(mapFrom("p_target_count")),
 });
 
 export type CreateEnduranceProjectReturnsEncoded = Readonly<
