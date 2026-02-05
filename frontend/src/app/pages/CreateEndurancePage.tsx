@@ -1,4 +1,4 @@
-import CreateEnduranceProjectLayout from "../CreateEnduranceProjectLayout";
+import CreateEnduranceProjectLayout from "../components/endurances/CreateEnduranceProjectLayout";
 
 const CreateEndurancePage = () => {
     return <CreateEnduranceProjectLayout />;

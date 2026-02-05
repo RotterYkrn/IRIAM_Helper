@@ -1,7 +1,7 @@
 import "../index.css";
 import { Routes, Route } from "react-router-dom";
 
-import Layout from "./Layout";
+import Layout from "./components/Layout";
 import CreateEndurancePage from "./pages/CreateEndurancePage";
 import ProjectPage from "./pages/EnduranceProjectPage";
 import TopPage from "./pages/TopPage";

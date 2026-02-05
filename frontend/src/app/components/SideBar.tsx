@@ -1,5 +1,5 @@
-import CreateProjectButton from "./CreateProjectButton";
-import ProjectGroup from "./ProjectGroup";
+import CreateProjectButton from "./projects/CreateProjectButton";
+import ProjectGroup from "./projects/ProjectGroup";
 
 import { useFetchProjectForSideBar } from "@/hooks/projects/useFetchProjectForSideBar";
 

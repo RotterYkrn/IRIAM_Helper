@@ -1,8 +1,9 @@
 import { useAtomValue, useSetAtom } from "jotai";
 import { useState } from "react";
 
+import ProjectLayout from "../projects/ProjectLayout";
+
 import EnduranceView from "./EnduranceView";
-import ProjectLayout from "./ProjectLayout";
 
 import {
     editEnduranceAtom,
