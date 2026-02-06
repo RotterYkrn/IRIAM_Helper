@@ -1,6 +1,6 @@
 import { useParams } from "react-router-dom";
 
-import EnduranceProjectLayout from "../EnduranceProjectLayout";
+import EnduranceProjectLayout from "../components/endurances/EnduranceProjectLayout";
 
 const ProjectPage = () => {
     const { projectId } = useParams<{ projectId: string }>();

@@ -2,7 +2,8 @@ import { useAtomValue, useSetAtom } from "jotai";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-import CreateProjectLayout from "./CreateProjectLayout";
+import CreateProjectLayout from "../projects/CreateProjectLayout";
+
 import EnduranceView from "./EnduranceView";
 
 import {

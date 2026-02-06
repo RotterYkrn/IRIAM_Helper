@@ -66,7 +66,14 @@ const Count = ({ currentCount, targetCount }: CountProps) => {
                             defaultValue={targetCount}
                             onChange={(e) => setState(Number(e.target.value))}
                         />
-                        {error && <p className="text-red-500">{error}</p>}
+                        {error && (
+                            <p
+                                className="absolute top-full mt-1 text-red-500
+                                    text-sm whitespace-nowrap"
+                            >
+                                {error}
+                            </p>
+                        )}
                     </div>
                 </label>
             </>

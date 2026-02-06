@@ -2,8 +2,17 @@ import { useState } from "react";
 
 import SelectProjectTypeDialog from "./SelectProjectTypeDialog";
 
-const CreateProjectButton = () => {
+type Props = {
+    toggleSidebar: () => void;
+};
+
+const CreateProjectButton = ({ toggleSidebar }: Props) => {
     const [open, setOpen] = useState(false);
+
+    const onOpenChange = (isOpen: boolean) => {
+        setOpen(isOpen);
+        toggleSidebar();
+    };
 
     return (
         <>
@@ -17,7 +26,7 @@ const CreateProjectButton = () => {
 
             <SelectProjectTypeDialog
                 open={open}
-                onOpenChange={setOpen}
+                onOpenChange={onOpenChange}
             />
         </>
     );

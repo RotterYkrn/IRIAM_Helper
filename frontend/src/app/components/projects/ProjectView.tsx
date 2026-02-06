@@ -5,8 +5,8 @@ import {
     editTitleAtom,
     editTitleErrorAtom,
 } from "@/atoms/projects/EditTitleAtom";
-import ProjectButton from "@/components/projects/ProjectButton";
 import type { ProjectSchema } from "@/domain/projects/tables/Project";
+import ProjectButton from "@/utils/components/ProjectButton";
 
 type ProjectContextType = {
     projectStatus: typeof ProjectSchema.Type.status;
@@ -92,7 +92,7 @@ const Title = ({ title }: TitleProps) => {
                         企画タイトル
                     </span>
 
-                    <div className="flex items-center">
+                    <div className="flex flex-col items-center">
                         <input
                             className="text-3xl font-bold text-center
                                 outline-none border-b-2 border-gray-300
@@ -100,7 +100,14 @@ const Title = ({ title }: TitleProps) => {
                             defaultValue={state}
                             onChange={(e) => setState(e.target.value)}
                         />
-                        {error && <p className="text-red-500">{error}</p>}
+                        {error && (
+                            <p
+                                className="absolute top-full mt-1 text-red-500
+                                    text-sm whitespace-nowrap"
+                            >
+                                {error}
+                            </p>
+                        )}
                     </div>
                 </label>
             </>

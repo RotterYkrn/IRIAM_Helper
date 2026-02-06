@@ -4,18 +4,18 @@ import { editTitleAtom } from "../projects/EditTitleAtom";
 
 import { editTargetCountAtom } from "./EditTargetCountAtom";
 
-import type { EnduranceSettings } from "@/domain/endurances/tables/EnduranceSettings";
-import type { Project } from "@/domain/projects/tables/Project";
+import type { UpdateEnduranceProjectArgs } from "@/domain/endurances/rpcs/UpdateEnduranceProject";
 
-export type EditEnduranceState = Pick<Project, "title"> &
-    Pick<EnduranceSettings, "target_count">;
+export type EditEnduranceState = Omit<UpdateEnduranceProjectArgs, "id">;
 
-export const editEnduranceAtom = atom<EditEnduranceState>((get) => {
-    return {
-        title: get(editTitleAtom),
-        target_count: get(editTargetCountAtom),
-    };
-});
+export const editEnduranceAtom = atom<Omit<UpdateEnduranceProjectArgs, "id">>(
+    (get) => {
+        return {
+            title: get(editTitleAtom),
+            target_count: get(editTargetCountAtom),
+        };
+    },
+);
 
 export const initEditEnduranceAtom = atom(
     null,
