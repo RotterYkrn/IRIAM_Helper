@@ -7,9 +7,14 @@ import type { ProjectForSideBer } from "@/domain/projects/tables/Project";
 type ProjectGroupProps = {
     title: string;
     projects: Chunk.Chunk<ProjectForSideBer>;
+    toggleSidebar: () => void;
 };
 
-const ProjectGroup = ({ title, projects }: ProjectGroupProps) => {
+const ProjectGroup = ({
+    title,
+    projects,
+    toggleSidebar,
+}: ProjectGroupProps) => {
     const [open, setOpen] = useState(true);
 
     return (
@@ -30,7 +35,10 @@ const ProjectGroup = ({ title, projects }: ProjectGroupProps) => {
                 <ul className="space-y-1 pl-5">
                     {Chunk.map(projects, (p) => (
                         <li key={p.id}>
-                            <button className="text-left hover:underline">
+                            <button
+                                onClick={toggleSidebar}
+                                className="text-left hover:underline"
+                            >
                                 <Link to={`/projects/${p.type}/${p.id}`}>
                                     {p.title}
                                 </Link>
