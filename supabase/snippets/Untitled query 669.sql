@@ -1,1 +1,3 @@
-DROP FUNCTION increment_endurance_count(uuid,integer)
+
+
+DROP TYPE IF EXISTS endurance_action_input cascade;

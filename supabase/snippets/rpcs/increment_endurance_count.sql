@@ -1,38 +1,38 @@
 create or replace function increment_endurance_count(
-  p_project_id uuid,
-  p_increment integer
+    p_project_id uuid,
+    p_increment integer
 )
 returns uuid
 language plpgsql
 SET search_path = public
 as $$
 declare
-  v_status text;
+    v_status text;
 begin
-  -- プロジェクトの status を取得
-  select status
-  into v_status
-  from projects
-  where id = p_project_id;
+    -- プロジェクトの status を取得
+    select status
+    into v_status
+    from projects
+    where id = p_project_id;
 
-  if v_status is null then
-    raise exception 'project not found';
-  end if;
+    if v_status is null then
+        raise exception 'project not found';
+    end if;
 
-  -- active 以外は拒否
-  if v_status <> 'active' then
-    raise exception 'project is not active';
-  end if;
+    -- active 以外は拒否
+    if v_status <> 'active' then
+        raise exception 'project is not active';
+    end if;
 
-  update endurance_progress
-  set current_count = least(
-    current_count + p_increment,
-    (select target_count
-     from endurance_settings
-     where project_id = p_project_id)
-  )
-  where project_id = p_project_id;
+    update endurance_progress
+    set current_count = least(
+        current_count + p_increment,
+        (select target_count
+        from endurance_settings
+        where project_id = p_project_id)
+    )
+    where project_id = p_project_id;
 
-  return p_project_id;
+    return p_project_id;
 end;
 $$;
