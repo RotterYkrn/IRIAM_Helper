@@ -12,6 +12,7 @@ import {
 } from "@/atoms/endurances/EditEnduranceAtom";
 import { isEnduranceValidAtom } from "@/atoms/endurances/isEditEnduranceValidAtom";
 import { useFetchEnduranceData as useFetchEnduranceProject } from "@/hooks/endurances/useFetchEnduranceProject";
+import { useLogEnduranceActionHistory } from "@/hooks/endurances/useLogEnduranceActionHistory";
 import { useUpdateEnduranceProject } from "@/hooks/endurances/useUpdateEnduranceProject";
 import { errorToast, successToast } from "@/utils/toast";
 
@@ -24,6 +25,7 @@ const EnduranceProjectLayout = ({ projectId }: Props) => {
 
     const projectQuery = useFetchEnduranceProject(projectId);
     const updateEnduranceProject = useUpdateEnduranceProject();
+    const logEnduranceActionHistory = useLogEnduranceActionHistory();
 
     const editState = useAtomValue(editEnduranceAtom);
     const initEditEndurance = useSetAtom(initEditEnduranceAtom);
@@ -67,7 +69,12 @@ const EnduranceProjectLayout = ({ projectId }: Props) => {
         );
     };
 
-    const onIncrement = () => {};
+    const onIncrement = () => {
+        logEnduranceActionHistory.mutate({
+            p_project_id: project.id,
+            p_action_history_type: "normal",
+        });
+    };
 
     return (
         <ProjectLayout

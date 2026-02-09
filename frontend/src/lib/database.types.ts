@@ -315,13 +315,7 @@ export type Database = {
           p_target_count: number
           p_title: string
         }
-        Returns: Database["public"]["CompositeTypes"]["update_endurance_project_returns"]
-        SetofOptions: {
-          from: "*"
-          to: "update_endurance_project_returns"
-          isOneToOne: true
-          isSetofReturn: false
-        }
+        Returns: string
       }
     }
     Enums: {
@@ -343,17 +337,6 @@ export type Database = {
         id: string | null
         label: string | null
         amount: number | null
-      }
-      update_endurance_project_returns: {
-        id: string | null
-        title: string | null
-        target_count: number | null
-        rescue_actions:
-          | Database["public"]["CompositeTypes"]["endurance_action_stat"][]
-          | null
-        sabotage_actions:
-          | Database["public"]["CompositeTypes"]["endurance_action_stat"][]
-          | null
       }
     }
   }

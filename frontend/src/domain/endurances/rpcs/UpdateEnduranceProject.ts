@@ -10,11 +10,6 @@ import {
     EnduranceTargetCountSchema,
     type EnduranceSettings,
 } from "../tables/EnduranceSettings";
-import {
-    EnduranceRescueActionChunkSchema,
-    EnduranceSabotageActionChunkSchema,
-    type EnduranceActionStatsView,
-} from "../views/EnduranceActionStatsView";
 
 import {
     type Project,
@@ -69,21 +64,4 @@ export const UpdateEnduranceProjectArgsSchema: Schema.Schema<
     sabotage_actions: UpdateEnduranceActionArgsChunkSchema.pipe(
         mapFrom("p_sabotage_actions"),
     ),
-});
-
-export type UpdateEnduranceProjectReturnsEncoded = RecursiveReadonly<
-    Database["public"]["Functions"]["update_endurance_project"]["Returns"]
->;
-export type UpdateEnduranceProjectReturns = Pick<Project, "id" | "title"> &
-    Pick<EnduranceSettings, "target_count"> &
-    Pick<EnduranceActionStatsView, "rescue_actions" | "sabotage_actions">;
-export const UpdateEnduranceProjectReturnsSchema: Schema.Schema<
-    UpdateEnduranceProjectReturns,
-    UpdateEnduranceProjectReturnsEncoded
-> = Schema.Struct({
-    id: withStrictNullCheck(ProjectIdSchema),
-    title: withStrictNullCheck(ProjectTitleSchema),
-    target_count: withStrictNullCheck(EnduranceTargetCountSchema),
-    rescue_actions: withStrictNullCheck(EnduranceRescueActionChunkSchema),
-    sabotage_actions: withStrictNullCheck(EnduranceSabotageActionChunkSchema),
 });

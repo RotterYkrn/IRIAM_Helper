@@ -1,28 +1,28 @@
-import { Schema, Effect, pipe } from "effect";
+import { Effect, pipe, Schema } from "effect";
 
 import {
-    type UpdateEnduranceProjectArgsEncoded,
-    UpdateEnduranceProjectArgsSchema,
-} from "@/domain/endurances/rpcs/UpdateEnduranceProject";
+    LogEnduranceActionHistoryArgsSchema,
+    type LogEnduranceActionHistoryArgsEncoded,
+} from "@/domain/endurances/rpcs/LogEnduranceActionHistory";
 import {
     ProjectIdSchema,
     type ProjectId,
 } from "@/domain/projects/tables/Project";
 import { supabase } from "@/lib/supabase";
 
-export const updateEnduranceProject = (
-    args: UpdateEnduranceProjectArgsEncoded,
+export const logEnduranceActionHistory = (
+    args: LogEnduranceActionHistoryArgsEncoded,
 ): Effect.Effect<ProjectId, unknown> =>
     pipe(
         args,
-        Schema.decodeEither(UpdateEnduranceProjectArgsSchema),
+        Schema.decodeEither(LogEnduranceActionHistoryArgsSchema),
         Effect.tryMapPromise({
             try: (args) =>
                 supabase.rpc(
-                    "update_endurance_project",
-                    Schema.encodeSync(UpdateEnduranceProjectArgsSchema)(
+                    "log_endurance_action_history",
+                    Schema.encodeSync(LogEnduranceActionHistoryArgsSchema)(
                         args,
-                    ) as any,
+                    ),
                 ),
             catch: (error) => error,
         }),

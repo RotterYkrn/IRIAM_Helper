@@ -1,19 +1,10 @@
 DROP function if exists update_endurance_project cascade;
 DROP TYPE IF EXISTS update_endurance_action_args cascade;
-DROP TYPE IF EXISTS update_endurance_project_returns cascade;
 
 create type update_endurance_action_args as (
     id uuid,        -- ★ 重要（更新/削除判定に使う）
     label text,
     amount integer
-);
-
-create type update_endurance_project_returns as (
-    id uuid,
-    title text,
-    target_count integer,
-    rescue_actions endurance_action_stat[],
-    sabotage_actions endurance_action_stat[]
 );
 
 create function update_endurance_project(
@@ -23,7 +14,7 @@ create function update_endurance_project(
     p_rescue_actions update_endurance_action_args[],
     p_sabotage_actions update_endurance_action_args[]
 )
-returns update_endurance_project_returns
+returns uuid
 language plpgsql
 SET search_path = public
 as $$
@@ -47,9 +38,9 @@ begin
     delete from endurance_actions
     where project_id = p_project_id
         and id not in (
-            select (v->>'id')::uuid
+            select (v.id)::uuid
             from unnest(p_rescue_actions || p_sabotage_actions) as v
-            where (v->>'id')::uuid is not null
+            where (v.id)::uuid is not null
         );
 
     -----------------------------
@@ -110,20 +101,6 @@ begin
         end if;
     end loop;
 
-    --------------------------------
-    -- ★ 返り値：ビューそのまま利用
-    --------------------------------
-    return (
-        select json_build_object(
-            'id', p_project_id,
-            'title', p_title,
-            'target_count', p_target_count,
-            'rescue_actions', v.rescue_actions,
-            'sabotage_actions', v.sabotage_actions
-        )
-        from endurance_action_stats_view v
-        where v.project_id = p_project_id
-    );
-
+    return p_project_id;
 end;
 $$;
