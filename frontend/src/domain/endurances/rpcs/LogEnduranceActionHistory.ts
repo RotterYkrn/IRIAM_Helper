@@ -13,6 +13,10 @@ import {
 import type { Database } from "@/lib/database.types";
 import { mapFrom } from "@/utils/schema";
 
+export type LogEnduranceActionHistoryArgsEncoded = Readonly<
+    Database["public"]["Functions"]["log_endurance_action_history"]["Args"]
+>;
+
 const LogEnduranceActionHistoryArgsActionIdSchema = Schema.optionalToRequired(
     EnduranceActionIdSchema,
     Schema.NullOr(EnduranceActionIdSchema),
@@ -29,17 +33,14 @@ const LogEnduranceActionHistoryArgsActionIdSchema = Schema.optionalToRequired(
     },
 );
 
-export type LogEnduranceActionHistoryArgsEncoded = Readonly<
-    Database["public"]["Functions"]["log_endurance_action_history"]["Args"]
->;
-export type LogEnduranceActionHistoryArgs = Readonly<{
+type LogEnduranceActionHistoryArgsBase = Readonly<{
     project_id: typeof ProjectSchema.Type.id;
     action_id: typeof EnduranceActionHistoriesSchema.Type.action_id | null;
     action_history_type: typeof EnduranceActionHistoriesSchema.Type.action_type;
 }>;
 
 const LogEnduranceActionHistoryArgsSchemaBase: Schema.Schema<
-    LogEnduranceActionHistoryArgs,
+    LogEnduranceActionHistoryArgsBase,
     LogEnduranceActionHistoryArgsEncoded
 > = Schema.Struct({
     project_id: ProjectIdSchema.pipe(mapFrom("p_project_id")),
@@ -51,12 +52,12 @@ const LogEnduranceActionHistoryArgsSchemaBase: Schema.Schema<
     ),
 });
 
-export const LogEnduranceActionHistoryArgsSchemaNormal =
+const LogEnduranceActionHistoryArgsSchemaNormal =
     LogEnduranceActionHistoryArgsSchemaBase.pipe(
         Schema.filter(
             (
                 a,
-            ): a is LogEnduranceActionHistoryArgs & {
+            ): a is LogEnduranceActionHistoryArgsBase & {
                 action_id: null;
                 action_history_type: "normal";
             } => a.action_history_type === "normal" && a.action_id === null,
@@ -68,12 +69,12 @@ export const LogEnduranceActionHistoryArgsSchemaNormal =
         ),
     );
 
-export const LogEnduranceActionHistoryArgsSchemaRescueSabotage =
+const LogEnduranceActionHistoryArgsSchemaRescueSabotage =
     LogEnduranceActionHistoryArgsSchemaBase.pipe(
         Schema.filter(
             (
                 a,
-            ): a is LogEnduranceActionHistoryArgs & {
+            ): a is LogEnduranceActionHistoryArgsBase & {
                 action_id: Exclude<
                     typeof EnduranceActionHistoriesSchema.Type.action_id,
                     null
@@ -91,7 +92,14 @@ export const LogEnduranceActionHistoryArgsSchemaRescueSabotage =
         ),
     );
 
-export const LogEnduranceActionHistoryArgsSchema = Schema.Union(
+export type LogEnduranceActionHistoryArgs =
+    | typeof LogEnduranceActionHistoryArgsSchemaNormal.Type
+    | typeof LogEnduranceActionHistoryArgsSchemaRescueSabotage.Type;
+
+export const LogEnduranceActionHistoryArgsSchema: Schema.Schema<
+    LogEnduranceActionHistoryArgs,
+    LogEnduranceActionHistoryArgsEncoded
+> = Schema.Union(
     LogEnduranceActionHistoryArgsSchemaNormal,
     LogEnduranceActionHistoryArgsSchemaRescueSabotage,
 );
