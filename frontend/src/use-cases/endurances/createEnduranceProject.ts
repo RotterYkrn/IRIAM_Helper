@@ -17,7 +17,9 @@ export const createEnduranceProject = (
             try: (args) =>
                 supabase.rpc(
                     "create_endurance_project",
-                    Schema.encodeSync(CreateEnduranceProjectArgsSchema)(args),
+                    Schema.encodeSync(CreateEnduranceProjectArgsSchema)(
+                        args,
+                    ) as any,
                 ),
             catch: (error) => error,
         }),

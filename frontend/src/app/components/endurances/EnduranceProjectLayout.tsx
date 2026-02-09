@@ -1,3 +1,4 @@
+import { Chunk } from "effect";
 import { useAtomValue, useSetAtom } from "jotai";
 import { useState } from "react";
 
@@ -11,7 +12,6 @@ import {
 } from "@/atoms/endurances/EditEnduranceAtom";
 import { isEnduranceValidAtom } from "@/atoms/endurances/isEditEnduranceValidAtom";
 import { useFetchEnduranceData as useFetchEnduranceProject } from "@/hooks/endurances/useFetchEnduranceProject";
-import { useIncrementEnduranceCount } from "@/hooks/endurances/useIncrementEnduranceCount";
 import { useUpdateEnduranceProject } from "@/hooks/endurances/useUpdateEnduranceProject";
 import { errorToast, successToast } from "@/utils/toast";
 
@@ -24,7 +24,6 @@ const EnduranceProjectLayout = ({ projectId }: Props) => {
 
     const projectQuery = useFetchEnduranceProject(projectId);
     const updateEnduranceProject = useUpdateEnduranceProject();
-    const incrementEnduranceCount = useIncrementEnduranceCount();
 
     const editState = useAtomValue(editEnduranceAtom);
     const initEditEndurance = useSetAtom(initEditEnduranceAtom);
@@ -40,6 +39,8 @@ const EnduranceProjectLayout = ({ projectId }: Props) => {
         initEditEndurance({
             title: project.title,
             target_count: project.target_count,
+            rescue_actions: Chunk.empty(),
+            sabotage_actions: Chunk.empty(),
         });
         setIsEdit(true);
     };
@@ -50,6 +51,8 @@ const EnduranceProjectLayout = ({ projectId }: Props) => {
                 p_project_id: project.id,
                 p_title: editState.title,
                 p_target_count: editState.target_count,
+                p_rescue_actions: [],
+                p_sabotage_actions: [],
             },
             {
                 onSuccess: () => {
@@ -64,12 +67,7 @@ const EnduranceProjectLayout = ({ projectId }: Props) => {
         );
     };
 
-    const onIncrement = () => {
-        incrementEnduranceCount.mutate({
-            p_project_id: project.id,
-            p_increment: 1,
-        });
-    };
+    const onIncrement = () => {};
 
     return (
         <ProjectLayout

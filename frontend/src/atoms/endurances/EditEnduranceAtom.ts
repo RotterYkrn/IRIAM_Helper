@@ -1,3 +1,4 @@
+import { Chunk } from "effect";
 import { atom } from "jotai";
 
 import { editTitleAtom } from "../projects/EditTitleAtom";
@@ -13,6 +14,8 @@ export const editEnduranceAtom = atom<Omit<UpdateEnduranceProjectArgs, "id">>(
         return {
             title: get(editTitleAtom),
             target_count: get(editTargetCountAtom),
+            rescue_actions: Chunk.empty(),
+            sabotage_actions: Chunk.empty(),
         };
     },
 );

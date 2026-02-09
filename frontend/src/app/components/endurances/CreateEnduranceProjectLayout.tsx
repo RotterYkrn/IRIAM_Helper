@@ -1,3 +1,4 @@
+import { Chunk } from "effect";
 import { useAtomValue, useSetAtom } from "jotai";
 import { useEffect } from "react";
 import { useNavigate } from "react-router-dom";
@@ -30,6 +31,8 @@ const CreateEnduranceProjectLayout = () => {
             title: "○○耐久" as typeof ProjectSchema.Type.title,
             target_count:
                 100 as typeof EnduranceSettingsSchema.Type.target_count,
+            rescue_actions: Chunk.empty(),
+            sabotage_actions: Chunk.empty(),
         });
     }, [initEditEndurance]);
 
@@ -38,6 +41,8 @@ const CreateEnduranceProjectLayout = () => {
             {
                 p_title: editState.title,
                 p_target_count: editState.target_count,
+                p_rescue_actions: [],
+                p_sabotage_actions: [],
             },
             {
                 onSuccess: (projectId) => {

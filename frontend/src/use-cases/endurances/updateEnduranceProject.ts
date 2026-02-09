@@ -18,7 +18,9 @@ export const updateEnduranceProject = (
             try: (args) =>
                 supabase.rpc(
                     "update_endurance_project",
-                    Schema.encodeSync(UpdateEnduranceProjectArgsSchema)(args),
+                    Schema.encodeSync(UpdateEnduranceProjectArgsSchema)(
+                        args,
+                    ) as any,
                 ),
             catch: (error) => error,
         }),
