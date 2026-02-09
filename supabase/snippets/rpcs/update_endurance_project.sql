@@ -1,5 +1,6 @@
+DROP function if exists update_endurance_project cascade;
 DROP TYPE IF EXISTS update_endurance_action_args cascade;
-DROP TYPE IF EXISTS update_endurance_project_result cascade;
+DROP TYPE IF EXISTS update_endurance_project_returns cascade;
 
 create type update_endurance_action_args as (
     id uuid,        -- ★ 重要（更新/削除判定に使う）
@@ -7,22 +8,22 @@ create type update_endurance_action_args as (
     amount integer
 );
 
-create type update_endurance_project_result as (
-  id uuid,
-  title text,
-  target_count integer,
-  rescue_actions endurance_action_stat[],
-  sabotage_actions endurance_action_stat[]
+create type update_endurance_project_returns as (
+    id uuid,
+    title text,
+    target_count integer,
+    rescue_actions endurance_action_stat[],
+    sabotage_actions endurance_action_stat[]
 );
 
-create or replace function update_endurance_project(
+create function update_endurance_project(
     p_project_id uuid,
     p_title text,
     p_target_count integer,
-    p_rescue_actions update_endurance_action_args[] default array[]::update_endurance_action_args[],
-    p_sabotage_actions update_endurance_action_args[] default array[]::update_endurance_action_args[]
+    p_rescue_actions update_endurance_action_args[],
+    p_sabotage_actions update_endurance_action_args[]
 )
-returns update_endurance_project_result
+returns update_endurance_project_returns
 language plpgsql
 SET search_path = public
 as $$

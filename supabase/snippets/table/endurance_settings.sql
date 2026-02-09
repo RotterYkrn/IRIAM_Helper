@@ -4,8 +4,8 @@ create table endurance_settings (
 
     target_count integer not null check (target_count > 0),
 
-    rescue_enabled boolean not null default false,
-    sabotage_enabled boolean not null default false,
+    -- rescue_enabled boolean not null default false,
+    -- sabotage_enabled boolean not null default false,
 
     created_at timestamp with time zone not null default now(),
     updated_at timestamp with time zone not null default now(),

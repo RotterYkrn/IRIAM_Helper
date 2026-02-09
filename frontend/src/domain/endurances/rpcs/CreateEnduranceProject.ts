@@ -1,6 +1,11 @@
 import { Schema } from "effect";
 
 import {
+    EnduranceActionAmountSchema,
+    EnduranceActionLabelSchema,
+    type EnduranceActions,
+} from "../tables/EnduranceActions";
+import {
     EnduranceTargetCountSchema,
     type EnduranceSettings,
 } from "../tables/EnduranceSettings";
@@ -12,19 +17,51 @@ import {
     type ProjectSchema,
 } from "@/domain/projects/tables/Project";
 import type { Database } from "@/lib/database.types";
-import { mapFrom } from "@/utils/schema";
+import {
+    mapFrom,
+    withStrictNullCheck,
+    type RecursiveReadonly,
+} from "@/utils/schema";
 
-export type CreateEnduranceProjectArgsEncoded = Readonly<
+export type CreateEnduranceActionArgsEncoded = Readonly<
+    Database["public"]["CompositeTypes"]["create_endurance_action_args"]
+>;
+export type CreateEnduranceActionArgs = Pick<
+    EnduranceActions,
+    "label" | "amount"
+>;
+export const CreateEnduranceActionArgsSchema: Schema.Schema<
+    CreateEnduranceActionArgs,
+    CreateEnduranceActionArgsEncoded
+> = Schema.Struct({
+    label: withStrictNullCheck(EnduranceActionLabelSchema),
+    amount: withStrictNullCheck(EnduranceActionAmountSchema),
+});
+export const CreateEnduranceActionArgsChunkSchema = Schema.Chunk(
+    CreateEnduranceActionArgsSchema,
+);
+
+export type CreateEnduranceProjectArgsEncoded = RecursiveReadonly<
     Database["public"]["Functions"]["create_endurance_project"]["Args"]
 >;
 export type CreateEnduranceProjectArgs = Pick<Project, "title"> &
-    Pick<EnduranceSettings, "target_count">;
+    Pick<EnduranceSettings, "target_count"> &
+    Readonly<{
+        rescue_actions: typeof CreateEnduranceActionArgsChunkSchema.Type;
+        sabotage_actions: typeof CreateEnduranceActionArgsChunkSchema.Type;
+    }>;
 export const CreateEnduranceProjectArgsSchema: Schema.Schema<
     CreateEnduranceProjectArgs,
     CreateEnduranceProjectArgsEncoded
 > = Schema.Struct({
     title: ProjectTitleSchema.pipe(mapFrom("p_title")),
     target_count: EnduranceTargetCountSchema.pipe(mapFrom("p_target_count")),
+    rescue_actions: CreateEnduranceActionArgsChunkSchema.pipe(
+        mapFrom("p_rescue_actions"),
+    ),
+    sabotage_actions: CreateEnduranceActionArgsChunkSchema.pipe(
+        mapFrom("p_sabotage_actions"),
+    ),
 });
 
 export type CreateEnduranceProjectReturnsEncoded = Readonly<

@@ -2,7 +2,7 @@ DROP view endurance_action_stats_view;
 DROP TYPE IF EXISTS endurance_action_stat cascade;
 
 create type endurance_action_stat as (
-    action_id uuid,
+    id uuid,
     type text,
     label text,
     amount integer,

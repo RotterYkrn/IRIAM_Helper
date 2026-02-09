@@ -2,7 +2,11 @@ import { ParseResult, Schema } from "effect";
 
 export type ChunkInfer<S> = S extends Schema.Chunk<infer A> ? A : never;
 
-export const withNullAs = <A, I, R>(self: Schema.Schema<A, I, R>) =>
+export type RecursiveReadonly<T> = T extends object
+    ? { readonly [K in keyof T]: RecursiveReadonly<T[K]> }
+    : T;
+
+export const withStrictNullCheck = <A, I, R>(self: Schema.Schema<A, I, R>) =>
     Schema.transformOrFail(
         Schema.Union(Schema.encodedSchema(self), Schema.Null),
         Schema.encodedSchema(self),

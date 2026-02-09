@@ -51,3 +51,5 @@ export const ProjectForSideBerSchema = ProjectSchema.pipe(
 );
 export type ProjectForSideBer = typeof ProjectForSideBerSchema.Type;
 export type ProjectForSideBerEncoded = typeof ProjectForSideBerSchema.Encoded;
+
+export const tmp = Schema.Array(ProjectForSideBerSchema);

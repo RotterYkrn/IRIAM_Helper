@@ -1,7 +1,9 @@
-create or replace function log_endurance_action(
+DROP function if exists log_endurance_action_history cascade;
+
+create function log_endurance_action_history(
     p_project_id uuid,
-    p_action_type text,               -- 'normal' | 'rescue' | 'sabotage'
-    p_action_id uuid default null -- rescue/sabotage の場合のみ必須
+    p_action_history_type text,
+    p_action_id uuid default null
 )
 returns uuid
 language plpgsql
@@ -30,10 +32,10 @@ begin
     -----------------------------
     -- 2) amount の決定（分岐）
     -----------------------------
-    if p_action_type = 'normal' then
+    if p_action_history_type = 'normal' then
         v_amount := 1;  -- 固定
 
-    elsif p_action_type in ('rescue','sabotage') then
+    elsif p_action_history_type in ('rescue','sabotage') then
         -- 定義から amount を取得
         select amount
         into v_amount
@@ -61,10 +63,10 @@ begin
     values (
         p_project_id,
         case 
-            when p_action_type = 'normal' then null
+            when p_action_history_type = 'normal' then null
             else p_action_id
         end,
-        p_action_type,
+        p_action_history_type,
         v_amount,
         now()
     );
@@ -76,28 +78,28 @@ begin
     set
         current_count =
             case
-                when p_action_type = 'normal'
+                when p_action_history_type = 'normal'
                     then current_count + v_amount
 
-                when p_action_type = 'rescue'
+                when p_action_history_type = 'rescue'
                     then current_count + v_amount
 
-                when p_action_type = 'sabotage'
+                when p_action_history_type = 'sabotage'
                     then current_count - v_amount
             end,
 
         normal_count =
-            case when p_action_type = 'normal'
+            case when p_action_history_type = 'normal'
                 then normal_count + v_amount
                 else normal_count end,
 
         rescue_count =
-            case when p_action_type = 'rescue'
+            case when p_action_history_type = 'rescue'
                 then rescue_count + v_amount
                 else rescue_count end,
 
         sabotage_count =
-            case when p_action_type = 'sabotage'
+            case when p_action_history_type = 'sabotage'
                 then sabotage_count + v_amount
                 else sabotage_count end,
 

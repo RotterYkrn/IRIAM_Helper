@@ -1,3 +1,4 @@
+DROP function IF EXISTS create_endurance_project cascade;
 DROP TYPE IF EXISTS create_endurance_action_args cascade;
 
 create type create_endurance_action_args as (
@@ -5,11 +6,11 @@ create type create_endurance_action_args as (
     amount integer
 );
 
-create or replace function create_endurance_project(
+create function create_endurance_project(
     p_title text,
     p_target_count integer,
-    p_rescue_actions create_endurance_action_args[] default array[]::create_endurance_action_args[],
-    p_sabotage_actions create_endurance_action_args[] default array[]::create_endurance_action_args[]
+    p_rescue_actions create_endurance_action_args[],
+    p_sabotage_actions create_endurance_action_args[]
 )
 returns uuid
 language plpgsql

@@ -17,7 +17,7 @@ export const fetchProjectsByStatus = () =>
             error ? Effect.fail(error) : Effect.succeed(data),
         ),
         Effect.flatMap(
-            Schema.decodeUnknownEither(Schema.Chunk(ProjectForSideBerSchema)),
+            Schema.decodeEither(Schema.Chunk(ProjectForSideBerSchema)),
         ),
         Effect.map((projects) => {
             return {
