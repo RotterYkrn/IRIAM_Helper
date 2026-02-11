@@ -1,4 +1,4 @@
-import { useQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { Effect } from "effect";
 
 import type { ProjectIdEncoded } from "@/domain/projects/tables/Project";
@@ -18,5 +18,6 @@ export const useFetchEnduranceData = (projectId: ProjectIdEncoded) => {
                 throw error;
             }
         },
+        placeholderData: keepPreviousData,
     });
 };

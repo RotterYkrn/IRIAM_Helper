@@ -89,6 +89,7 @@ export type Database = {
           created_at: string
           id: string
           label: string
+          position: number
           project_id: string
           type: string
         }
@@ -97,6 +98,7 @@ export type Database = {
           created_at?: string
           id?: string
           label: string
+          position: number
           project_id: string
           type: string
         }
@@ -105,6 +107,7 @@ export type Database = {
           created_at?: string
           id?: string
           label?: string
+          position?: number
           project_id?: string
           type?: string
         }
@@ -323,18 +326,21 @@ export type Database = {
     }
     CompositeTypes: {
       create_endurance_action_args: {
+        position: number | null
         label: string | null
         amount: number | null
       }
       endurance_action_stat: {
         id: string | null
         type: string | null
+        position: number | null
         label: string | null
         amount: number | null
         action_times: number | null
       }
       update_endurance_action_args: {
         id: string | null
+        position: number | null
         label: string | null
         amount: number | null
       }

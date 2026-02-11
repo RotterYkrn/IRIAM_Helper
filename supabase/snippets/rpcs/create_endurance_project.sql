@@ -2,6 +2,7 @@ DROP function IF EXISTS create_endurance_project cascade;
 DROP TYPE IF EXISTS create_endurance_action_args cascade;
 
 create type create_endurance_action_args as (
+    position integer,
     label text,
     amount integer
 );
@@ -77,12 +78,13 @@ begin
     foreach v_action in array p_rescue_actions
     loop
         insert into endurance_actions (
-            id, project_id, type, label, amount, created_at
+            id, project_id, type, position, label, amount, created_at
         )
         values (
             gen_random_uuid(),
             v_project_id,
             'rescue',
+            v_action.position,
             v_action.label,
             v_action.amount,
             now()
@@ -92,17 +94,18 @@ begin
     -- 妨害
     foreach v_action in array p_sabotage_actions
     loop
-      insert into endurance_actions (
-          id, project_id, type, label, amount, created_at
-      )
-      values (
-          gen_random_uuid(),
-          v_project_id,
-          'sabotage',
-          v_action.label,
-          v_action.amount,
-          now()
-      );
+        insert into endurance_actions (
+            id, project_id, type, position, label, amount, created_at
+        )
+        values (
+            gen_random_uuid(),
+            v_project_id,
+            'sabotage',
+            v_action.position,
+            v_action.label,
+            v_action.amount,
+            now()
+        );
     end loop;
 
     return v_project_id;

@@ -1,10 +1,10 @@
-import { useSuspenseQuery } from "@tanstack/react-query";
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
 import { Effect } from "effect";
 
 import { fetchProjectsByStatus } from "@/use-cases/projects/fetchProjectByStatus";
 
 export const useFetchProjectForSideBar = () => {
-    return useSuspenseQuery({
+    return useQuery({
         queryKey: ["projects"],
         queryFn: async () => {
             try {
@@ -14,5 +14,6 @@ export const useFetchProjectForSideBar = () => {
                 throw error;
             }
         },
+        placeholderData: keepPreviousData,
     });
 };

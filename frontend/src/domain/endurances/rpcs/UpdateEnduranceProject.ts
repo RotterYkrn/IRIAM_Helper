@@ -4,6 +4,8 @@ import {
     EnduranceActionAmountSchema,
     EnduranceActionIdSchema,
     EnduranceActionLabelSchema,
+    EnduranceActionPositionSchema,
+    EnduranceActionsSchema,
     type EnduranceActions,
 } from "../tables/EnduranceActions";
 import {
@@ -28,13 +30,16 @@ export type UpdateEnduranceActionArgsEncoded = Readonly<
 >;
 export type UpdateEnduranceActionArgs = Pick<
     EnduranceActions,
-    "id" | "label" | "amount"
->;
+    "position" | "label" | "amount"
+> & {
+    id: typeof EnduranceActionsSchema.Type.id | null;
+};
 export const UpdateEnduranceActionArgsSchema: Schema.Schema<
     UpdateEnduranceActionArgs,
     UpdateEnduranceActionArgsEncoded
 > = Schema.Struct({
-    id: withStrictNullCheck(EnduranceActionIdSchema),
+    id: Schema.NullOr(EnduranceActionIdSchema),
+    position: withStrictNullCheck(EnduranceActionPositionSchema),
     label: withStrictNullCheck(EnduranceActionLabelSchema),
     amount: withStrictNullCheck(EnduranceActionAmountSchema),
 });

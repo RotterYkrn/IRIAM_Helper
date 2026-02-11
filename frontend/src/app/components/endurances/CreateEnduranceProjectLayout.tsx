@@ -1,11 +1,12 @@
 import { Chunk } from "effect";
 import { useAtomValue, useSetAtom } from "jotai";
-import { useEffect } from "react";
+import { useEffect, useEffectEvent } from "react";
 import { useNavigate } from "react-router-dom";
 
 import CreateProjectLayout from "../projects/CreateProjectLayout";
 
 import EnduranceView from "./EnduranceView";
+import RescueEditSection from "./RescueEditSection";
 
 import {
     editEnduranceAtom,
@@ -26,35 +27,31 @@ const CreateEnduranceProjectLayout = () => {
 
     const createMutation = useCreateEnduranceProject();
 
-    useEffect(() => {
+    const initEvent = useEffectEvent(() =>
         initEditEndurance({
             title: "○○耐久" as typeof ProjectSchema.Type.title,
             target_count:
                 100 as typeof EnduranceSettingsSchema.Type.target_count,
             rescue_actions: Chunk.empty(),
             sabotage_actions: Chunk.empty(),
-        });
-    }, [initEditEndurance]);
+        }),
+    );
+
+    useEffect(() => {
+        initEvent();
+    }, []);
 
     const onSave = async () => {
-        createMutation.mutate(
-            {
-                p_title: editState.title,
-                p_target_count: editState.target_count,
-                p_rescue_actions: [],
-                p_sabotage_actions: [],
+        createMutation.mutate(editState, {
+            onSuccess: (projectId) => {
+                successToast(`「${editState.title}」を作成しました`);
+                navigate(`/projects/endurance/${projectId}`);
             },
-            {
-                onSuccess: (projectId) => {
-                    successToast(`「${editState.title}」を作成しました`);
-                    navigate(`/projects/endurance/${projectId}`);
-                },
-                onError: (error) => {
-                    console.error(error);
-                    errorToast(`「${editState.title}」の作成に失敗しました`);
-                },
+            onError: (error) => {
+                console.error(error);
+                errorToast(`「${editState.title}」の作成に失敗しました`);
             },
-        );
+        });
     };
 
     return (
@@ -70,6 +67,7 @@ const CreateEnduranceProjectLayout = () => {
                     currentCount={0}
                     targetCount={100}
                 />
+                <RescueEditSection />
             </EnduranceView>
         </CreateProjectLayout>
     );

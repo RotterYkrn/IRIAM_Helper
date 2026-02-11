@@ -2,7 +2,8 @@ DROP function if exists update_endurance_project cascade;
 DROP TYPE IF EXISTS update_endurance_action_args cascade;
 
 create type update_endurance_action_args as (
-    id uuid,        -- ★ 重要（更新/削除判定に使う）
+    id uuid null,
+    position integer,
     label text,
     amount integer
 );
@@ -51,12 +52,13 @@ begin
         if v_action.id is null then
             -- 新規作成
             insert into endurance_actions (
-                id, project_id, type, label, amount, created_at
+                id, project_id, type, position, label, amount, created_at
             )
             values (
                 gen_random_uuid(),
                 p_project_id,
                 'rescue',
+                v_action.position,
                 v_action.label,
                 v_action.amount,
                 now()
@@ -65,6 +67,7 @@ begin
             -- 更新
             update endurance_actions
             set 
+                position = v_action.position,
                 label = v_action.label,
                 amount = v_action.amount,
                 updated_at = now()
@@ -80,12 +83,13 @@ begin
     loop
         if v_action.id is null then
             insert into endurance_actions (
-                id, project_id, type, label, amount, created_at
+                id, project_id, type, position, label, amount, created_at
             )
             values (
                 gen_random_uuid(),
                 p_project_id,
                 'sabotage',
+                v_action.position,
                 v_action.label,
                 v_action.amount,
                 now()
@@ -93,6 +97,7 @@ begin
         else
             update endurance_actions
             set 
+                position = v_action.position,
                 label = v_action.label,
                 amount = v_action.amount,
                 updated_at = now()

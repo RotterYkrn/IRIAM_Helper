@@ -50,11 +50,8 @@ const EnduranceProjectLayout = ({ projectId }: Props) => {
     const onSave = () => {
         updateEnduranceProject.mutate(
             {
-                p_project_id: project.id,
-                p_title: editState.title,
-                p_target_count: editState.target_count,
-                p_rescue_actions: [],
-                p_sabotage_actions: [],
+                id: project.id,
+                ...editState,
             },
             {
                 onSuccess: () => {

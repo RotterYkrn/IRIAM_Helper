@@ -4,6 +4,7 @@ import {
     EnduranceActionAmountSchema,
     EnduranceActionIdSchema,
     EnduranceActionLabelSchema,
+    EnduranceActionPositionSchema,
     EnduranceActionTypeSchema,
     type EnduranceActions,
 } from "../tables/EnduranceActions";
@@ -23,7 +24,7 @@ export const EnduranceActionTimesSchema = Schema.Number.pipe(
 
 export type EnduranceActionStat = Pick<
     EnduranceActions,
-    "id" | "type" | "label" | "amount"
+    "id" | "type" | "position" | "label" | "amount"
 > & {
     action_times: typeof EnduranceActionTimesSchema.Type;
 };
@@ -34,6 +35,7 @@ export const EnduranceActionStatSchema: Schema.Schema<
 > = Schema.Struct({
     id: withStrictNullCheck(EnduranceActionIdSchema),
     type: withStrictNullCheck(EnduranceActionTypeSchema),
+    position: withStrictNullCheck(EnduranceActionPositionSchema),
     label: withStrictNullCheck(EnduranceActionLabelSchema),
     amount: withStrictNullCheck(EnduranceActionAmountSchema),
     action_times: withStrictNullCheck(EnduranceActionTimesSchema),

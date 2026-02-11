@@ -21,12 +21,14 @@ export const editTargetCountAtom = atom(
         pipe(
             newTargetCount,
             Schema.decodeEither(EnduranceTargetCountSchema),
-            Either.map((targetCount) => {
-                set(baseTargetCountAtom, targetCount);
-                set(editTargetCountErrorAtom, null);
-            }),
-            Either.mapLeft((error) => {
-                set(editTargetCountErrorAtom, error.message);
+            Either.match({
+                onRight: (targetCount) => {
+                    set(baseTargetCountAtom, targetCount);
+                    set(editTargetCountErrorAtom, null);
+                },
+                onLeft: (error) => {
+                    set(editTargetCountErrorAtom, error.message);
+                },
             }),
         );
     },

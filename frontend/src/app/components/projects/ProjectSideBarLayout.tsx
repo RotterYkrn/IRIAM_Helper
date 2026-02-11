@@ -7,7 +7,15 @@ type Props = {
 };
 
 const ProjectSideBarLayout = ({ toggleSidebar }: Props) => {
-    const { data } = useFetchProjectForSideBar();
+    const { data, isLoading } = useFetchProjectForSideBar();
+
+    if (isLoading) {
+        return <div>読み込み中...</div>;
+    }
+
+    if (!data) {
+        return <div>企画情報の取得に失敗しました</div>;
+    }
 
     const { active, scheduled, finished } = data;
 

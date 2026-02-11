@@ -3,6 +3,7 @@ import { Schema } from "effect";
 import {
     EnduranceActionAmountSchema,
     EnduranceActionLabelSchema,
+    EnduranceActionPositionSchema,
     type EnduranceActions,
 } from "../tables/EnduranceActions";
 import {
@@ -28,12 +29,13 @@ export type CreateEnduranceActionArgsEncoded = Readonly<
 >;
 export type CreateEnduranceActionArgs = Pick<
     EnduranceActions,
-    "label" | "amount"
+    "position" | "label" | "amount"
 >;
 export const CreateEnduranceActionArgsSchema: Schema.Schema<
     CreateEnduranceActionArgs,
     CreateEnduranceActionArgsEncoded
 > = Schema.Struct({
+    position: withStrictNullCheck(EnduranceActionPositionSchema),
     label: withStrictNullCheck(EnduranceActionLabelSchema),
     amount: withStrictNullCheck(EnduranceActionAmountSchema),
 });

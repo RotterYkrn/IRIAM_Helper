@@ -19,6 +19,12 @@ export const EnduranceActionTypeSchema = Schema.String.pipe(
     Schema.brand("EnduranceActionType"),
 );
 
+export const EnduranceActionPositionSchema = Schema.Number.pipe(
+    Schema.int(),
+    Schema.greaterThanOrEqualTo(0),
+    Schema.brand("EnduranceActionPosition"),
+);
+
 export const EnduranceActionLabelSchema = Schema.String.pipe(
     Schema.minLength(1, {
         message: () => "1文字以上入力してください",
@@ -38,6 +44,7 @@ export type EnduranceActions = Readonly<{
     id: typeof EnduranceActionIdSchema.Type;
     project_id: typeof ProjectSchema.Type.id;
     type: typeof EnduranceActionTypeSchema.Type;
+    position: typeof EnduranceActionPositionSchema.Type;
     label: typeof EnduranceActionLabelSchema.Type;
     amount: typeof EnduranceActionAmountSchema.Type;
     created_at: Date;
@@ -50,6 +57,7 @@ export const EnduranceActionsSchema: Schema.Schema<
     id: EnduranceActionIdSchema,
     project_id: ProjectIdSchema,
     type: EnduranceActionTypeSchema,
+    position: EnduranceActionPositionSchema,
     label: EnduranceActionLabelSchema,
     amount: EnduranceActionAmountSchema,
     created_at: Schema.Date,

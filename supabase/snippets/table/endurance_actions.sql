@@ -5,6 +5,8 @@ create table endurance_actions (
     type text not null
         check (type in ('rescue','sabotage')),
 
+    position integer not null,
+
     label text not null,
 
     amount integer not null check (amount > 0),
@@ -20,5 +22,5 @@ create table endurance_actions (
         unique (project_id, label)
 );
 
-create index idx_endurance_actions_project
-    on endurance_actions (project_id);
+create index idx_endurance_actions_project_type_position
+    on endurance_actions (project_id, type, position);

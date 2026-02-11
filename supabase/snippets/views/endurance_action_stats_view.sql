@@ -1,9 +1,10 @@
-DROP view endurance_action_stats_view;
+DROP view IF EXISTS endurance_action_stats_view;
 DROP TYPE IF EXISTS endurance_action_stat cascade;
 
 create type endurance_action_stat as (
     id uuid,
     type text,
+    position integer,
     label text,
     amount integer,
     action_times integer
@@ -17,6 +18,7 @@ select
         row(
             a.id,
             a.type,
+            a.position,
             a.label,
             a.amount,
             (
@@ -32,6 +34,7 @@ select
         row(
             a.id,
             a.type,
+            a.position,
             a.label,
             a.amount,
             (
