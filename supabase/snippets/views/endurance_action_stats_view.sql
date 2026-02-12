@@ -28,6 +28,7 @@ select
                     where h.action_id = a.id
                 )
             )::endurance_action_stat
+            order by a.position ASC
         ) filter (where a.type = 'rescue'),
         '{}'::endurance_action_stat[]
     ) as rescue_actions,
@@ -46,6 +47,7 @@ select
                     where h.action_id = a.id
                 )
             )::endurance_action_stat
+            order by a.position ASC
         ) filter (where a.type = 'sabotage'),
         '{}'::endurance_action_stat[]
     ) as sabotage_actions
