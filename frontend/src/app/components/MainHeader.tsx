@@ -22,7 +22,7 @@ const MainHeader = ({ onToggle }: MainHeaderProps) => {
                 className="flex items-center justify-center text-xl font-black
                     cursor-pointer"
             >
-                🏠企画管理
+                🏠IRIAM企画補助つーるぅ（仮）
             </button>
         </header>
     );
