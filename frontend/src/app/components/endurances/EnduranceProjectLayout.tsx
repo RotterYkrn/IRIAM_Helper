@@ -11,6 +11,7 @@ import {
     initEditEnduranceAtom,
 } from "@/atoms/endurances/EditEnduranceAtom";
 import { isEnduranceValidAtom } from "@/atoms/endurances/isEditEnduranceValidAtom";
+import type { EnduranceActionsSchema } from "@/domain/endurances/tables/EnduranceActions";
 import { useFetchEnduranceData as useFetchEnduranceProject } from "@/hooks/endurances/useFetchEnduranceProject";
 import { useLogEnduranceActionHistory } from "@/hooks/endurances/useLogEnduranceActionHistory";
 import { useUpdateEnduranceProject } from "@/hooks/endurances/useUpdateEnduranceProject";
@@ -68,12 +69,25 @@ const EnduranceProjectLayout = ({ projectId }: Props) => {
         );
     };
 
-    const onIncrement = () => {
+    const onIncrementNormal = () => {
         logEnduranceActionHistory.mutate({
             p_project_id: project.id,
             p_action_history_type: "normal",
         });
     };
+
+    const onIncrement =
+        (
+            actionId: typeof EnduranceActionsSchema.Type.id,
+            actionType: typeof EnduranceActionsSchema.Type.type,
+        ) =>
+        () => {
+            logEnduranceActionHistory.mutate({
+                p_project_id: project.id,
+                p_action_history_type: actionType,
+                p_action_id: actionId,
+            });
+        };
 
     return (
         <ProjectLayout
@@ -92,10 +106,14 @@ const EnduranceProjectLayout = ({ projectId }: Props) => {
                     currentCount={project.current_count}
                     targetCount={project.target_count}
                 />
-                <EnduranceView.IncrementButton onIncrement={onIncrement} />
+                <EnduranceView.IncrementButton
+                    normalCount={project.normal_count}
+                    onIncrementNormal={onIncrementNormal}
+                />
                 <EnduranceView.ActionsField>
                     <EnduranceView.RescueActionsField
                         actions={actionStats.rescue_actions}
+                        onIncrement={onIncrement}
                     />
                 </EnduranceView.ActionsField>
             </EnduranceView>

@@ -8,6 +8,8 @@ import {
     editTargetCountErrorAtom,
 } from "@/atoms/endurances/EditTargetCountAtom";
 import type { EnduranceActionsSchema } from "@/domain/endurances/tables/EnduranceActions";
+import type { EnduranceProgressSchema } from "@/domain/endurances/tables/EnduranceProgress";
+import type { EnduranceActionStatSchema } from "@/domain/endurances/types/EnduranceActionStat";
 import type { EnduranceRescueActionChunkSchema } from "@/domain/endurances/views/EnduranceActionStatsView";
 import type { ProjectSchema } from "@/domain/projects/tables/Project";
 
@@ -101,27 +103,55 @@ const Count = ({ currentCount, targetCount }: CountProps) => {
     );
 };
 
-type IncrementButtonProps = {
-    onIncrement: () => void;
+type NormalActionProps = {
+    normalCount: typeof EnduranceProgressSchema.Type.normal_count;
+    onIncrementNormal: () => void;
 };
 
-const IncrementButton = ({ onIncrement }: IncrementButtonProps) => {
+const NormalAction = ({
+    normalCount,
+    onIncrementNormal,
+}: NormalActionProps) => {
     const { projectStatus } = useEndurance();
+
+    if (projectStatus === "scheduled") {
+        return null;
+    }
 
     const isActive = projectStatus === "active";
 
     return (
-        <button
-            onClick={onIncrement}
-            disabled={!isActive}
-            className={` rounded-full px-8 py-3 text-xl font-bold transition ${
-                isActive
-                    ? "bg-blue-500 hover:bg-blue-600 active:scale-95 text-white"
-                    : "bg-gray-400 cursor-not-allowed"
-                } `}
+        <div
+            className="flex flex-col items-center space-y-2 bg-white rounded-xl
+                border border-slate-200 shadow-sm p-4 w-32"
         >
-            +1
-        </button>
+            {isActive && (
+                <p
+                    className="flex items-center justify-center font-mono
+                        text-2xl"
+                >
+                    +1
+                </p>
+            )}
+            <div className="flex flex-row justify-center gap-2">
+                <p
+                    className="flex items-center justify-center font-mono
+                        text-2xl"
+                >
+                    {normalCount}
+                </p>
+                {isActive && (
+                    <button
+                        onClick={onIncrementNormal}
+                        className={`w-7 h-7 flex items-center justify-center
+                        rounded-full text-xl font-bold transition bg-blue-500
+                        hover:bg-blue-600 active:scale-95 text-white`}
+                    >
+                        +
+                    </button>
+                )}
+            </div>
+        </div>
     );
 };
 
@@ -131,9 +161,16 @@ const ActionsField = ({ children }: { children: React.ReactNode }) => {
 
 type RescueActionsFieldProps = {
     actions: typeof EnduranceRescueActionChunkSchema.Type;
+    onIncrement: (
+        id: typeof EnduranceActionsSchema.Type.id,
+        actionType: typeof EnduranceActionsSchema.Type.type,
+    ) => () => void;
 };
 
-const RescueActionsField = ({ actions }: RescueActionsFieldProps) => {
+const RescueActionsField = ({
+    actions,
+    onIncrement,
+}: RescueActionsFieldProps) => {
     const { isEdit } = useEndurance();
     const state = useAtomValue(editRescueActionsAtoms.editActions);
     const createAction = useSetAtom(editRescueActionsAtoms.createAction);
@@ -144,7 +181,7 @@ const RescueActionsField = ({ actions }: RescueActionsFieldProps) => {
 
     if (isEdit) {
         return (
-            <div className="space-y-4 border p-4">
+            <div className="rounded-xl space-y-4 border p-4">
                 <div className="flex justify-between items-center">
                     <h2>救済</h2>
                     <button onClick={onAddAction}>＋追加</button>
@@ -153,20 +190,30 @@ const RescueActionsField = ({ actions }: RescueActionsFieldProps) => {
                     <Action
                         key={action.id}
                         id={action.id}
+                        actionType={
+                            "rescue" as typeof EnduranceActionsSchema.Type.type
+                        }
                         label={action.label}
                         amount={action.amount}
+                        actionCount={
+                            0 as typeof EnduranceActionStatSchema.Type.action_times
+                        }
+                        onIncrement={onIncrement(
+                            action.id,
+                            "rescue" as typeof EnduranceActionsSchema.Type.type,
+                        )}
                     />
                 ))}
             </div>
         );
     }
 
-    if (state.length === 0) {
+    if (actions.length === 0) {
         return null;
     }
 
     return (
-        <div className="space-y-4 border p-4">
+        <div className="rounded-xl space-y-4 border p-4">
             <div className="flex justify-between items-center">
                 <h2>救済</h2>
             </div>
@@ -174,8 +221,11 @@ const RescueActionsField = ({ actions }: RescueActionsFieldProps) => {
                 <Action
                     key={action.id}
                     id={action.id}
+                    actionType={action.type}
                     label={action.label}
                     amount={action.amount}
+                    actionCount={action.action_times}
+                    onIncrement={onIncrement(action.id, action.type)}
                 />
             ))}
         </div>
@@ -184,20 +234,35 @@ const RescueActionsField = ({ actions }: RescueActionsFieldProps) => {
 
 type ActionProps = {
     id: typeof EnduranceActionsSchema.Type.id;
+    actionType: typeof EnduranceActionsSchema.Type.type;
     label: typeof EnduranceActionsSchema.Type.label;
     amount: typeof EnduranceActionsSchema.Type.amount;
+    actionCount: typeof EnduranceActionStatSchema.Type.action_times;
+    onIncrement: () => void;
 };
 
-const Action = ({ id, label, amount }: ActionProps) => {
+const Action = ({
+    id,
+    actionType,
+    label,
+    amount,
+    actionCount,
+    onIncrement,
+}: ActionProps) => {
     return (
-        <div className="border p-3 space-y-2">
-            <Label
+        <div
+            className="flex flex-col p-3 space-y-2 bg-white rounded-xl border
+                border-slate-200 shadow-sm w-32"
+        >
+            <Settings
                 id={id}
+                actionType={actionType}
                 label={label}
-            />
-            <Amount
-                id={id}
                 amount={amount}
+            />
+            <Progress
+                actionCount={actionCount}
+                onIncrement={onIncrement}
             />
             <DeleteActionButton id={id} />
         </div>
@@ -219,6 +284,41 @@ const DeleteActionButton = ({
     }
 
     return <button onClick={deleteAction}>削除</button>;
+};
+
+type SettingsProps = {
+    id: typeof EnduranceActionsSchema.Type.id;
+    actionType: typeof EnduranceActionsSchema.Type.type;
+    label: typeof EnduranceActionsSchema.Type.label;
+    amount: typeof EnduranceActionsSchema.Type.amount;
+};
+
+const Settings = ({ id, actionType, label, amount }: SettingsProps) => {
+    const { isEdit } = useEndurance();
+
+    if (isEdit) {
+        return (
+            <div className="flex flex-col space-y-4">
+                <Label
+                    id={id}
+                    label={label}
+                />
+                <Amount
+                    id={id}
+                    amount={amount}
+                />
+            </div>
+        );
+    }
+
+    return (
+        <div className="flex flex-row space-x-2">
+            <div className="font-medium">{label}</div>
+            <div className="font-mono">
+                {actionType === "rescue" ? `(+${amount})` : `(-${amount})`}
+            </div>
+        </div>
+    );
 };
 
 type LabelProps = {
@@ -252,7 +352,7 @@ const Label = ({ id, label }: LabelProps) => {
 
 type AmountProps = {
     id: typeof EnduranceActionsSchema.Type.id;
-    amount: number;
+    amount: typeof EnduranceActionsSchema.Type.amount;
 };
 
 const Amount = ({ id, amount }: AmountProps) => {
@@ -278,8 +378,41 @@ const Amount = ({ id, amount }: AmountProps) => {
     return <div>{amount}</div>;
 };
 
+type ProgressProps = {
+    actionCount: typeof EnduranceActionStatSchema.Type.action_times;
+    onIncrement: () => void;
+};
+
+const Progress = ({ actionCount, onIncrement }: ProgressProps) => {
+    const { projectStatus, isEdit } = useEndurance();
+
+    if (projectStatus === "scheduled" || isEdit) {
+        return null;
+    }
+
+    const isActive = projectStatus === "active";
+
+    return (
+        <div className="flex flex-row justify-center gap-2">
+            <p className="flex items-center justify-center font-mono text-2xl">
+                {actionCount}
+            </p>
+            {isActive && (
+                <button
+                    onClick={onIncrement}
+                    className={`w-7 h-7 flex items-center justify-center
+                    rounded-full text-xl font-bold transition bg-blue-500
+                    hover:bg-blue-600 active:scale-95 text-white`}
+                >
+                    +
+                </button>
+            )}
+        </div>
+    );
+};
+
 EnduranceView.Count = Count;
-EnduranceView.IncrementButton = IncrementButton;
+EnduranceView.IncrementButton = NormalAction;
 EnduranceView.ActionsField = ActionsField;
 EnduranceView.RescueActionsField = RescueActionsField;
 EnduranceView.Action = Action;

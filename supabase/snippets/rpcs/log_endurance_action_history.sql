@@ -37,7 +37,7 @@ begin
 
     elsif p_action_history_type in ('rescue','sabotage') then
         -- 定義から amount を取得
-        select action_amount
+        select amount
         into v_amount
         from endurance_actions
         where id = p_action_id;

@@ -6,7 +6,6 @@ import { useNavigate } from "react-router-dom";
 import CreateProjectLayout from "../projects/CreateProjectLayout";
 
 import EnduranceView from "./EnduranceView";
-import RescueEditSection from "./RescueEditSection";
 
 import {
     editEnduranceAtom,
@@ -67,7 +66,12 @@ const CreateEnduranceProjectLayout = () => {
                     currentCount={0}
                     targetCount={100}
                 />
-                <RescueEditSection />
+                <EnduranceView.ActionsField>
+                    <EnduranceView.RescueActionsField
+                        actions={Chunk.empty()}
+                        onIncrement={() => () => {}}
+                    />
+                </EnduranceView.ActionsField>
             </EnduranceView>
         </CreateProjectLayout>
     );

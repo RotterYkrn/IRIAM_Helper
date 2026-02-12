@@ -21,6 +21,9 @@ export const useLogEnduranceActionHistory = () => {
         },
         onSuccess: (projectId) => {
             queryClient.invalidateQueries({ queryKey: ["project", projectId] });
+            queryClient.invalidateQueries({
+                queryKey: ["actionStats", projectId],
+            });
         },
     });
 };
