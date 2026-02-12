@@ -313,6 +313,7 @@ export type Database = {
         Returns: string
       }
       delete_project: { Args: { p_project_id: string }; Returns: undefined }
+      duplicate_project: { Args: { p_project_id: string }; Returns: string }
       finish_project: { Args: { p_project_id: string }; Returns: string }
       increment_endurance_count: {
         Args: { p_increment: number; p_project_id: string }
