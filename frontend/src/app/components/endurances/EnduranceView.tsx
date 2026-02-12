@@ -1,10 +1,22 @@
-import { useAtomValue, useSetAtom } from "jotai";
-import { createContext, useContext } from "react";
+import { Chunk } from "effect";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
+import { createContext, useContext, useMemo } from "react";
 
+import {
+    editRescueActionsAtoms,
+    editSabotageActionsAtoms,
+} from "@/atoms/endurances/EditActionAtom";
 import {
     editTargetCountAtom,
     editTargetCountErrorAtom,
 } from "@/atoms/endurances/EditTargetCountAtom";
+import type { EnduranceActionsSchema } from "@/domain/endurances/tables/EnduranceActions";
+import type { EnduranceProgressSchema } from "@/domain/endurances/tables/EnduranceProgress";
+import type { EnduranceActionStatSchema } from "@/domain/endurances/types/EnduranceActionStat";
+import type {
+    EnduranceRescueActionChunkSchema,
+    EnduranceSabotageActionChunkSchema,
+} from "@/domain/endurances/views/EnduranceActionStatsView";
 import type { ProjectSchema } from "@/domain/projects/tables/Project";
 
 type EnduranceContextType = {
@@ -97,31 +109,472 @@ const Count = ({ currentCount, targetCount }: CountProps) => {
     );
 };
 
-type IncrementButtonProps = {
-    onIncrement: () => void;
+type NormalActionProps = {
+    normalCount: typeof EnduranceProgressSchema.Type.normal_count;
+    onIncrementNormal: () => void;
 };
 
-const IncrementButton = ({ onIncrement }: IncrementButtonProps) => {
+const NormalAction = ({
+    normalCount,
+    onIncrementNormal,
+}: NormalActionProps) => {
     const { projectStatus } = useEndurance();
+
+    if (projectStatus === "scheduled") {
+        return null;
+    }
 
     const isActive = projectStatus === "active";
 
     return (
-        <button
-            onClick={onIncrement}
-            disabled={!isActive}
-            className={` rounded-full px-8 py-3 text-xl font-bold transition ${
-                isActive
-                    ? "bg-blue-500 hover:bg-blue-600 active:scale-95 text-white"
-                    : "bg-gray-400 cursor-not-allowed"
-                } `}
+        <div
+            className="flex flex-col items-center space-y-2 bg-white rounded-xl
+                border border-slate-200 shadow-sm p-4 w-32"
         >
-            +1
+            {isActive && (
+                <p
+                    className="flex items-center justify-center font-mono
+                        text-2xl"
+                >
+                    +1
+                </p>
+            )}
+            <div className="flex flex-row justify-center gap-2">
+                <p
+                    className="flex items-center justify-center font-mono
+                        text-2xl"
+                >
+                    {normalCount}
+                </p>
+                {isActive && (
+                    <button
+                        onClick={onIncrementNormal}
+                        className={`w-7 h-7 flex items-center justify-center
+                        rounded-full text-xl font-bold transition bg-blue-500
+                        hover:bg-blue-600 active:scale-95 text-white`}
+                    >
+                        +
+                    </button>
+                )}
+            </div>
+        </div>
+    );
+};
+
+const ActionsField = ({ children }: { children: React.ReactNode }) => {
+    return <div className="flex flex-row gap-4">{children}</div>;
+};
+
+type RescueActionsFieldProps = {
+    actions: typeof EnduranceRescueActionChunkSchema.Type;
+    onIncrement: (
+        id: typeof EnduranceActionsSchema.Type.id,
+        actionType: typeof EnduranceActionsSchema.Type.type,
+    ) => () => void;
+};
+
+const RescueActionsField = ({
+    actions,
+    onIncrement,
+}: RescueActionsFieldProps) => {
+    const { isEdit } = useEndurance();
+    const state = useAtomValue(editRescueActionsAtoms.editActions);
+    const createAction = useSetAtom(editRescueActionsAtoms.createAction);
+
+    const onAddAction = () => {
+        createAction();
+    };
+
+    if (isEdit) {
+        return (
+            <div
+                className="flex flex-col rounded-xl space-y-4 border p-4
+                    border-red-500 bg-red-400 shadow-md"
+            >
+                <div className="flex justify-between items-center gap-4">
+                    <h2 className="text-lg font-bold">救済</h2>
+                    <button
+                        className="bg-red-200 hover:bg-red-300 px-2 py-1
+                            rounded-md border border-red-300"
+                        onClick={onAddAction}
+                    >
+                        ＋追加
+                    </button>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                    {Chunk.map(state, (action) => (
+                        <Action
+                            key={action.id}
+                            id={action.id}
+                            actionType={
+                                "rescue" as typeof EnduranceActionsSchema.Type.type
+                            }
+                            label={action.label}
+                            amount={action.amount}
+                            actionCount={
+                                0 as typeof EnduranceActionStatSchema.Type.action_times
+                            }
+                            onIncrement={onIncrement(
+                                action.id,
+                                "rescue" as typeof EnduranceActionsSchema.Type.type,
+                            )}
+                        />
+                    ))}
+                </div>
+            </div>
+        );
+    }
+
+    if (actions.length === 0) {
+        return null;
+    }
+
+    return (
+        <div
+            className="flex flex-col rounded-xl space-y-4 border border-red-500
+                p-4 bg-red-400 shadow-md"
+        >
+            <div className="flex justify-between items-center">
+                <h2 className="text-lg font-bold">救済</h2>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+                {Chunk.map(actions, (action) => (
+                    <Action
+                        key={action.id}
+                        id={action.id}
+                        actionType={action.type}
+                        label={action.label}
+                        amount={action.amount}
+                        actionCount={action.action_times}
+                        onIncrement={onIncrement(action.id, action.type)}
+                    />
+                ))}
+            </div>
+        </div>
+    );
+};
+
+type SabotageActionsFieldProps = {
+    actions: typeof EnduranceSabotageActionChunkSchema.Type;
+    onIncrement: (
+        id: typeof EnduranceActionsSchema.Type.id,
+        actionType: typeof EnduranceActionsSchema.Type.type,
+    ) => () => void;
+};
+
+const SabotageActionsField = ({
+    actions,
+    onIncrement,
+}: SabotageActionsFieldProps) => {
+    const { isEdit } = useEndurance();
+    const state = useAtomValue(editSabotageActionsAtoms.editActions);
+    const createAction = useSetAtom(editSabotageActionsAtoms.createAction);
+
+    const onAddAction = () => {
+        createAction();
+    };
+
+    if (isEdit) {
+        return (
+            <div
+                className="flex flex-col rounded-xl space-y-4 border p-4
+                    border-blue-500 bg-blue-400 shadow-md"
+            >
+                <div className="flex justify-between items-center gap-4">
+                    <h2 className="text-lg font-bold">妨害</h2>
+                    <button
+                        className="bg-blue-200 hover:bg-blue-300 px-2 py-1
+                            rounded-md border border-blue-400"
+                        onClick={onAddAction}
+                    >
+                        ＋追加
+                    </button>
+                </div>
+                <div className="grid grid-cols-2 gap-4">
+                    {Chunk.map(state, (action) => (
+                        <Action
+                            key={action.id}
+                            id={action.id}
+                            actionType={
+                                "sabotage" as typeof EnduranceActionsSchema.Type.type
+                            }
+                            label={action.label}
+                            amount={action.amount}
+                            actionCount={
+                                0 as typeof EnduranceActionStatSchema.Type.action_times
+                            }
+                            onIncrement={onIncrement(
+                                action.id,
+                                "sabotage" as typeof EnduranceActionsSchema.Type.type,
+                            )}
+                        />
+                    ))}
+                </div>
+            </div>
+        );
+    }
+
+    if (actions.length === 0) {
+        return null;
+    }
+
+    return (
+        <div
+            className="flex flex-col rounded-xl space-y-4 border border-blue-500
+                p-4 bg-blue-400 shadow-md"
+        >
+            <div className="flex justify-between items-center">
+                <h2 className="text-lg font-bold">妨害</h2>
+            </div>
+            <div className="grid grid-cols-2 gap-4">
+                {Chunk.map(actions, (action) => (
+                    <Action
+                        key={action.id}
+                        id={action.id}
+                        actionType={action.type}
+                        label={action.label}
+                        amount={action.amount}
+                        actionCount={action.action_times}
+                        onIncrement={onIncrement(action.id, action.type)}
+                    />
+                ))}
+            </div>
+        </div>
+    );
+};
+
+type ActionProps = {
+    id: typeof EnduranceActionsSchema.Type.id;
+    actionType: typeof EnduranceActionsSchema.Type.type;
+    label: typeof EnduranceActionsSchema.Type.label;
+    amount: typeof EnduranceActionsSchema.Type.amount;
+    actionCount: typeof EnduranceActionStatSchema.Type.action_times;
+    onIncrement: () => void;
+};
+
+const Action = ({
+    id,
+    actionType,
+    label,
+    amount,
+    actionCount,
+    onIncrement,
+}: ActionProps) => {
+    return (
+        <div
+            className="flex flex-col items-center justify-center p-3 space-y-2
+                bg-white rounded-xl border border-slate-300 shadow-sm w-32"
+        >
+            <Settings
+                id={id}
+                actionType={actionType}
+                label={label}
+                amount={amount}
+            />
+            <Progress
+                actionCount={actionCount}
+                onIncrement={onIncrement}
+            />
+            <DeleteActionButton
+                id={id}
+                actionType={actionType}
+            />
+        </div>
+    );
+};
+
+type SettingsProps = {
+    id: typeof EnduranceActionsSchema.Type.id;
+    actionType: typeof EnduranceActionsSchema.Type.type;
+    label: typeof EnduranceActionsSchema.Type.label;
+    amount: typeof EnduranceActionsSchema.Type.amount;
+};
+
+const Settings = ({ id, actionType, label, amount }: SettingsProps) => {
+    const { isEdit } = useEndurance();
+
+    if (isEdit) {
+        return (
+            <div className="flex flex-col items-center justify-center space-y-2">
+                <Label
+                    id={id}
+                    actionType={actionType}
+                    label={label}
+                />
+                <Amount
+                    id={id}
+                    actionType={actionType}
+                    amount={amount}
+                />
+            </div>
+        );
+    }
+
+    return (
+        <div className="flex flex-col items-center justify-center">
+            <Label
+                id={id}
+                actionType={actionType}
+                label={label}
+            />
+            <Amount
+                id={id}
+                actionType={actionType}
+                amount={amount}
+            />
+        </div>
+    );
+};
+
+type LabelProps = {
+    id: typeof EnduranceActionsSchema.Type.id;
+    actionType: typeof EnduranceActionsSchema.Type.type;
+    label: string;
+};
+
+const Label = ({ id, actionType, label }: LabelProps) => {
+    const { isEdit } = useEndurance();
+    const [state, setState] = useAtom(
+        useMemo(
+            () =>
+                actionType === "rescue"
+                    ? editRescueActionsAtoms.editLabel(id)
+                    : editSabotageActionsAtoms.editLabel(id),
+            [id, actionType],
+        ),
+    );
+
+    if (isEdit) {
+        return (
+            <>
+                <input
+                    className="w-20 text-center outline-none border-b-2
+                        border-gray-300 focus:border-gray-500 transition-colors"
+                    defaultValue={state.value}
+                    placeholder="ラベルを入力"
+                    onChange={(e) => setState(e.target.value)}
+                />
+                {state.error && (
+                    <p className="text-red-600 text-sm">{state.error}</p>
+                )}
+            </>
+        );
+    }
+
+    return <div className="font-medium text-xl">{label}</div>;
+};
+
+type AmountProps = {
+    id: typeof EnduranceActionsSchema.Type.id;
+    actionType: typeof EnduranceActionsSchema.Type.type;
+    amount: typeof EnduranceActionsSchema.Type.amount;
+};
+
+const Amount = ({ id, actionType, amount }: AmountProps) => {
+    const { isEdit } = useEndurance();
+    const [state, setState] = useAtom(
+        useMemo(
+            () =>
+                actionType === "rescue"
+                    ? editRescueActionsAtoms.editAmount(id)
+                    : editSabotageActionsAtoms.editAmount(id),
+            [id, actionType],
+        ),
+    );
+
+    if (isEdit) {
+        return (
+            <>
+                <input
+                    className="w-20 text-center outline-none border-b-2
+                        border-gray-300 focus:border-gray-500 transition-colors"
+                    defaultValue={state.value}
+                    placeholder="数値を入力"
+                    onChange={(e) => setState(Number(e.target.value))}
+                />
+                {state.error && (
+                    <p className="text-red-600 text-sm">{state.error}</p>
+                )}
+            </>
+        );
+    }
+
+    return (
+        <div className="font-mono text-xl">
+            {actionType === "rescue" ? `(+${amount})` : `(-${amount})`}
+        </div>
+    );
+};
+
+type ProgressProps = {
+    actionCount: typeof EnduranceActionStatSchema.Type.action_times;
+    onIncrement: () => void;
+};
+
+const Progress = ({ actionCount, onIncrement }: ProgressProps) => {
+    const { projectStatus, isEdit } = useEndurance();
+
+    if (projectStatus === "scheduled" || isEdit) {
+        return null;
+    }
+
+    const isActive = projectStatus === "active";
+
+    return (
+        <div className="flex flex-row justify-center gap-2">
+            <p className="flex items-center justify-center font-mono text-2xl">
+                {actionCount}
+            </p>
+            {isActive && (
+                <button
+                    onClick={onIncrement}
+                    className={`w-7 h-7 flex items-center justify-center
+                    rounded-full text-xl font-bold transition bg-blue-500
+                    hover:bg-blue-600 active:scale-95 text-white`}
+                >
+                    +
+                </button>
+            )}
+        </div>
+    );
+};
+
+type DeleteActionButtonProps = {
+    id: typeof EnduranceActionsSchema.Type.id;
+    actionType: typeof EnduranceActionsSchema.Type.type;
+};
+
+const DeleteActionButton = ({ id, actionType }: DeleteActionButtonProps) => {
+    const { isEdit } = useEndurance();
+    const deleteAction = useSetAtom(
+        useMemo(
+            () =>
+                actionType === "rescue"
+                    ? editRescueActionsAtoms.deleteAction(id)
+                    : editSabotageActionsAtoms.deleteAction(id),
+            [id, actionType],
+        ),
+    );
+
+    if (!isEdit) {
+        return null;
+    }
+
+    return (
+        <button
+            className="bg-gray-300 hover:bg-gray-200 px-2 py-1 rounded-md border
+                border-gray-400"
+            onClick={deleteAction}
+        >
+            削除
         </button>
     );
 };
 
 EnduranceView.Count = Count;
-EnduranceView.IncrementButton = IncrementButton;
+EnduranceView.NormalAction = NormalAction;
+EnduranceView.ActionsField = ActionsField;
+EnduranceView.RescueActionsField = RescueActionsField;
+EnduranceView.SabotageActionsField = SabotageActionsField;
 
 export default EnduranceView;

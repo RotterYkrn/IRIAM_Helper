@@ -1,27 +1,61 @@
-import { pipe, Schema } from "effect";
+import { Schema } from "effect";
 
 import {
-    EnduranceSettingsSchema,
+    EnduranceActionAmountSchema,
+    EnduranceActionIdSchema,
+    EnduranceActionLabelSchema,
+    EnduranceActionPositionSchema,
+    EnduranceActionsSchema,
+    type EnduranceActions,
+} from "../tables/EnduranceActions";
+import {
     EnduranceTargetCountSchema,
     type EnduranceSettings,
-    type EnduranceSettingsEncoded,
 } from "../tables/EnduranceSettings";
 
 import {
     type Project,
-    type ProjectEncoded,
     ProjectIdSchema,
-    ProjectSchema,
     ProjectTitleSchema,
 } from "@/domain/projects/tables/Project";
 import type { Database } from "@/lib/database.types";
-import { mapFrom } from "@/utils/schema";
+import {
+    mapFrom,
+    withStrictNullCheck,
+    type RecursiveReadonly,
+} from "@/utils/schema";
 
-export type UpdateEnduranceProjectArgsEncoded = Readonly<
+export type UpdateEnduranceActionArgsEncoded = Readonly<
+    Database["public"]["CompositeTypes"]["update_endurance_action_args"]
+>;
+export type UpdateEnduranceActionArgs = Pick<
+    EnduranceActions,
+    "position" | "label" | "amount"
+> & {
+    id: typeof EnduranceActionsSchema.Type.id | null;
+};
+export const UpdateEnduranceActionArgsSchema: Schema.Schema<
+    UpdateEnduranceActionArgs,
+    UpdateEnduranceActionArgsEncoded
+> = Schema.Struct({
+    id: Schema.NullOr(EnduranceActionIdSchema),
+    position: withStrictNullCheck(EnduranceActionPositionSchema),
+    label: withStrictNullCheck(EnduranceActionLabelSchema),
+    amount: withStrictNullCheck(EnduranceActionAmountSchema),
+});
+export const UpdateEnduranceActionArgsChunkSchema = Schema.Chunk(
+    UpdateEnduranceActionArgsSchema,
+);
+
+export type UpdateEnduranceProjectArgsEncoded = RecursiveReadonly<
     Database["public"]["Functions"]["update_endurance_project"]["Args"]
 >;
 export type UpdateEnduranceProjectArgs = Pick<Project, "id" | "title"> &
-    Pick<EnduranceSettings, "target_count">;
+    Pick<EnduranceSettings, "target_count"> &
+    Readonly<{
+        rescue_actions: typeof UpdateEnduranceActionArgsChunkSchema.Type;
+        sabotage_actions: typeof UpdateEnduranceActionArgsChunkSchema.Type;
+    }>;
 export const UpdateEnduranceProjectArgsSchema: Schema.Schema<
     UpdateEnduranceProjectArgs,
     UpdateEnduranceProjectArgsEncoded
@@ -29,18 +63,10 @@ export const UpdateEnduranceProjectArgsSchema: Schema.Schema<
     id: ProjectIdSchema.pipe(mapFrom("p_project_id")),
     title: ProjectTitleSchema.pipe(mapFrom("p_title")),
     target_count: EnduranceTargetCountSchema.pipe(mapFrom("p_target_count")),
+    rescue_actions: UpdateEnduranceActionArgsChunkSchema.pipe(
+        mapFrom("p_rescue_actions"),
+    ),
+    sabotage_actions: UpdateEnduranceActionArgsChunkSchema.pipe(
+        mapFrom("p_sabotage_actions"),
+    ),
 });
-
-export type UpdateEnduranceProjectReturnsEncoded = Pick<
-    ProjectEncoded,
-    "id" | "title"
-> &
-    Pick<EnduranceSettingsEncoded, "target_count">;
-export type UpdateEnduranceProjectReturns = UpdateEnduranceProjectArgs;
-export const UpdateEnduranceProjectReturnsSchema: Schema.Schema<
-    UpdateEnduranceProjectReturns,
-    UpdateEnduranceProjectReturnsEncoded
-> = pipe(
-    ProjectSchema.pipe(Schema.pick("id", "title")),
-    Schema.extend(EnduranceSettingsSchema.pipe(Schema.pick("target_count"))),
-);

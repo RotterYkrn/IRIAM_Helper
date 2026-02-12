@@ -130,7 +130,7 @@ type EditButtonProps = {
 const EditButton = ({ onEdit }: EditButtonProps) => {
     const { projectStatus, isEdit } = useProject();
 
-    if (projectStatus === "finished" || isEdit) {
+    if (projectStatus !== "scheduled" || isEdit) {
         return null;
     }
 

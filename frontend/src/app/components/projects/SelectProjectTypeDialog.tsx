@@ -44,17 +44,19 @@ const SelectProjectTypeDialog = ({
                         </button>
 
                         <button
-                            className="rounded border p-3 hover:bg-gray-100"
+                            className="rounded border p-3 bg-gray-500"
+                            disabled={true}
                             onClick={() => handleSelect("gacha")}
                         >
-                            ガチャ企画
+                            ガチャ企画（準備中）
                         </button>
 
                         <button
-                            className="rounded border p-3 hover:bg-gray-100"
+                            className="rounded border p-3 bg-gray-500"
+                            disabled={true}
                             onClick={() => handleSelect("panel-open")}
                         >
-                            パネル開け
+                            パネル開け（準備中）
                         </button>
                     </div>
 

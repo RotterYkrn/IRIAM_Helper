@@ -10,8 +10,9 @@ import {
     initEditEnduranceAtom,
 } from "@/atoms/endurances/EditEnduranceAtom";
 import { isEnduranceValidAtom } from "@/atoms/endurances/isEditEnduranceValidAtom";
+import type { EnduranceActionsSchema } from "@/domain/endurances/tables/EnduranceActions";
 import { useFetchEnduranceData as useFetchEnduranceProject } from "@/hooks/endurances/useFetchEnduranceProject";
-import { useIncrementEnduranceCount } from "@/hooks/endurances/useIncrementEnduranceCount";
+import { useLogEnduranceActionHistory } from "@/hooks/endurances/useLogEnduranceActionHistory";
 import { useUpdateEnduranceProject } from "@/hooks/endurances/useUpdateEnduranceProject";
 import { errorToast, successToast } from "@/utils/toast";
 
@@ -22,24 +23,28 @@ type Props = {
 const EnduranceProjectLayout = ({ projectId }: Props) => {
     const [isEdit, setIsEdit] = useState(false);
 
-    const projectQuery = useFetchEnduranceProject(projectId);
+    const [projectQuery, actionStatsQuery] =
+        useFetchEnduranceProject(projectId);
     const updateEnduranceProject = useUpdateEnduranceProject();
-    const incrementEnduranceCount = useIncrementEnduranceCount();
+    const logEnduranceActionHistory = useLogEnduranceActionHistory();
 
     const editState = useAtomValue(editEnduranceAtom);
     const initEditEndurance = useSetAtom(initEditEnduranceAtom);
     const disabled = !useAtomValue(isEnduranceValidAtom);
 
-    if (!projectQuery.data) {
+    if (!projectQuery.data || !actionStatsQuery.data) {
         return null;
     }
 
     const project = projectQuery.data;
+    const actionStats = actionStatsQuery.data;
 
     const onEdit = () => {
         initEditEndurance({
             title: project.title,
             target_count: project.target_count,
+            rescue_actions: actionStats.rescue_actions,
+            sabotage_actions: actionStats.sabotage_actions,
         });
         setIsEdit(true);
     };
@@ -47,9 +52,8 @@ const EnduranceProjectLayout = ({ projectId }: Props) => {
     const onSave = () => {
         updateEnduranceProject.mutate(
             {
-                p_project_id: project.id,
-                p_title: editState.title,
-                p_target_count: editState.target_count,
+                id: project.id,
+                ...editState,
             },
             {
                 onSuccess: () => {
@@ -64,12 +68,25 @@ const EnduranceProjectLayout = ({ projectId }: Props) => {
         );
     };
 
-    const onIncrement = () => {
-        incrementEnduranceCount.mutate({
+    const onIncrementNormal = () => {
+        logEnduranceActionHistory.mutate({
             p_project_id: project.id,
-            p_increment: 1,
+            p_action_history_type: "normal",
         });
     };
+
+    const onIncrement =
+        (
+            actionId: typeof EnduranceActionsSchema.Type.id,
+            actionType: typeof EnduranceActionsSchema.Type.type,
+        ) =>
+        () => {
+            logEnduranceActionHistory.mutate({
+                p_project_id: project.id,
+                p_action_history_type: actionType,
+                p_action_id: actionId,
+            });
+        };
 
     return (
         <ProjectLayout
@@ -88,7 +105,20 @@ const EnduranceProjectLayout = ({ projectId }: Props) => {
                     currentCount={project.current_count}
                     targetCount={project.target_count}
                 />
-                <EnduranceView.IncrementButton onIncrement={onIncrement} />
+                <EnduranceView.NormalAction
+                    normalCount={project.normal_count}
+                    onIncrementNormal={onIncrementNormal}
+                />
+                <EnduranceView.ActionsField>
+                    <EnduranceView.RescueActionsField
+                        actions={actionStats.rescue_actions}
+                        onIncrement={onIncrement}
+                    />
+                    <EnduranceView.SabotageActionsField
+                        actions={actionStats.sabotage_actions}
+                        onIncrement={onIncrement}
+                    />
+                </EnduranceView.ActionsField>
             </EnduranceView>
         </ProjectLayout>
     );

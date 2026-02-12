@@ -14,12 +14,14 @@ export const editTitleAtom = atom(
         pipe(
             newTitle,
             Schema.decodeEither(ProjectTitleSchema),
-            Either.map((title) => {
-                set(baseTitleAtom, title);
-                set(editTitleErrorAtom, null);
-            }),
-            Either.mapLeft((error) => {
-                set(editTitleErrorAtom, error.message);
+            Either.match({
+                onRight: (title) => {
+                    set(baseTitleAtom, title);
+                    set(editTitleErrorAtom, null);
+                },
+                onLeft: (error) => {
+                    set(editTitleErrorAtom, error.message);
+                },
             }),
         );
     },

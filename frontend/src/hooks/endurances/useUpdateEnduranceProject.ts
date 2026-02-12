@@ -1,15 +1,14 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Effect } from "effect";
 
-import type { UpdateEnduranceProjectArgsEncoded } from "@/domain/endurances/rpcs/UpdateEnduranceProject";
-import type { EnduranceProjectView } from "@/domain/endurances/views/EnduranceProjectView";
+import type { UpdateEnduranceProjectArgs } from "@/domain/endurances/rpcs/UpdateEnduranceProject";
 import { updateEnduranceProject } from "@/use-cases/endurances/updateEnduranceProject";
 
 export const useUpdateEnduranceProject = () => {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: async (args: UpdateEnduranceProjectArgsEncoded) => {
+        mutationFn: async (args: UpdateEnduranceProjectArgs) => {
             try {
                 const result = await Effect.runPromise(
                     updateEnduranceProject(args),
@@ -20,19 +19,13 @@ export const useUpdateEnduranceProject = () => {
                 throw error;
             }
         },
-        onSuccess: ({ id, title, target_count }) => {
-            queryClient.setQueryData<EnduranceProjectView>(
-                ["project", id],
-                (oldData) => {
-                    return (
-                        oldData && {
-                            ...oldData,
-                            title,
-                            target_count,
-                        }
-                    );
-                },
-            );
+        onSuccess: (projectId) => {
+            queryClient.invalidateQueries({
+                queryKey: ["project", projectId],
+            });
+            queryClient.invalidateQueries({
+                queryKey: ["actionStats", projectId],
+            });
         },
     });
 };

@@ -34,40 +34,167 @@ export type Database = {
   }
   public: {
     Tables: {
-      endurance_progress: {
+      endurance_action_histories: {
         Row: {
+          action_amount: number
+          action_id: string | null
+          action_type: string
           created_at: string
-          current_count: number
           id: string
           project_id: string
-          updated_at: string
         }
         Insert: {
+          action_amount: number
+          action_id?: string | null
+          action_type: string
           created_at?: string
-          current_count?: number
           id?: string
           project_id: string
-          updated_at?: string
         }
         Update: {
+          action_amount?: number
+          action_id?: string | null
+          action_type?: string
           created_at?: string
-          current_count?: number
           id?: string
           project_id?: string
-          updated_at?: string
         }
         Relationships: [
           {
-            foreignKeyName: "fk_endurance_progress_project"
+            foreignKeyName: "fk_endurance_histories_actions"
+            columns: ["action_id"]
+            isOneToOne: false
+            referencedRelation: "endurance_actions"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_endurance_histories_project"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "endurance_action_stats_view"
+            referencedColumns: ["project_id"]
+          },
+          {
+            foreignKeyName: "fk_endurance_histories_project"
             columns: ["project_id"]
             isOneToOne: false
             referencedRelation: "endurance_project_view"
             referencedColumns: ["id"]
           },
           {
-            foreignKeyName: "fk_endurance_progress_project"
+            foreignKeyName: "fk_endurance_histories_project"
             columns: ["project_id"]
             isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      endurance_actions: {
+        Row: {
+          amount: number
+          created_at: string
+          id: string
+          label: string
+          position: number
+          project_id: string
+          type: string
+          updated_at: string
+        }
+        Insert: {
+          amount: number
+          created_at?: string
+          id?: string
+          label: string
+          position: number
+          project_id: string
+          type: string
+          updated_at?: string
+        }
+        Update: {
+          amount?: number
+          created_at?: string
+          id?: string
+          label?: string
+          position?: number
+          project_id?: string
+          type?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_action_project"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "endurance_action_stats_view"
+            referencedColumns: ["project_id"]
+          },
+          {
+            foreignKeyName: "fk_action_project"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "endurance_project_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_action_project"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      endurance_progress: {
+        Row: {
+          created_at: string
+          current_count: number
+          id: string
+          normal_count: number
+          project_id: string
+          rescue_count: number
+          sabotage_count: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          current_count?: number
+          id?: string
+          normal_count?: number
+          project_id: string
+          rescue_count?: number
+          sabotage_count?: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          current_count?: number
+          id?: string
+          normal_count?: number
+          project_id?: string
+          rescue_count?: number
+          sabotage_count?: number
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_endurance_progress_project"
+            columns: ["project_id"]
+            isOneToOne: true
+            referencedRelation: "endurance_action_stats_view"
+            referencedColumns: ["project_id"]
+          },
+          {
+            foreignKeyName: "fk_endurance_progress_project"
+            columns: ["project_id"]
+            isOneToOne: true
+            referencedRelation: "endurance_project_view"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_endurance_progress_project"
+            columns: ["project_id"]
+            isOneToOne: true
             referencedRelation: "projects"
             referencedColumns: ["id"]
           },
@@ -77,7 +204,6 @@ export type Database = {
         Row: {
           created_at: string
           id: string
-          increment_per_action: number
           project_id: string
           target_count: number
           updated_at: string
@@ -85,7 +211,6 @@ export type Database = {
         Insert: {
           created_at?: string
           id?: string
-          increment_per_action?: number
           project_id: string
           target_count: number
           updated_at?: string
@@ -93,7 +218,6 @@ export type Database = {
         Update: {
           created_at?: string
           id?: string
-          increment_per_action?: number
           project_id?: string
           target_count?: number
           updated_at?: string
@@ -102,14 +226,21 @@ export type Database = {
           {
             foreignKeyName: "fk_endurance_settings_project"
             columns: ["project_id"]
-            isOneToOne: false
+            isOneToOne: true
+            referencedRelation: "endurance_action_stats_view"
+            referencedColumns: ["project_id"]
+          },
+          {
+            foreignKeyName: "fk_endurance_settings_project"
+            columns: ["project_id"]
+            isOneToOne: true
             referencedRelation: "endurance_project_view"
             referencedColumns: ["id"]
           },
           {
             foreignKeyName: "fk_endurance_settings_project"
             columns: ["project_id"]
-            isOneToOne: false
+            isOneToOne: true
             referencedRelation: "projects"
             referencedColumns: ["id"]
           },
@@ -144,10 +275,25 @@ export type Database = {
       }
     }
     Views: {
+      endurance_action_stats_view: {
+        Row: {
+          project_id: string | null
+          rescue_actions:
+            | Database["public"]["CompositeTypes"]["endurance_action_stat"][]
+            | null
+          sabotage_actions:
+            | Database["public"]["CompositeTypes"]["endurance_action_stat"][]
+            | null
+        }
+        Relationships: []
+      }
       endurance_project_view: {
         Row: {
           current_count: number | null
           id: string | null
+          normal_count: number | null
+          rescue_count: number | null
+          sabotage_count: number | null
           status: string | null
           target_count: number | null
           title: string | null
@@ -158,7 +304,12 @@ export type Database = {
     Functions: {
       activate_project: { Args: { p_project_id: string }; Returns: string }
       create_endurance_project: {
-        Args: { p_target_count: number; p_title: string }
+        Args: {
+          p_rescue_actions: Database["public"]["CompositeTypes"]["create_endurance_action_args"][]
+          p_sabotage_actions: Database["public"]["CompositeTypes"]["create_endurance_action_args"][]
+          p_target_count: number
+          p_title: string
+        }
         Returns: string
       }
       delete_project: { Args: { p_project_id: string }; Returns: undefined }
@@ -167,16 +318,48 @@ export type Database = {
         Args: { p_increment: number; p_project_id: string }
         Returns: string
       }
+      log_endurance_action_history: {
+        Args: {
+          p_action_history_type: string
+          p_action_id?: string
+          p_project_id: string
+        }
+        Returns: string
+      }
       update_endurance_project: {
-        Args: { p_project_id: string; p_target_count: number; p_title: string }
-        Returns: Json
+        Args: {
+          p_project_id: string
+          p_rescue_actions: Database["public"]["CompositeTypes"]["update_endurance_action_args"][]
+          p_sabotage_actions: Database["public"]["CompositeTypes"]["update_endurance_action_args"][]
+          p_target_count: number
+          p_title: string
+        }
+        Returns: string
       }
     }
     Enums: {
       [_ in never]: never
     }
     CompositeTypes: {
-      [_ in never]: never
+      create_endurance_action_args: {
+        position: number | null
+        label: string | null
+        amount: number | null
+      }
+      endurance_action_stat: {
+        id: string | null
+        type: string | null
+        position: number | null
+        label: string | null
+        amount: number | null
+        action_times: number | null
+      }
+      update_endurance_action_args: {
+        id: string | null
+        position: number | null
+        label: string | null
+        amount: number | null
+      }
     }
   }
 }

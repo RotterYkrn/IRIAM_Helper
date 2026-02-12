@@ -1,31 +1,31 @@
 import { Schema, Effect, pipe } from "effect";
 
 import {
-    type UpdateEnduranceProjectArgsEncoded,
     UpdateEnduranceProjectArgsSchema,
-    type UpdateEnduranceProjectReturns,
-    UpdateEnduranceProjectReturnsSchema,
+    type UpdateEnduranceProjectArgs,
 } from "@/domain/endurances/rpcs/UpdateEnduranceProject";
+import {
+    ProjectIdSchema,
+    type ProjectId,
+} from "@/domain/projects/tables/Project";
 import { supabase } from "@/lib/supabase";
 
 export const updateEnduranceProject = (
-    args: UpdateEnduranceProjectArgsEncoded,
-): Effect.Effect<UpdateEnduranceProjectReturns, unknown> =>
+    args: UpdateEnduranceProjectArgs,
+): Effect.Effect<ProjectId, unknown> =>
     pipe(
-        args,
-        Schema.decodeEither(UpdateEnduranceProjectArgsSchema),
-        Effect.tryMapPromise({
-            try: (args) =>
+        Effect.tryPromise({
+            try: () =>
                 supabase.rpc(
                     "update_endurance_project",
-                    Schema.encodeSync(UpdateEnduranceProjectArgsSchema)(args),
+                    Schema.encodeSync(UpdateEnduranceProjectArgsSchema)(
+                        args,
+                    ) as any,
                 ),
             catch: (error) => error,
         }),
         Effect.flatMap(({ data, error }) =>
             error ? Effect.fail(error) : Effect.succeed(data),
         ),
-        Effect.flatMap(
-            Schema.decodeUnknownEither(UpdateEnduranceProjectReturnsSchema),
-        ),
+        Effect.flatMap(Schema.decodeUnknownEither(ProjectIdSchema)),
     );
