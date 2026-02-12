@@ -451,7 +451,7 @@ const Label = ({ id, actionType, label }: LabelProps) => {
                     className="w-20 text-center outline-none border-b-2
                         border-gray-300 focus:border-gray-500 transition-colors"
                     defaultValue={state.value}
-                    placeholder="初見、ギフト名など"
+                    placeholder="ラベルを入力"
                     onChange={(e) => setState(e.target.value)}
                 />
                 {state.error && (
@@ -489,6 +489,7 @@ const Amount = ({ id, actionType, amount }: AmountProps) => {
                     className="w-20 text-center outline-none border-b-2
                         border-gray-300 focus:border-gray-500 transition-colors"
                     defaultValue={state.value}
+                    placeholder="数値を入力"
                     onChange={(e) => setState(Number(e.target.value))}
                 />
                 {state.error && (
