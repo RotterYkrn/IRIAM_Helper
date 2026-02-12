@@ -1,4 +1,3 @@
-import { Chunk } from "effect";
 import { useAtomValue, useSetAtom } from "jotai";
 import { useState } from "react";
 
@@ -45,7 +44,7 @@ const EnduranceProjectLayout = ({ projectId }: Props) => {
             title: project.title,
             target_count: project.target_count,
             rescue_actions: actionStats.rescue_actions,
-            sabotage_actions: Chunk.empty(),
+            sabotage_actions: actionStats.sabotage_actions,
         });
         setIsEdit(true);
     };
@@ -106,13 +105,17 @@ const EnduranceProjectLayout = ({ projectId }: Props) => {
                     currentCount={project.current_count}
                     targetCount={project.target_count}
                 />
-                <EnduranceView.IncrementButton
+                <EnduranceView.NormalAction
                     normalCount={project.normal_count}
                     onIncrementNormal={onIncrementNormal}
                 />
                 <EnduranceView.ActionsField>
                     <EnduranceView.RescueActionsField
                         actions={actionStats.rescue_actions}
+                        onIncrement={onIncrement}
+                    />
+                    <EnduranceView.SabotageActionsField
+                        actions={actionStats.sabotage_actions}
                         onIncrement={onIncrement}
                     />
                 </EnduranceView.ActionsField>

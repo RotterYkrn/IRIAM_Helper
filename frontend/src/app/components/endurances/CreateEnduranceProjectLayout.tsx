@@ -71,6 +71,10 @@ const CreateEnduranceProjectLayout = () => {
                         actions={Chunk.empty()}
                         onIncrement={() => () => {}}
                     />
+                    <EnduranceView.SabotageActionsField
+                        actions={Chunk.empty()}
+                        onIncrement={() => () => {}}
+                    />
                 </EnduranceView.ActionsField>
             </EnduranceView>
         </CreateProjectLayout>
