@@ -192,6 +192,27 @@ const CancelButton = ({ onCancel }: CancelButtonProps) => {
     );
 };
 
+type DuplicateButtonProps = {
+    onDuplicate: () => void;
+};
+
+const DuplicateButton = ({ onDuplicate }: DuplicateButtonProps) => {
+    const { projectStatus } = useProject();
+
+    if (projectStatus === "active") {
+        return null;
+    }
+
+    return (
+        <ProjectButton
+            onClick={onDuplicate}
+            className="bg-gray-500 hover:bg-gray-600"
+        >
+            コピー
+        </ProjectButton>
+    );
+};
+
 type DeleteButtonProps = {
     onDelete: () => void;
 };
@@ -263,6 +284,7 @@ ProjectView.Body = Body;
 ProjectView.EditButton = EditButton;
 ProjectView.SaveButton = SaveButton;
 ProjectView.CancelButton = CancelButton;
+ProjectView.DuplicateButton = DuplicateButton;
 ProjectView.DeleteButton = DeleteButton;
 ProjectView.ActivateButton = ActivateButton;
 ProjectView.FinishButton = FinishButton;

@@ -5,12 +5,13 @@ import ProjectView from "./ProjectView";
 import type { Project } from "@/domain/projects/tables/Project";
 import { useActivateProject } from "@/hooks/projects/useActivateProject";
 import { useDeleteProject } from "@/hooks/projects/useDeleteProject";
+import { useDuplicateProject } from "@/hooks/projects/useDuplicateProject";
 import { useFinishProject } from "@/hooks/projects/useFinishProject";
 import { errorToast, successToast } from "@/utils/toast";
 
 type ProjectLayoutProps = {
     children: React.ReactNode;
-    project: Omit<Project, "type" | "created_at" | "updated_at">;
+    project: Omit<Project, "created_at" | "updated_at">;
     isEdit: boolean;
     setIsEdit: (v: boolean) => void;
     disabled: boolean;
@@ -28,6 +29,7 @@ const ProjectLayout = ({
     onSave,
 }: ProjectLayoutProps) => {
     const navigate = useNavigate();
+    const duplicateMutation = useDuplicateProject();
     const deleteMutation = useDeleteProject();
     const activateMutation = useActivateProject();
     const finishMutation = useFinishProject();
@@ -37,6 +39,22 @@ const ProjectLayout = ({
             return;
         }
         setIsEdit(false);
+    };
+
+    const onDuplicate = () => {
+        if (!confirm("この企画をコピーしますか？")) {
+            return;
+        }
+        duplicateMutation.mutate(project.id, {
+            onSuccess: (id) => {
+                successToast(`「${project.title}」がコピーされました`);
+                navigate(`/projects/${project.type}/${id}`);
+            },
+            onError: (error) => {
+                console.error(error);
+                errorToast(`「${project.title}」のコピーに失敗しました`);
+            },
+        });
     };
 
     const onDelete = () => {
@@ -115,6 +133,7 @@ const ProjectLayout = ({
                     onSave={onSave}
                 />
 
+                <ProjectView.DuplicateButton onDuplicate={onDuplicate} />
                 <ProjectView.DeleteButton onDelete={onDelete} />
 
                 <ProjectView.ActivateButton onActivate={onActivate} />

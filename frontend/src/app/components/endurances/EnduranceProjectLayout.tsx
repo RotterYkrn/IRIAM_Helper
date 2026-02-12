@@ -11,6 +11,7 @@ import {
 } from "@/atoms/endurances/EditEnduranceAtom";
 import { isEnduranceValidAtom } from "@/atoms/endurances/isEditEnduranceValidAtom";
 import type { EnduranceActionsSchema } from "@/domain/endurances/tables/EnduranceActions";
+import type { ProjectTypeSchema } from "@/domain/projects/tables/Project";
 import { useFetchEnduranceData as useFetchEnduranceProject } from "@/hooks/endurances/useFetchEnduranceProject";
 import { useLogEnduranceActionHistory } from "@/hooks/endurances/useLogEnduranceActionHistory";
 import { useUpdateEnduranceProject } from "@/hooks/endurances/useUpdateEnduranceProject";
@@ -90,7 +91,10 @@ const EnduranceProjectLayout = ({ projectId }: Props) => {
 
     return (
         <ProjectLayout
-            project={project}
+            project={{
+                ...project,
+                type: "endurance" as typeof ProjectTypeSchema.Type,
+            }}
             isEdit={isEdit}
             setIsEdit={setIsEdit}
             onEdit={onEdit}
