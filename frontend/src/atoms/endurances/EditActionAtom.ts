@@ -6,8 +6,8 @@ import {
     EnduranceActionAmountSchema,
     EnduranceActionLabelSchema,
     EnduranceActionsSchema,
-    type EnduranceActions,
 } from "@/domain/endurances/tables/EnduranceActions";
+import type { EnduranceActionStatSchema } from "@/domain/endurances/types/EnduranceActionStat";
 
 type EditAction = Omit<UpdateEnduranceActionArgs, "id"> & {
     id: typeof EnduranceActionsSchema.Type.id;
@@ -23,7 +23,11 @@ const createEditActionAtoms = () => {
 
     const initActions = atom(
         null,
-        (_, set, initialActions: Chunk.Chunk<EnduranceActions>) => {
+        (
+            _,
+            set,
+            initialActions: Chunk.Chunk<typeof EnduranceActionStatSchema.Type>,
+        ) => {
             set(
                 editActions,
                 Chunk.map(initialActions, (action) => ({

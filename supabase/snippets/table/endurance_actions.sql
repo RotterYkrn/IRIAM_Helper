@@ -12,6 +12,7 @@ create table endurance_actions (
     amount integer not null check (amount > 0),
 
     created_at timestamptz not null default now(),
+    updated_at timestamptz not null default now(),
 
     constraint fk_action_project
         foreign key (project_id)

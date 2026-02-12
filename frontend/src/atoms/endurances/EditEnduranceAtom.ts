@@ -8,12 +8,13 @@ import { editTargetCountAtom } from "./EditTargetCountAtom";
 
 import type { UpdateEnduranceProjectArgs } from "@/domain/endurances/rpcs/UpdateEnduranceProject";
 import type { EnduranceActions } from "@/domain/endurances/tables/EnduranceActions";
+import type { EnduranceActionStatsViewSchema } from "@/domain/endurances/views/EnduranceActionStatsView";
 
 export type EditEnduranceState = Omit<
     UpdateEnduranceProjectArgs,
     "id" | "rescue_actions" | "sabotage_actions"
 > & {
-    rescue_actions: Chunk.Chunk<EnduranceActions>;
+    rescue_actions: typeof EnduranceActionStatsViewSchema.Type.rescue_actions;
     sabotage_actions: Chunk.Chunk<EnduranceActions>;
 };
 

@@ -16,7 +16,7 @@ export const fetchEnduranceActionStats = (projectId: ProjectIdEncoded) =>
                 supabase
                     .from("endurance_action_stats_view")
                     .select("*")
-                    .eq("id", id)
+                    .eq("project_id", id)
                     .single(),
             catch: (error) => error,
         }),

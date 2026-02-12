@@ -12,39 +12,44 @@ create type endurance_action_stat as (
 
 create or replace view endurance_action_stats_view as
 select
-    a.project_id,
+    p.id as project_id,
 
-    array_agg(
-        row(
-            a.id,
-            a.type,
-            a.position,
-            a.label,
-            a.amount,
-            (
-                select count(*)
-                from endurance_action_histories h
-                where h.action_id = a.id
-            )
-        )::endurance_action_stat
-    ) filter (where a.type = 'rescue')
-    as rescue_actions,
+    coalesce(
+        array_agg(
+            row(
+                a.id,
+                a.type,
+                a.position,
+                a.label,
+                a.amount,
+                (
+                    select count(*)
+                    from endurance_action_histories h
+                    where h.action_id = a.id
+                )
+            )::endurance_action_stat
+        ) filter (where a.type = 'rescue'),
+        '{}'::endurance_action_stat[]
+    ) as rescue_actions,
 
-    array_agg(
-        row(
-            a.id,
-            a.type,
-            a.position,
-            a.label,
-            a.amount,
-            (
-                select count(*)
-                from endurance_action_histories h
-                where h.action_id = a.id
-            )
-        )::endurance_action_stat
-    ) filter (where a.type = 'sabotage')
-    as sabotage_actions
+    coalesce(
+        array_agg(
+            row(
+                a.id,
+                a.type,
+                a.position,
+                a.label,
+                a.amount,
+                (
+                    select count(*)
+                    from endurance_action_histories h
+                    where h.action_id = a.id
+                )
+            )::endurance_action_stat
+        ) filter (where a.type = 'sabotage'),
+        '{}'::endurance_action_stat[]
+    ) as sabotage_actions
 
-from endurance_actions a
-group by a.project_id;
+from projects p
+left join endurance_actions a on a.project_id = p.id
+group by p.id;

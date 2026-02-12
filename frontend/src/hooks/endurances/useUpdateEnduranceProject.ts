@@ -23,6 +23,9 @@ export const useUpdateEnduranceProject = () => {
             queryClient.invalidateQueries({
                 queryKey: ["project", projectId],
             });
+            queryClient.invalidateQueries({
+                queryKey: ["actionStats", projectId],
+            });
         },
     });
 };

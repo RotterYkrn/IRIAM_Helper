@@ -78,7 +78,7 @@ begin
     foreach v_action in array p_rescue_actions
     loop
         insert into endurance_actions (
-            id, project_id, type, position, label, amount, created_at
+            id, project_id, type, position, label, amount, created_at, updated_at
         )
         values (
             gen_random_uuid(),
@@ -87,6 +87,7 @@ begin
             v_action.position,
             v_action.label,
             v_action.amount,
+            now(),
             now()
         );
     end loop;
@@ -95,7 +96,7 @@ begin
     foreach v_action in array p_sabotage_actions
     loop
         insert into endurance_actions (
-            id, project_id, type, position, label, amount, created_at
+            id, project_id, type, position, label, amount, created_at, updated_at
         )
         values (
             gen_random_uuid(),
@@ -104,6 +105,7 @@ begin
             v_action.position,
             v_action.label,
             v_action.amount,
+            now(),
             now()
         );
     end loop;

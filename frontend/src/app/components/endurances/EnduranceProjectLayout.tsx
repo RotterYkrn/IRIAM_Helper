@@ -23,7 +23,8 @@ type Props = {
 const EnduranceProjectLayout = ({ projectId }: Props) => {
     const [isEdit, setIsEdit] = useState(false);
 
-    const projectQuery = useFetchEnduranceProject(projectId);
+    const [projectQuery, actionStatsQuery] =
+        useFetchEnduranceProject(projectId);
     const updateEnduranceProject = useUpdateEnduranceProject();
     const logEnduranceActionHistory = useLogEnduranceActionHistory();
 
@@ -31,17 +32,18 @@ const EnduranceProjectLayout = ({ projectId }: Props) => {
     const initEditEndurance = useSetAtom(initEditEnduranceAtom);
     const disabled = !useAtomValue(isEnduranceValidAtom);
 
-    if (!projectQuery.data) {
+    if (!projectQuery.data || !actionStatsQuery.data) {
         return null;
     }
 
     const project = projectQuery.data;
+    const actionStats = actionStatsQuery.data;
 
     const onEdit = () => {
         initEditEndurance({
             title: project.title,
             target_count: project.target_count,
-            rescue_actions: Chunk.empty(),
+            rescue_actions: actionStats.rescue_actions,
             sabotage_actions: Chunk.empty(),
         });
         setIsEdit(true);
@@ -91,6 +93,11 @@ const EnduranceProjectLayout = ({ projectId }: Props) => {
                     targetCount={project.target_count}
                 />
                 <EnduranceView.IncrementButton onIncrement={onIncrement} />
+                <EnduranceView.ActionsField>
+                    <EnduranceView.RescueActionsField
+                        actions={actionStats.rescue_actions}
+                    />
+                </EnduranceView.ActionsField>
             </EnduranceView>
         </ProjectLayout>
     );

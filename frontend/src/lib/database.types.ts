@@ -71,6 +71,13 @@ export type Database = {
             foreignKeyName: "fk_endurance_histories_project"
             columns: ["project_id"]
             isOneToOne: false
+            referencedRelation: "endurance_action_stats_view"
+            referencedColumns: ["project_id"]
+          },
+          {
+            foreignKeyName: "fk_endurance_histories_project"
+            columns: ["project_id"]
+            isOneToOne: false
             referencedRelation: "endurance_project_view"
             referencedColumns: ["id"]
           },
@@ -92,6 +99,7 @@ export type Database = {
           position: number
           project_id: string
           type: string
+          updated_at: string
         }
         Insert: {
           amount: number
@@ -101,6 +109,7 @@ export type Database = {
           position: number
           project_id: string
           type: string
+          updated_at?: string
         }
         Update: {
           amount?: number
@@ -110,8 +119,16 @@ export type Database = {
           position?: number
           project_id?: string
           type?: string
+          updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "fk_action_project"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "endurance_action_stats_view"
+            referencedColumns: ["project_id"]
+          },
           {
             foreignKeyName: "fk_action_project"
             columns: ["project_id"]
@@ -164,6 +181,13 @@ export type Database = {
             foreignKeyName: "fk_endurance_progress_project"
             columns: ["project_id"]
             isOneToOne: true
+            referencedRelation: "endurance_action_stats_view"
+            referencedColumns: ["project_id"]
+          },
+          {
+            foreignKeyName: "fk_endurance_progress_project"
+            columns: ["project_id"]
+            isOneToOne: true
             referencedRelation: "endurance_project_view"
             referencedColumns: ["id"]
           },
@@ -199,6 +223,13 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "fk_endurance_settings_project"
+            columns: ["project_id"]
+            isOneToOne: true
+            referencedRelation: "endurance_action_stats_view"
+            referencedColumns: ["project_id"]
+          },
           {
             foreignKeyName: "fk_endurance_settings_project"
             columns: ["project_id"]
@@ -254,22 +285,7 @@ export type Database = {
             | Database["public"]["CompositeTypes"]["endurance_action_stat"][]
             | null
         }
-        Relationships: [
-          {
-            foreignKeyName: "fk_action_project"
-            columns: ["project_id"]
-            isOneToOne: false
-            referencedRelation: "endurance_project_view"
-            referencedColumns: ["id"]
-          },
-          {
-            foreignKeyName: "fk_action_project"
-            columns: ["project_id"]
-            isOneToOne: false
-            referencedRelation: "projects"
-            referencedColumns: ["id"]
-          },
-        ]
+        Relationships: []
       }
       endurance_project_view: {
         Row: {

@@ -1,10 +1,14 @@
-import { useAtomValue, useSetAtom } from "jotai";
-import { createContext, useContext } from "react";
+import { Chunk } from "effect";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
+import { createContext, useContext, useMemo } from "react";
 
+import { editRescueActionsAtoms } from "@/atoms/endurances/EditActionAtom";
 import {
     editTargetCountAtom,
     editTargetCountErrorAtom,
 } from "@/atoms/endurances/EditTargetCountAtom";
+import type { EnduranceActionsSchema } from "@/domain/endurances/tables/EnduranceActions";
+import type { EnduranceRescueActionChunkSchema } from "@/domain/endurances/views/EnduranceActionStatsView";
 import type { ProjectSchema } from "@/domain/projects/tables/Project";
 
 type EnduranceContextType = {
@@ -121,7 +125,163 @@ const IncrementButton = ({ onIncrement }: IncrementButtonProps) => {
     );
 };
 
+const ActionsField = ({ children }: { children: React.ReactNode }) => {
+    return <div>{children}</div>;
+};
+
+type RescueActionsFieldProps = {
+    actions: typeof EnduranceRescueActionChunkSchema.Type;
+};
+
+const RescueActionsField = ({ actions }: RescueActionsFieldProps) => {
+    const { isEdit } = useEndurance();
+    const state = useAtomValue(editRescueActionsAtoms.editActions);
+    const createAction = useSetAtom(editRescueActionsAtoms.createAction);
+
+    const onAddAction = () => {
+        createAction();
+    };
+
+    if (isEdit) {
+        return (
+            <div className="space-y-4 border p-4">
+                <div className="flex justify-between items-center">
+                    <h2>救済</h2>
+                    <button onClick={onAddAction}>＋追加</button>
+                </div>
+                {Chunk.map(state, (action) => (
+                    <Action
+                        key={action.id}
+                        id={action.id}
+                        label={action.label}
+                        amount={action.amount}
+                    />
+                ))}
+            </div>
+        );
+    }
+
+    if (state.length === 0) {
+        return null;
+    }
+
+    return (
+        <div className="space-y-4 border p-4">
+            <div className="flex justify-between items-center">
+                <h2>救済</h2>
+            </div>
+            {Chunk.map(actions, (action) => (
+                <Action
+                    key={action.id}
+                    id={action.id}
+                    label={action.label}
+                    amount={action.amount}
+                />
+            ))}
+        </div>
+    );
+};
+
+type ActionProps = {
+    id: typeof EnduranceActionsSchema.Type.id;
+    label: typeof EnduranceActionsSchema.Type.label;
+    amount: typeof EnduranceActionsSchema.Type.amount;
+};
+
+const Action = ({ id, label, amount }: ActionProps) => {
+    return (
+        <div className="border p-3 space-y-2">
+            <Label
+                id={id}
+                label={label}
+            />
+            <Amount
+                id={id}
+                amount={amount}
+            />
+            <DeleteActionButton id={id} />
+        </div>
+    );
+};
+
+const DeleteActionButton = ({
+    id,
+}: {
+    id: typeof EnduranceActionsSchema.Type.id;
+}) => {
+    const { isEdit } = useEndurance();
+    const deleteAction = useSetAtom(
+        useMemo(() => editRescueActionsAtoms.deleteAction(id), [id]),
+    );
+
+    if (!isEdit) {
+        return null;
+    }
+
+    return <button onClick={deleteAction}>削除</button>;
+};
+
+type LabelProps = {
+    id: typeof EnduranceActionsSchema.Type.id;
+    label: string;
+};
+
+const Label = ({ id, label }: LabelProps) => {
+    const { isEdit } = useEndurance();
+    const [state, setState] = useAtom(
+        useMemo(() => editRescueActionsAtoms.editLabel(id), [id]),
+    );
+
+    if (isEdit) {
+        return (
+            <>
+                <input
+                    defaultValue={state.value}
+                    placeholder="初見、ギフト名など"
+                    onChange={(e) => setState(e.target.value)}
+                />
+                {state.error && (
+                    <p className="text-red-600 text-sm">{state.error}</p>
+                )}
+            </>
+        );
+    }
+
+    return <div>{label}</div>;
+};
+
+type AmountProps = {
+    id: typeof EnduranceActionsSchema.Type.id;
+    amount: number;
+};
+
+const Amount = ({ id, amount }: AmountProps) => {
+    const { isEdit } = useEndurance();
+    const [state, setState] = useAtom(
+        useMemo(() => editRescueActionsAtoms.editAmount(id), [id]),
+    );
+
+    if (isEdit) {
+        return (
+            <>
+                <input
+                    defaultValue={state.value}
+                    onChange={(e) => setState(Number(e.target.value))}
+                />
+                {state.error && (
+                    <p className="text-red-600 text-sm">{state.error}</p>
+                )}
+            </>
+        );
+    }
+
+    return <div>{amount}</div>;
+};
+
 EnduranceView.Count = Count;
 EnduranceView.IncrementButton = IncrementButton;
+EnduranceView.ActionsField = ActionsField;
+EnduranceView.RescueActionsField = RescueActionsField;
+EnduranceView.Action = Action;
 
 export default EnduranceView;
