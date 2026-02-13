@@ -178,54 +178,13 @@ const RescueActionsField = ({
     onIncrement,
 }: RescueActionsFieldProps) => {
     const { isEdit } = useEndurance();
-    const state = useAtomValue(editRescueActionsAtoms.editActions);
     const createAction = useSetAtom(editRescueActionsAtoms.createAction);
 
     const onAddAction = () => {
         createAction();
     };
 
-    if (isEdit) {
-        return (
-            <div
-                className="flex flex-col rounded-xl space-y-4 border p-4
-                    border-red-500 bg-red-400 shadow-md"
-            >
-                <div className="flex justify-between items-center gap-4">
-                    <h2 className="text-lg font-bold">救済</h2>
-                    <button
-                        className="bg-red-200 hover:bg-red-300 px-2 py-1
-                            rounded-md border border-red-300"
-                        onClick={onAddAction}
-                    >
-                        ＋追加
-                    </button>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                    {Chunk.map(state, (action) => (
-                        <Action
-                            key={action.id}
-                            id={action.id}
-                            actionType={
-                                "rescue" as typeof EnduranceActionsSchema.Type.type
-                            }
-                            label={action.label}
-                            amount={action.amount}
-                            actionCount={
-                                0 as typeof EnduranceActionStatSchema.Type.action_times
-                            }
-                            onIncrement={onIncrement(
-                                action.id,
-                                "rescue" as typeof EnduranceActionsSchema.Type.type,
-                            )}
-                        />
-                    ))}
-                </div>
-            </div>
-        );
-    }
-
-    if (actions.length === 0) {
+    if (!isEdit && actions.length === 0) {
         return null;
     }
 
@@ -234,8 +193,17 @@ const RescueActionsField = ({
             className="flex flex-col rounded-xl space-y-4 border border-red-500
                 p-4 bg-red-400 shadow-md"
         >
-            <div className="flex justify-between items-center">
+            <div className="flex justify-between items-center gap-4">
                 <h2 className="text-lg font-bold">救済</h2>
+                {isEdit && (
+                    <button
+                        className="bg-red-200 hover:bg-red-300 px-2 py-1
+                            rounded-md border border-red-300"
+                        onClick={onAddAction}
+                    >
+                        ＋追加
+                    </button>
+                )}
             </div>
             <div className="grid grid-cols-2 gap-4">
                 {Chunk.map(actions, (action) => (
@@ -267,54 +235,13 @@ const SabotageActionsField = ({
     onIncrement,
 }: SabotageActionsFieldProps) => {
     const { isEdit } = useEndurance();
-    const state = useAtomValue(editSabotageActionsAtoms.editActions);
     const createAction = useSetAtom(editSabotageActionsAtoms.createAction);
 
     const onAddAction = () => {
         createAction();
     };
 
-    if (isEdit) {
-        return (
-            <div
-                className="flex flex-col rounded-xl space-y-4 border p-4
-                    border-blue-500 bg-blue-400 shadow-md"
-            >
-                <div className="flex justify-between items-center gap-4">
-                    <h2 className="text-lg font-bold">妨害</h2>
-                    <button
-                        className="bg-blue-200 hover:bg-blue-300 px-2 py-1
-                            rounded-md border border-blue-400"
-                        onClick={onAddAction}
-                    >
-                        ＋追加
-                    </button>
-                </div>
-                <div className="grid grid-cols-2 gap-4">
-                    {Chunk.map(state, (action) => (
-                        <Action
-                            key={action.id}
-                            id={action.id}
-                            actionType={
-                                "sabotage" as typeof EnduranceActionsSchema.Type.type
-                            }
-                            label={action.label}
-                            amount={action.amount}
-                            actionCount={
-                                0 as typeof EnduranceActionStatSchema.Type.action_times
-                            }
-                            onIncrement={onIncrement(
-                                action.id,
-                                "sabotage" as typeof EnduranceActionsSchema.Type.type,
-                            )}
-                        />
-                    ))}
-                </div>
-            </div>
-        );
-    }
-
-    if (actions.length === 0) {
+    if (!isEdit && actions.length === 0) {
         return null;
     }
 
@@ -323,8 +250,17 @@ const SabotageActionsField = ({
             className="flex flex-col rounded-xl space-y-4 border border-blue-500
                 p-4 bg-blue-400 shadow-md"
         >
-            <div className="flex justify-between items-center">
+            <div className="flex justify-between items-center gap-4">
                 <h2 className="text-lg font-bold">妨害</h2>
+                {isEdit && (
+                    <button
+                        className="bg-blue-200 hover:bg-blue-300 px-2 py-1
+                            rounded-md border border-blue-400"
+                        onClick={onAddAction}
+                    >
+                        ＋追加
+                    </button>
+                )}
             </div>
             <div className="grid grid-cols-2 gap-4">
                 {Chunk.map(actions, (action) => (
@@ -362,7 +298,7 @@ const Action = ({
 }: ActionProps) => {
     return (
         <div
-            className="flex flex-col items-center justify-center p-3 space-y-2
+            className="flex flex-col items-center justify-center p-2 gap-1
                 bg-white rounded-xl border border-slate-300 shadow-sm w-32"
         >
             <Settings
@@ -461,7 +397,7 @@ const Label = ({ id, actionType, label }: LabelProps) => {
         );
     }
 
-    return <div className="font-medium text-xl">{label}</div>;
+    return <div className="whitespace-nowrap font-medium">{label}</div>;
 };
 
 type AmountProps = {
@@ -500,7 +436,7 @@ const Amount = ({ id, actionType, amount }: AmountProps) => {
     }
 
     return (
-        <div className="font-mono text-xl">
+        <div className="font-mono whitespace-nowrap text-lg">
             {actionType === "rescue" ? `(+${amount})` : `(-${amount})`}
         </div>
     );

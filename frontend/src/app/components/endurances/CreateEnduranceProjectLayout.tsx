@@ -1,6 +1,6 @@
 import { Chunk } from "effect";
 import { useAtomValue, useSetAtom } from "jotai";
-import { useEffect, useEffectEvent } from "react";
+import { useEffect, useEffectEvent, useMemo } from "react";
 import { useNavigate } from "react-router-dom";
 
 import CreateProjectLayout from "../projects/CreateProjectLayout";
@@ -8,11 +8,16 @@ import CreateProjectLayout from "../projects/CreateProjectLayout";
 import EnduranceView from "./EnduranceView";
 
 import {
+    editRescueActionsAtoms,
+    editSabotageActionsAtoms,
+} from "@/atoms/endurances/EditActionAtom";
+import {
     editEnduranceAtom,
     initEditEnduranceAtom,
 } from "@/atoms/endurances/EditEnduranceAtom";
 import { isEnduranceValidAtom } from "@/atoms/endurances/isEditEnduranceValidAtom";
 import type { EnduranceSettingsSchema } from "@/domain/endurances/tables/EnduranceSettings";
+import type { EnduranceActionStatSchema } from "@/domain/endurances/types/EnduranceActionStat";
 import type { ProjectSchema } from "@/domain/projects/tables/Project";
 import { useCreateEnduranceProject } from "@/hooks/endurances/useCreateEnduranceProject";
 import { errorToast, successToast } from "@/utils/toast";
@@ -23,6 +28,11 @@ const CreateEnduranceProjectLayout = () => {
     const editState = useAtomValue(editEnduranceAtom);
     const initEditEndurance = useSetAtom(initEditEnduranceAtom);
     const disabled = !useAtomValue(isEnduranceValidAtom);
+
+    const editRescueActions = useAtomValue(editRescueActionsAtoms.editActions);
+    const editSabotageActions = useAtomValue(
+        editSabotageActionsAtoms.editActions,
+    );
 
     const createMutation = useCreateEnduranceProject();
 
@@ -53,6 +63,34 @@ const CreateEnduranceProjectLayout = () => {
         });
     };
 
+    const rescueActionsWithType = useMemo(
+        () =>
+            Chunk.map(editRescueActions, (action) => ({
+                ...action,
+                type: "rescue" as Extract<
+                    typeof EnduranceActionStatSchema.Type.type,
+                    "rescue"
+                >,
+                action_times:
+                    0 as typeof EnduranceActionStatSchema.Type.action_times,
+            })),
+        [editRescueActions],
+    );
+
+    const sabotageActionsWithType = useMemo(
+        () =>
+            Chunk.map(editSabotageActions, (action) => ({
+                ...action,
+                type: "sabotage" as Extract<
+                    typeof EnduranceActionStatSchema.Type.type,
+                    "sabotage"
+                >,
+                action_times:
+                    0 as typeof EnduranceActionStatSchema.Type.action_times,
+            })),
+        [editSabotageActions],
+    );
+
     return (
         <CreateProjectLayout
             disabled={disabled}
@@ -68,11 +106,11 @@ const CreateEnduranceProjectLayout = () => {
                 />
                 <EnduranceView.ActionsField>
                     <EnduranceView.RescueActionsField
-                        actions={Chunk.empty()}
+                        actions={rescueActionsWithType}
                         onIncrement={() => () => {}}
                     />
                     <EnduranceView.SabotageActionsField
-                        actions={Chunk.empty()}
+                        actions={sabotageActionsWithType}
                         onIncrement={() => () => {}}
                     />
                 </EnduranceView.ActionsField>

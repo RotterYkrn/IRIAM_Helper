@@ -19,8 +19,8 @@ create table endurance_actions (
         references projects(id)
         on delete cascade,
 
-    constraint unique_action_per_project
-        unique (project_id, label)
+    constraint unique_action_label_per_type_per_project
+        unique (project_id, type, label)
 );
 
 create index idx_endurance_actions_project_type_position

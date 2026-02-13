@@ -78,7 +78,7 @@ const createEditActionAtoms = () => {
                             error: action.errors.label,
                         }),
                         onNone: () => ({
-                            value: "",
+                            value: "" as typeof EnduranceActionsSchema.Type.label,
                             error: null,
                         }),
                     }),
@@ -128,7 +128,7 @@ const createEditActionAtoms = () => {
                             error: action.errors.amount,
                         }),
                         onNone: () => ({
-                            value: "",
+                            value: 1 as typeof EnduranceActionsSchema.Type.amount,
                             error: null,
                         }),
                     }),

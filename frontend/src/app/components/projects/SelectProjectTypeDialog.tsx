@@ -40,7 +40,7 @@ const SelectProjectTypeDialog = ({
                             className="rounded border p-3 hover:bg-gray-100"
                             onClick={() => handleSelect("endurance")}
                         >
-                            入室耐久
+                            カウント型耐久
                         </button>
 
                         <button
