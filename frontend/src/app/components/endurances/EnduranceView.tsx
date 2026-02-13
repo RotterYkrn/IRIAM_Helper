@@ -298,7 +298,7 @@ const Action = ({
 }: ActionProps) => {
     return (
         <div
-            className="flex flex-col items-center justify-center p-3 space-y-2
+            className="flex flex-col items-center justify-center p-2 gap-1
                 bg-white rounded-xl border border-slate-300 shadow-sm w-32"
         >
             <Settings
@@ -397,7 +397,7 @@ const Label = ({ id, actionType, label }: LabelProps) => {
         );
     }
 
-    return <div className="font-medium text-xl">{label}</div>;
+    return <div className="whitespace-nowrap font-medium">{label}</div>;
 };
 
 type AmountProps = {
@@ -436,7 +436,7 @@ const Amount = ({ id, actionType, amount }: AmountProps) => {
     }
 
     return (
-        <div className="font-mono text-xl">
+        <div className="font-mono whitespace-nowrap text-lg">
             {actionType === "rescue" ? `(+${amount})` : `(-${amount})`}
         </div>
     );
