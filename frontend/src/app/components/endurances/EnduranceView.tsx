@@ -193,7 +193,7 @@ const RescueActionsField = ({
             className="flex flex-col rounded-xl space-y-4 border border-red-500
                 p-4 bg-red-400 shadow-md"
         >
-            <div className="flex justify-between items-center">
+            <div className="flex justify-between items-center gap-4">
                 <h2 className="text-lg font-bold">救済</h2>
                 {isEdit && (
                     <button
@@ -250,7 +250,7 @@ const SabotageActionsField = ({
             className="flex flex-col rounded-xl space-y-4 border border-blue-500
                 p-4 bg-blue-400 shadow-md"
         >
-            <div className="flex justify-between items-center">
+            <div className="flex justify-between items-center gap-4">
                 <h2 className="text-lg font-bold">妨害</h2>
                 {isEdit && (
                     <button
