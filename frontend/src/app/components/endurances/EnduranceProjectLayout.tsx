@@ -113,12 +113,14 @@ const EnduranceProjectLayout = ({ projectId }: Props) => {
                 <EnduranceView.ActionsField>
                     <EnduranceView.RescueActionsField
                         actions={actionStats.rescue_actions}
+                        rescueCount={project.rescue_count}
                         onIncrement={onIncrement(
                             "rescue" as typeof EnduranceActionsSchema.Type.type,
                         )}
                     />
                     <EnduranceView.SabotageActionsField
                         actions={actionStats.sabotage_actions}
+                        sabotageCount={project.sabotage_count}
                         onIncrement={onIncrement(
                             "sabotage" as typeof EnduranceActionsSchema.Type.type,
                         )}

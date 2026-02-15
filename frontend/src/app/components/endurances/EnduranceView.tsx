@@ -13,10 +13,7 @@ import {
 import type { EnduranceActionsSchema } from "@/domain/endurances/tables/EnduranceActions";
 import type { EnduranceProgressSchema } from "@/domain/endurances/tables/EnduranceProgress";
 import type { EnduranceActionStatSchema } from "@/domain/endurances/types/EnduranceActionStat";
-import type {
-    EnduranceRescueActionChunkSchema,
-    EnduranceSabotageActionChunkSchema,
-} from "@/domain/endurances/views/EnduranceActionStatsView";
+import type { EnduranceActionStatsViewSchema } from "@/domain/endurances/views/EnduranceActionStatsView";
 import type { ProjectSchema } from "@/domain/projects/tables/Project";
 
 type EnduranceContextType = {
@@ -166,15 +163,17 @@ const ActionsField = ({ children }: { children: React.ReactNode }) => {
 };
 
 type RescueActionsFieldProps = {
-    actions: typeof EnduranceRescueActionChunkSchema.Type;
+    actions: typeof EnduranceActionStatsViewSchema.Type.rescue_actions;
+    rescueCount: typeof EnduranceProgressSchema.Type.rescue_count;
     onIncrement: (id: typeof EnduranceActionsSchema.Type.id) => void;
 };
 
 const RescueActionsField = ({
     actions,
+    rescueCount,
     onIncrement,
 }: RescueActionsFieldProps) => {
-    const { isEdit } = useEndurance();
+    const { projectStatus, isEdit } = useEndurance();
     const state = useAtomValue(editRescueActionsAtoms.editActions);
     const createAction = useSetAtom(editRescueActionsAtoms.createAction);
 
@@ -201,6 +200,14 @@ const RescueActionsField = ({
                     >
                         ＋追加
                     </button>
+                )}
+                {projectStatus !== "scheduled" && (
+                    <p
+                        className="flex items-center justify-center font-mono
+                            text-2xl"
+                    >
+                        +{rescueCount}
+                    </p>
                 )}
             </div>
             <div className="grid grid-cols-2 gap-4">
@@ -237,15 +244,17 @@ const RescueActionsField = ({
 };
 
 type SabotageActionsFieldProps = {
-    actions: typeof EnduranceSabotageActionChunkSchema.Type;
+    actions: typeof EnduranceActionStatsViewSchema.Type.sabotage_actions;
+    sabotageCount: typeof EnduranceProgressSchema.Type.sabotage_count;
     onIncrement: (id: typeof EnduranceActionsSchema.Type.id) => void;
 };
 
 const SabotageActionsField = ({
     actions,
+    sabotageCount,
     onIncrement,
 }: SabotageActionsFieldProps) => {
-    const { isEdit } = useEndurance();
+    const { projectStatus, isEdit } = useEndurance();
     const state = useAtomValue(editSabotageActionsAtoms.editActions);
     const createAction = useSetAtom(editSabotageActionsAtoms.createAction);
 
@@ -272,6 +281,14 @@ const SabotageActionsField = ({
                     >
                         ＋追加
                     </button>
+                )}
+                {projectStatus !== "scheduled" && (
+                    <p
+                        className="flex items-center justify-center font-mono
+                            text-2xl"
+                    >
+                        -{sabotageCount}
+                    </p>
                 )}
             </div>
             <div className="grid grid-cols-2 gap-4">

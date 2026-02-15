@@ -12,6 +12,7 @@ import {
     initEditEnduranceAtom,
 } from "@/atoms/endurances/EditEnduranceAtom";
 import { isEnduranceValidAtom } from "@/atoms/endurances/isEditEnduranceValidAtom";
+import type { EnduranceProgressSchema } from "@/domain/endurances/tables/EnduranceProgress";
 import type { EnduranceSettingsSchema } from "@/domain/endurances/tables/EnduranceSettings";
 import type { ProjectSchema } from "@/domain/projects/tables/Project";
 import { useCreateEnduranceProject } from "@/hooks/endurances/useCreateEnduranceProject";
@@ -69,10 +70,16 @@ const CreateEnduranceProjectLayout = () => {
                 <EnduranceView.ActionsField>
                     <EnduranceView.RescueActionsField
                         actions={Chunk.empty()}
+                        rescueCount={
+                            0 as typeof EnduranceProgressSchema.Type.rescue_count
+                        }
                         onIncrement={() => () => {}}
                     />
                     <EnduranceView.SabotageActionsField
                         actions={Chunk.empty()}
+                        sabotageCount={
+                            0 as typeof EnduranceProgressSchema.Type.sabotage_count
+                        }
                         onIncrement={() => () => {}}
                     />
                 </EnduranceView.ActionsField>
