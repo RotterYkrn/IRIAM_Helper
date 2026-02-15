@@ -77,11 +77,8 @@ const EnduranceProjectLayout = ({ projectId }: Props) => {
     };
 
     const onIncrement =
-        (
-            actionId: typeof EnduranceActionsSchema.Type.id,
-            actionType: typeof EnduranceActionsSchema.Type.type,
-        ) =>
-        () => {
+        (actionType: typeof EnduranceActionsSchema.Type.type) =>
+        (actionId: typeof EnduranceActionsSchema.Type.id) => {
             logEnduranceActionHistory.mutate({
                 p_project_id: project.id,
                 p_action_history_type: actionType,
@@ -116,11 +113,17 @@ const EnduranceProjectLayout = ({ projectId }: Props) => {
                 <EnduranceView.ActionsField>
                     <EnduranceView.RescueActionsField
                         actions={actionStats.rescue_actions}
-                        onIncrement={onIncrement}
+                        rescueCount={project.rescue_count}
+                        onIncrement={onIncrement(
+                            "rescue" as typeof EnduranceActionsSchema.Type.type,
+                        )}
                     />
                     <EnduranceView.SabotageActionsField
                         actions={actionStats.sabotage_actions}
-                        onIncrement={onIncrement}
+                        sabotageCount={project.sabotage_count}
+                        onIncrement={onIncrement(
+                            "sabotage" as typeof EnduranceActionsSchema.Type.type,
+                        )}
                     />
                 </EnduranceView.ActionsField>
             </EnduranceView>
