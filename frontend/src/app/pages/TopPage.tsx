@@ -1,5 +1,12 @@
+import ProjectTopLayout from "../components/projects/ProjectTopLayout";
+
 const TopPage = () => {
-    return <div>TopPage（仮）</div>;
+    return (
+        <div className="flex flex-col items-center justify-center space-y-4">
+            <h1 className="text-3xl font-bold">企画一覧</h1>
+            <ProjectTopLayout />
+        </div>
+    );
 };
 
 export default TopPage;
