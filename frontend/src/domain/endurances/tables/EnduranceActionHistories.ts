@@ -29,12 +29,17 @@ export const EnduranceActionHistoryActionIdSchema = Schema.NullOr(
     EnduranceActionIdSchema,
 );
 
+export const EnduranceActionHistoryIsReversalSchema = Schema.Boolean.pipe(
+    Schema.brand("EnduranceActionHistoryIsReversal"),
+);
+
 export type EnduranceActionHistories = Readonly<{
     id: typeof EnduranceActionHistoryIdSchema.Type;
     project_id: typeof ProjectSchema.Type.id;
     action_id: typeof EnduranceActionHistoryActionIdSchema.Type;
     action_type: typeof EnduranceActionHistoryTypeSchema.Type;
     action_amount: typeof EnduranceActionsSchema.Type.amount;
+    is_reversal: typeof EnduranceActionHistoryIsReversalSchema.Type;
     created_at: Date;
 }>;
 
@@ -47,5 +52,6 @@ export const EnduranceActionHistoriesSchema: Schema.Schema<
     action_id: EnduranceActionHistoryActionIdSchema,
     action_type: EnduranceActionHistoryTypeSchema,
     action_amount: EnduranceActionAmountSchema,
+    is_reversal: EnduranceActionHistoryIsReversalSchema,
     created_at: Schema.Date,
 });

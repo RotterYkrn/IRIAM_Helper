@@ -3,6 +3,7 @@ DROP function if exists log_endurance_action_history cascade;
 create function log_endurance_action_history(
     p_project_id uuid,
     p_action_history_type text,
+    p_is_reversal boolean,
     p_action_id uuid default null
 )
 returns uuid
@@ -58,6 +59,7 @@ begin
         action_id,
         action_type,
         action_amount,
+        is_reversal,
         created_at
     )
     values (
@@ -68,8 +70,13 @@ begin
         end,
         p_action_history_type,
         v_amount,
+        p_is_reversal,
         now()
     );
+
+    if p_is_reversal = true then
+        v_amount = -v_amount;
+    end if;
 
     -----------------------------
     -- 4) progress を更新（あなたのロジック）
