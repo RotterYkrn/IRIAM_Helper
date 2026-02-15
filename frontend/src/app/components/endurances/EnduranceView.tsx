@@ -1,4 +1,4 @@
-import { Chunk } from "effect";
+import { Chunk, Schema } from "effect";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { createContext, useContext, useMemo } from "react";
 
@@ -10,9 +10,15 @@ import {
     editTargetCountAtom,
     editTargetCountErrorAtom,
 } from "@/atoms/endurances/EditTargetCountAtom";
-import type { EnduranceActionsSchema } from "@/domain/endurances/tables/EnduranceActions";
-import type { EnduranceProgressSchema } from "@/domain/endurances/tables/EnduranceProgress";
-import type { EnduranceActionStatSchema } from "@/domain/endurances/types/EnduranceActionStat";
+import {
+    EnduranceActionTypeSchema,
+    type EnduranceActionsSchema,
+} from "@/domain/endurances/tables/EnduranceActions";
+import { type EnduranceProgressSchema } from "@/domain/endurances/tables/EnduranceProgress";
+import {
+    EnduranceActionTimesSchema,
+    type EnduranceActionStatSchema,
+} from "@/domain/endurances/types/EnduranceActionStat";
 import type { EnduranceActionStatsViewSchema } from "@/domain/endurances/views/EnduranceActionStatsView";
 import type { ProjectSchema } from "@/domain/projects/tables/Project";
 
@@ -216,14 +222,14 @@ const RescueActionsField = ({
                           <Action
                               key={action.id}
                               id={action.id}
-                              actionType={
-                                  "rescue" as typeof EnduranceActionsSchema.Type.type
-                              }
+                              actionType={Schema.decodeSync(
+                                  EnduranceActionTypeSchema,
+                              )("rescue")}
                               label={action.label}
                               amount={action.amount}
-                              actionCount={
-                                  0 as typeof EnduranceActionStatSchema.Type.action_times
-                              }
+                              actionCount={Schema.decodeSync(
+                                  EnduranceActionTimesSchema,
+                              )(0)}
                               onIncrement={() => {}}
                           />
                       ))
@@ -297,14 +303,14 @@ const SabotageActionsField = ({
                           <Action
                               key={action.id}
                               id={action.id}
-                              actionType={
-                                  "sabotage" as typeof EnduranceActionsSchema.Type.type
-                              }
+                              actionType={Schema.decodeSync(
+                                  EnduranceActionTypeSchema,
+                              )("sabotage")}
                               label={action.label}
                               amount={action.amount}
-                              actionCount={
-                                  0 as typeof EnduranceActionStatSchema.Type.action_times
-                              }
+                              actionCount={Schema.decodeSync(
+                                  EnduranceActionTimesSchema,
+                              )(0)}
                               onIncrement={() => {}}
                           />
                       ))

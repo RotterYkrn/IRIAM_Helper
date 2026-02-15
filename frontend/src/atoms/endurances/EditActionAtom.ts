@@ -4,7 +4,9 @@ import { atom } from "jotai";
 import type { UpdateEnduranceActionArgs } from "@/domain/endurances/rpcs/UpdateEnduranceProject";
 import {
     EnduranceActionAmountSchema,
+    EnduranceActionIdSchema,
     EnduranceActionLabelSchema,
+    EnduranceActionPositionSchema,
     EnduranceActionsSchema,
 } from "@/domain/endurances/tables/EnduranceActions";
 import type { EnduranceActionStatSchema } from "@/domain/endurances/types/EnduranceActionStat";
@@ -45,14 +47,17 @@ const createEditActionAtoms = () => {
     const createAction = atom(null, (_, set) => {
         set(editActions, (prev) =>
             Chunk.append(prev, {
-                id: crypto.randomUUID() as typeof EnduranceActionsSchema.Type.id,
+                id: Schema.decodeSync(EnduranceActionIdSchema)(
+                    crypto.randomUUID(),
+                ),
                 isNew: true,
-                position:
-                    prev.length as typeof EnduranceActionsSchema.Type.position,
+                position: Schema.decodeSync(EnduranceActionPositionSchema)(
+                    prev.length,
+                ),
                 label: "" as typeof EnduranceActionsSchema.Type.label,
-                amount: 1 as typeof EnduranceActionsSchema.Type.amount,
+                amount: Schema.decodeSync(EnduranceActionAmountSchema)(1),
                 errors: {
-                    label: null,
+                    label: "",
                     amount: null,
                 },
             }),
@@ -62,7 +67,16 @@ const createEditActionAtoms = () => {
     const deleteAction = (id: typeof EnduranceActionsSchema.Type.id) =>
         atom(null, (_, set) => {
             set(editActions, (prev) =>
-                Chunk.filter(prev, (action) => action.id !== id),
+                pipe(
+                    prev,
+                    Chunk.filter((action) => action.id !== id),
+                    Chunk.map((action, i) => ({
+                        ...action,
+                        position: Schema.decodeSync(
+                            EnduranceActionPositionSchema,
+                        )(i),
+                    })),
+                ),
             );
         });
 
@@ -128,7 +142,9 @@ const createEditActionAtoms = () => {
                             error: action.errors.amount,
                         }),
                         onNone: () => ({
-                            value: 1 as typeof EnduranceActionsSchema.Type.amount,
+                            value: Schema.decodeSync(
+                                EnduranceActionAmountSchema,
+                            )(1),
                             error: null,
                         }),
                     }),
@@ -170,6 +186,17 @@ const createEditActionAtoms = () => {
             },
         );
 
+    const isValid = atom((get) =>
+        pipe(
+            get(editActions),
+            Chunk.every(
+                (action) =>
+                    action.errors.label === null &&
+                    action.errors.amount === null,
+            ),
+        ),
+    );
+
     return {
         editActions,
         initActions,
@@ -177,6 +204,7 @@ const createEditActionAtoms = () => {
         deleteAction,
         editLabel,
         editAmount,
+        isValid,
     };
 };
 

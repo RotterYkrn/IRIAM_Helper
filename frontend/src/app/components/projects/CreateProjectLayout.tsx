@@ -1,8 +1,9 @@
+import { Schema } from "effect";
 import { useNavigate } from "react-router-dom";
 
 import ProjectView from "./ProjectView";
 
-import type { ProjectSchema } from "@/domain/projects/tables/Project";
+import { ProjectStatusSchema } from "@/domain/projects/tables/Project";
 
 type CreateProjectLayoutProps = {
     children: React.ReactNode;
@@ -23,7 +24,7 @@ const CreateProjectLayout = ({
 
     return (
         <ProjectView
-            projectStatus={"scheduled" as typeof ProjectSchema.Type.status}
+            projectStatus={Schema.decodeSync(ProjectStatusSchema)("scheduled")}
             isEdit={true}
         >
             <ProjectView.Action pageName={"企画新規作成"}>

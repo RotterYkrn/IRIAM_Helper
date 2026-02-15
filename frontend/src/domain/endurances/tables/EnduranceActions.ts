@@ -48,6 +48,7 @@ export type EnduranceActions = Readonly<{
     label: typeof EnduranceActionLabelSchema.Type;
     amount: typeof EnduranceActionAmountSchema.Type;
     created_at: Date;
+    updated_at: Date;
 }>;
 
 export const EnduranceActionsSchema: Schema.Schema<
@@ -61,4 +62,5 @@ export const EnduranceActionsSchema: Schema.Schema<
     label: EnduranceActionLabelSchema,
     amount: EnduranceActionAmountSchema,
     created_at: Schema.Date,
+    updated_at: Schema.Date,
 });

@@ -5,7 +5,7 @@ import type { ProjectIdEncoded } from "@/domain/projects/tables/Project";
 import { fetchEnduranceActionStats } from "@/use-cases/endurances/fetchEnduranceActionStats";
 import { fetchEnduranceProject } from "@/use-cases/endurances/fetchEnduranceProject";
 
-export const useFetchEnduranceData = (projectId: ProjectIdEncoded) => {
+export const useFetchEnduranceProject = (projectId: ProjectIdEncoded) => {
     return useQueries({
         queries: [
             {
