@@ -168,15 +168,30 @@ const ActionsField = ({ children }: { children: React.ReactNode }) => {
     return <div className="flex flex-row gap-4">{children}</div>;
 };
 
+const ActionColumnClass = (actionLength: number) => {
+    switch (actionLength) {
+        case 1:
+            return "grid-cols-1";
+        case 2:
+            return "grid-cols-2";
+        case 3:
+            return "grid-cols-3";
+        default:
+            return "grid-cols-4";
+    }
+};
+
 type RescueActionsFieldProps = {
     actions: typeof EnduranceActionStatsViewSchema.Type.rescue_actions;
     rescueCount: typeof EnduranceProgressSchema.Type.rescue_count;
+    isWide: boolean;
     onIncrement: (id: typeof EnduranceActionsSchema.Type.id) => void;
 };
 
 const RescueActionsField = ({
     actions,
     rescueCount,
+    isWide,
     onIncrement,
 }: RescueActionsFieldProps) => {
     const { projectStatus, isEdit } = useEndurance();
@@ -216,7 +231,10 @@ const RescueActionsField = ({
                     </p>
                 )}
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div
+                className={`grid gap-4
+                    ${isWide ? ActionColumnClass(actions.length) : "grid-cols-2"}`}
+            >
                 {isEdit
                     ? Chunk.map(state, (action) => (
                           <Action
@@ -252,12 +270,14 @@ const RescueActionsField = ({
 type SabotageActionsFieldProps = {
     actions: typeof EnduranceActionStatsViewSchema.Type.sabotage_actions;
     sabotageCount: typeof EnduranceProgressSchema.Type.sabotage_count;
+    isWide: boolean;
     onIncrement: (id: typeof EnduranceActionsSchema.Type.id) => void;
 };
 
 const SabotageActionsField = ({
     actions,
     sabotageCount,
+    isWide,
     onIncrement,
 }: SabotageActionsFieldProps) => {
     const { projectStatus, isEdit } = useEndurance();
@@ -297,7 +317,10 @@ const SabotageActionsField = ({
                     </p>
                 )}
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div
+                className={`grid gap-4
+                    ${isWide ? ActionColumnClass(actions.length) : "grid-cols-2"}`}
+            >
                 {isEdit
                     ? Chunk.map(state, (action) => (
                           <Action
