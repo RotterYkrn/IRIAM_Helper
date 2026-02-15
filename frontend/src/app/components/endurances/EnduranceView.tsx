@@ -167,10 +167,7 @@ const ActionsField = ({ children }: { children: React.ReactNode }) => {
 
 type RescueActionsFieldProps = {
     actions: typeof EnduranceRescueActionChunkSchema.Type;
-    onIncrement: (
-        id: typeof EnduranceActionsSchema.Type.id,
-        actionType: typeof EnduranceActionsSchema.Type.type,
-    ) => () => void;
+    onIncrement: (id: typeof EnduranceActionsSchema.Type.id) => void;
 };
 
 const RescueActionsField = ({
@@ -178,6 +175,7 @@ const RescueActionsField = ({
     onIncrement,
 }: RescueActionsFieldProps) => {
     const { isEdit } = useEndurance();
+    const state = useAtomValue(editRescueActionsAtoms.editActions);
     const createAction = useSetAtom(editRescueActionsAtoms.createAction);
 
     const onAddAction = () => {
@@ -206,17 +204,33 @@ const RescueActionsField = ({
                 )}
             </div>
             <div className="grid grid-cols-2 gap-4">
-                {Chunk.map(actions, (action) => (
-                    <Action
-                        key={action.id}
-                        id={action.id}
-                        actionType={action.type}
-                        label={action.label}
-                        amount={action.amount}
-                        actionCount={action.action_times}
-                        onIncrement={onIncrement(action.id, action.type)}
-                    />
-                ))}
+                {isEdit
+                    ? Chunk.map(state, (action) => (
+                          <Action
+                              key={action.id}
+                              id={action.id}
+                              actionType={
+                                  "rescue" as typeof EnduranceActionsSchema.Type.type
+                              }
+                              label={action.label}
+                              amount={action.amount}
+                              actionCount={
+                                  0 as typeof EnduranceActionStatSchema.Type.action_times
+                              }
+                              onIncrement={() => {}}
+                          />
+                      ))
+                    : Chunk.map(actions, (action) => (
+                          <Action
+                              key={action.id}
+                              id={action.id}
+                              actionType={action.type}
+                              label={action.label}
+                              amount={action.amount}
+                              actionCount={action.action_times}
+                              onIncrement={() => onIncrement(action.id)}
+                          />
+                      ))}
             </div>
         </div>
     );
@@ -224,10 +238,7 @@ const RescueActionsField = ({
 
 type SabotageActionsFieldProps = {
     actions: typeof EnduranceSabotageActionChunkSchema.Type;
-    onIncrement: (
-        id: typeof EnduranceActionsSchema.Type.id,
-        actionType: typeof EnduranceActionsSchema.Type.type,
-    ) => () => void;
+    onIncrement: (id: typeof EnduranceActionsSchema.Type.id) => void;
 };
 
 const SabotageActionsField = ({
@@ -235,6 +246,7 @@ const SabotageActionsField = ({
     onIncrement,
 }: SabotageActionsFieldProps) => {
     const { isEdit } = useEndurance();
+    const state = useAtomValue(editSabotageActionsAtoms.editActions);
     const createAction = useSetAtom(editSabotageActionsAtoms.createAction);
 
     const onAddAction = () => {
@@ -263,17 +275,33 @@ const SabotageActionsField = ({
                 )}
             </div>
             <div className="grid grid-cols-2 gap-4">
-                {Chunk.map(actions, (action) => (
-                    <Action
-                        key={action.id}
-                        id={action.id}
-                        actionType={action.type}
-                        label={action.label}
-                        amount={action.amount}
-                        actionCount={action.action_times}
-                        onIncrement={onIncrement(action.id, action.type)}
-                    />
-                ))}
+                {isEdit
+                    ? Chunk.map(state, (action) => (
+                          <Action
+                              key={action.id}
+                              id={action.id}
+                              actionType={
+                                  "sabotage" as typeof EnduranceActionsSchema.Type.type
+                              }
+                              label={action.label}
+                              amount={action.amount}
+                              actionCount={
+                                  0 as typeof EnduranceActionStatSchema.Type.action_times
+                              }
+                              onIncrement={() => {}}
+                          />
+                      ))
+                    : Chunk.map(actions, (action) => (
+                          <Action
+                              key={action.id}
+                              id={action.id}
+                              actionType={action.type}
+                              label={action.label}
+                              amount={action.amount}
+                              actionCount={action.action_times}
+                              onIncrement={() => onIncrement(action.id)}
+                          />
+                      ))}
             </div>
         </div>
     );
