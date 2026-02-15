@@ -40,7 +40,23 @@ const SelectProjectTypeDialog = ({
                             className="rounded border p-3 hover:bg-gray-100"
                             onClick={() => handleSelect("endurance")}
                         >
-                            カウント型耐久
+                            カウント型耐久（単体）
+                        </button>
+
+                        <button
+                            className="rounded border p-3 bg-gray-500"
+                            disabled={true}
+                            onClick={() => handleSelect("multi-endurance")}
+                        >
+                            カウント型耐久（複数）（準備中）
+                        </button>
+
+                        <button
+                            className="rounded border p-3 bg-gray-500"
+                            disabled={true}
+                            onClick={() => {}}
+                        >
+                            その他耐久（準備中）
                         </button>
 
                         <button
