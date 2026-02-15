@@ -233,7 +233,7 @@ const RescueActionsField = ({
             </div>
             <div
                 className={`grid gap-4
-                    ${isWide ? ActionColumnClass(actions.length) : "grid-cols-2"}`}
+                    ${isWide && !isEdit ? ActionColumnClass(actions.length) : "grid-cols-2"}`}
             >
                 {isEdit
                     ? Chunk.map(state, (action) => (
@@ -319,7 +319,7 @@ const SabotageActionsField = ({
             </div>
             <div
                 className={`grid gap-4
-                    ${isWide ? ActionColumnClass(actions.length) : "grid-cols-2"}`}
+                    ${isWide && !isEdit ? ActionColumnClass(actions.length) : "grid-cols-2"}`}
             >
                 {isEdit
                     ? Chunk.map(state, (action) => (
