@@ -11,12 +11,13 @@ on:
 jobs:
   deploy:
     runs-on: ubuntu-latest
-
-    # ブランチによって環境変数を切り替える
+    # ブランチによって参照するEnvironmentを切り替える
+    environment: ${{ github.ref_name == 'main' && 'production' || 'staging' }}
+    
     env:
       SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
-      PROJECT_ID: ${{ github.ref_name == 'main' && secrets.PROD_PROJECT_ID || secrets.STAGING_PROJECT_ID }}
-      DB_PASSWORD: ${{ github.ref_name == 'main' && secrets.PROD_DB_PASSWORD || secrets.STAGING_DB_PASSWORD }}
+      PROJECT_ID: ${{ secrets.SUPABASE_PROJECT_ID }}
+      DB_PASSWORD: ${{ secrets.SUPABASE_DB_PASSWORD }}
 
     steps:
       - name: Checkout code
