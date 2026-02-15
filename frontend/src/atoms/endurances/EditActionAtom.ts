@@ -62,7 +62,15 @@ const createEditActionAtoms = () => {
     const deleteAction = (id: typeof EnduranceActionsSchema.Type.id) =>
         atom(null, (_, set) => {
             set(editActions, (prev) =>
-                Chunk.filter(prev, (action) => action.id !== id),
+                pipe(
+                    prev,
+                    Chunk.filter((action) => action.id !== id),
+                    Chunk.map((action, i) => ({
+                        ...action,
+                        position:
+                            i as typeof EnduranceActionsSchema.Type.position,
+                    })),
+                ),
             );
         });
 
