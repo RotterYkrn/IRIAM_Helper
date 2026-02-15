@@ -52,7 +52,7 @@ const createEditActionAtoms = () => {
                 label: "" as typeof EnduranceActionsSchema.Type.label,
                 amount: 1 as typeof EnduranceActionsSchema.Type.amount,
                 errors: {
-                    label: null,
+                    label: "",
                     amount: null,
                 },
             }),
@@ -178,6 +178,17 @@ const createEditActionAtoms = () => {
             },
         );
 
+    const isValid = atom((get) =>
+        pipe(
+            get(editActions),
+            Chunk.every(
+                (action) =>
+                    action.errors.label === null &&
+                    action.errors.amount === null,
+            ),
+        ),
+    );
+
     return {
         editActions,
         initActions,
@@ -185,6 +196,7 @@ const createEditActionAtoms = () => {
         deleteAction,
         editLabel,
         editAmount,
+        isValid,
     };
 };
 
