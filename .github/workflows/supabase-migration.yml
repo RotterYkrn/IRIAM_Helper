@@ -1,0 +1,34 @@
+name: Supabase Migration CI/CD
+
+on:
+  push:
+    branches:
+      - main
+      - develop
+    paths:
+      - 'supabase/migrations/**' # マイグレーションファイルに変更があった時のみ実行
+
+jobs:
+  deploy:
+    runs-on: ubuntu-latest
+
+    # ブランチによって環境変数を切り替える
+    env:
+      SUPABASE_ACCESS_TOKEN: ${{ secrets.SUPABASE_ACCESS_TOKEN }}
+      PROJECT_ID: ${{ github.ref_name == 'main' && secrets.PROD_PROJECT_ID || secrets.STAGING_PROJECT_ID }}
+      DB_PASSWORD: ${{ github.ref_name == 'main' && secrets.PROD_DB_PASSWORD || secrets.STAGING_DB_PASSWORD }}
+
+    steps:
+      - name: Checkout code
+        uses: actions/checkout@v4
+
+      - name: Setup Supabase CLI
+        uses: supabase/setup-cli@v1
+        with:
+          version: latest
+
+      - name: Link Supabase Project
+        run: supabase link --project-ref $PROJECT_ID --password $DB_PASSWORD
+
+      - name: Push Migrations
+        run: supabase db push
