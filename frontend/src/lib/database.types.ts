@@ -407,6 +407,7 @@ export type Database = {
         Args: {
           p_action_history_type: string
           p_action_id?: string
+          p_is_reversal: boolean
           p_project_id: string
         }
         Returns: string
