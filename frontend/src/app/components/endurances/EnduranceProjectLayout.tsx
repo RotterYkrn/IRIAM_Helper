@@ -80,6 +80,9 @@ const EnduranceProjectLayout = ({ projectId }: Props) => {
         });
     };
 
+    const isWideRescue = actionStats.sabotage_actions.length === 0;
+    const isWideSabotage = actionStats.rescue_actions.length === 0;
+
     const onIncrement =
         (actionType: typeof EnduranceActionsSchema.Type.type) =>
         (actionId: typeof EnduranceActionsSchema.Type.id) => {
@@ -118,6 +121,7 @@ const EnduranceProjectLayout = ({ projectId }: Props) => {
                     <EnduranceView.RescueActionsField
                         actions={actionStats.rescue_actions}
                         rescueCount={project.rescue_count}
+                        isWide={isWideRescue}
                         onIncrement={onIncrement(
                             Schema.decodeSync(EnduranceActionTypeSchema)(
                                 "rescue",
@@ -127,6 +131,7 @@ const EnduranceProjectLayout = ({ projectId }: Props) => {
                     <EnduranceView.SabotageActionsField
                         actions={actionStats.sabotage_actions}
                         sabotageCount={project.sabotage_count}
+                        isWide={isWideSabotage}
                         onIncrement={onIncrement(
                             Schema.decodeSync(EnduranceActionTypeSchema)(
                                 "sabotage",
