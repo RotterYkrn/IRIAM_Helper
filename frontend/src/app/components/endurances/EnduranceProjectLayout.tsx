@@ -1,3 +1,4 @@
+import { Schema } from "effect";
 import { useAtomValue, useSetAtom } from "jotai";
 import { useState } from "react";
 
@@ -10,9 +11,12 @@ import {
     initEditEnduranceAtom,
 } from "@/atoms/endurances/EditEnduranceAtom";
 import { isEnduranceValidAtom } from "@/atoms/endurances/isEditEnduranceValidAtom";
-import type { EnduranceActionsSchema } from "@/domain/endurances/tables/EnduranceActions";
-import type { ProjectTypeSchema } from "@/domain/projects/tables/Project";
-import { useFetchEnduranceData as useFetchEnduranceProject } from "@/hooks/endurances/useFetchEnduranceProject";
+import {
+    EnduranceActionTypeSchema,
+    type EnduranceActionsSchema,
+} from "@/domain/endurances/tables/EnduranceActions";
+import { ProjectTypeSchema } from "@/domain/projects/tables/Project";
+import { useFetchEnduranceProject } from "@/hooks/endurances/useFetchEnduranceProject";
 import { useLogEnduranceActionHistory } from "@/hooks/endurances/useLogEnduranceActionHistory";
 import { useUpdateEnduranceProject } from "@/hooks/endurances/useUpdateEnduranceProject";
 import { errorToast, successToast } from "@/utils/toast";
@@ -90,7 +94,7 @@ const EnduranceProjectLayout = ({ projectId }: Props) => {
         <ProjectLayout
             project={{
                 ...project,
-                type: "endurance" as typeof ProjectTypeSchema.Type,
+                type: Schema.decodeSync(ProjectTypeSchema)("endurance"),
             }}
             isEdit={isEdit}
             setIsEdit={setIsEdit}
@@ -115,14 +119,18 @@ const EnduranceProjectLayout = ({ projectId }: Props) => {
                         actions={actionStats.rescue_actions}
                         rescueCount={project.rescue_count}
                         onIncrement={onIncrement(
-                            "rescue" as typeof EnduranceActionsSchema.Type.type,
+                            Schema.decodeSync(EnduranceActionTypeSchema)(
+                                "rescue",
+                            ),
                         )}
                     />
                     <EnduranceView.SabotageActionsField
                         actions={actionStats.sabotage_actions}
                         sabotageCount={project.sabotage_count}
                         onIncrement={onIncrement(
-                            "sabotage" as typeof EnduranceActionsSchema.Type.type,
+                            Schema.decodeSync(EnduranceActionTypeSchema)(
+                                "sabotage",
+                            ),
                         )}
                     />
                 </EnduranceView.ActionsField>

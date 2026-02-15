@@ -4,7 +4,9 @@ import { atom } from "jotai";
 import type { UpdateEnduranceActionArgs } from "@/domain/endurances/rpcs/UpdateEnduranceProject";
 import {
     EnduranceActionAmountSchema,
+    EnduranceActionIdSchema,
     EnduranceActionLabelSchema,
+    EnduranceActionPositionSchema,
     EnduranceActionsSchema,
 } from "@/domain/endurances/tables/EnduranceActions";
 import type { EnduranceActionStatSchema } from "@/domain/endurances/types/EnduranceActionStat";
@@ -45,12 +47,15 @@ const createEditActionAtoms = () => {
     const createAction = atom(null, (_, set) => {
         set(editActions, (prev) =>
             Chunk.append(prev, {
-                id: crypto.randomUUID() as typeof EnduranceActionsSchema.Type.id,
+                id: Schema.decodeSync(EnduranceActionIdSchema)(
+                    crypto.randomUUID(),
+                ),
                 isNew: true,
-                position:
-                    prev.length as typeof EnduranceActionsSchema.Type.position,
+                position: Schema.decodeSync(EnduranceActionPositionSchema)(
+                    prev.length,
+                ),
                 label: "" as typeof EnduranceActionsSchema.Type.label,
-                amount: 1 as typeof EnduranceActionsSchema.Type.amount,
+                amount: Schema.decodeSync(EnduranceActionAmountSchema)(1),
                 errors: {
                     label: "",
                     amount: null,
@@ -67,8 +72,9 @@ const createEditActionAtoms = () => {
                     Chunk.filter((action) => action.id !== id),
                     Chunk.map((action, i) => ({
                         ...action,
-                        position:
-                            i as typeof EnduranceActionsSchema.Type.position,
+                        position: Schema.decodeSync(
+                            EnduranceActionPositionSchema,
+                        )(i),
                     })),
                 ),
             );
@@ -136,7 +142,9 @@ const createEditActionAtoms = () => {
                             error: action.errors.amount,
                         }),
                         onNone: () => ({
-                            value: 1 as typeof EnduranceActionsSchema.Type.amount,
+                            value: Schema.decodeSync(
+                                EnduranceActionAmountSchema,
+                            )(1),
                             error: null,
                         }),
                     }),

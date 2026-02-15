@@ -8,7 +8,7 @@ import {
 
 const baseTargetCountAtom = atom<
     typeof EnduranceSettingsSchema.Type.target_count
->(1 as typeof EnduranceSettingsSchema.Type.target_count);
+>(Schema.decodeSync(EnduranceTargetCountSchema)(1));
 export const editTargetCountErrorAtom = atom<string | null>(null);
 
 export const editTargetCountAtom = atom(

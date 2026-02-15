@@ -1,4 +1,4 @@
-import { Chunk } from "effect";
+import { Chunk, Schema } from "effect";
 import { useAtomValue, useSetAtom } from "jotai";
 import { useEffect, useEffectEvent } from "react";
 import { useNavigate } from "react-router-dom";
@@ -12,9 +12,15 @@ import {
     initEditEnduranceAtom,
 } from "@/atoms/endurances/EditEnduranceAtom";
 import { isEnduranceValidAtom } from "@/atoms/endurances/isEditEnduranceValidAtom";
-import type { EnduranceProgressSchema } from "@/domain/endurances/tables/EnduranceProgress";
-import type { EnduranceSettingsSchema } from "@/domain/endurances/tables/EnduranceSettings";
-import type { ProjectSchema } from "@/domain/projects/tables/Project";
+import {
+    EnduranceRescueCountSchema,
+    EnduranceSabotageCountSchema,
+} from "@/domain/endurances/tables/EnduranceProgress";
+import { EnduranceTargetCountSchema } from "@/domain/endurances/tables/EnduranceSettings";
+import {
+    ProjectStatusSchema,
+    ProjectTitleSchema,
+} from "@/domain/projects/tables/Project";
 import { useCreateEnduranceProject } from "@/hooks/endurances/useCreateEnduranceProject";
 import { errorToast, successToast } from "@/utils/toast";
 
@@ -29,9 +35,8 @@ const CreateEnduranceProjectLayout = () => {
 
     const initEvent = useEffectEvent(() =>
         initEditEndurance({
-            title: "○○耐久" as typeof ProjectSchema.Type.title,
-            target_count:
-                100 as typeof EnduranceSettingsSchema.Type.target_count,
+            title: Schema.decodeSync(ProjectTitleSchema)("○○耐久"),
+            target_count: Schema.decodeSync(EnduranceTargetCountSchema)(100),
             rescue_actions: Chunk.empty(),
             sabotage_actions: Chunk.empty(),
         }),
@@ -60,7 +65,9 @@ const CreateEnduranceProjectLayout = () => {
             onSave={onSave}
         >
             <EnduranceView
-                projectStatus={"scheduled" as typeof ProjectSchema.Type.status}
+                projectStatus={Schema.decodeSync(ProjectStatusSchema)(
+                    "scheduled",
+                )}
                 isEdit={true}
             >
                 <EnduranceView.Count
@@ -70,16 +77,16 @@ const CreateEnduranceProjectLayout = () => {
                 <EnduranceView.ActionsField>
                     <EnduranceView.RescueActionsField
                         actions={Chunk.empty()}
-                        rescueCount={
-                            0 as typeof EnduranceProgressSchema.Type.rescue_count
-                        }
+                        rescueCount={Schema.decodeSync(
+                            EnduranceRescueCountSchema,
+                        )(0)}
                         onIncrement={() => () => {}}
                     />
                     <EnduranceView.SabotageActionsField
                         actions={Chunk.empty()}
-                        sabotageCount={
-                            0 as typeof EnduranceProgressSchema.Type.sabotage_count
-                        }
+                        sabotageCount={Schema.decodeSync(
+                            EnduranceSabotageCountSchema,
+                        )(0)}
                         onIncrement={() => () => {}}
                     />
                 </EnduranceView.ActionsField>
