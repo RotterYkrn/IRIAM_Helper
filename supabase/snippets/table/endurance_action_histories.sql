@@ -8,6 +8,8 @@ create table endurance_action_histories (
 
     action_amount integer not null check (action_amount > 0),
 
+    is_reversal boolean not null default false,
+
     created_at timestamptz not null default now(),
 
     constraint fk_endurance_histories_project

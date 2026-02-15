@@ -11,6 +11,7 @@ import {
     initEditEnduranceAtom,
 } from "@/atoms/endurances/EditEnduranceAtom";
 import { isEnduranceValidAtom } from "@/atoms/endurances/isEditEnduranceValidAtom";
+import type { EnduranceActionHistoriesSchema } from "@/domain/endurances/tables/EnduranceActionHistories";
 import {
     EnduranceActionTypeSchema,
     type EnduranceActionsSchema,
@@ -73,20 +74,30 @@ const EnduranceProjectLayout = ({ projectId }: Props) => {
         );
     };
 
-    const onIncrementNormal = () => {
+    const onIncrementNormal = (
+        isReversal: typeof EnduranceActionHistoriesSchema.Encoded.is_reversal,
+    ) => {
         logEnduranceActionHistory.mutate({
             p_project_id: project.id,
             p_action_history_type: "normal",
+            p_is_reversal: isReversal,
         });
     };
 
+    const isWideRescue = actionStats.sabotage_actions.length === 0;
+    const isWideSabotage = actionStats.rescue_actions.length === 0;
+
     const onIncrement =
         (actionType: typeof EnduranceActionsSchema.Type.type) =>
-        (actionId: typeof EnduranceActionsSchema.Type.id) => {
+        (actionId: typeof EnduranceActionsSchema.Type.id) =>
+        (
+            isReversal: typeof EnduranceActionHistoriesSchema.Encoded.is_reversal,
+        ) => {
             logEnduranceActionHistory.mutate({
                 p_project_id: project.id,
                 p_action_history_type: actionType,
                 p_action_id: actionId,
+                p_is_reversal: isReversal,
             });
         };
 
@@ -118,6 +129,7 @@ const EnduranceProjectLayout = ({ projectId }: Props) => {
                     <EnduranceView.RescueActionsField
                         actions={actionStats.rescue_actions}
                         rescueCount={project.rescue_count}
+                        isWide={isWideRescue}
                         onIncrement={onIncrement(
                             Schema.decodeSync(EnduranceActionTypeSchema)(
                                 "rescue",
@@ -127,6 +139,7 @@ const EnduranceProjectLayout = ({ projectId }: Props) => {
                     <EnduranceView.SabotageActionsField
                         actions={actionStats.sabotage_actions}
                         sabotageCount={project.sabotage_count}
+                        isWide={isWideSabotage}
                         onIncrement={onIncrement(
                             Schema.decodeSync(EnduranceActionTypeSchema)(
                                 "sabotage",

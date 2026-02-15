@@ -2,6 +2,7 @@ import { Option, Schema } from "effect";
 
 import {
     EnduranceActionHistoriesSchema,
+    EnduranceActionHistoryIsReversalSchema,
     EnduranceActionHistoryTypeSchema,
 } from "../tables/EnduranceActionHistories";
 import { EnduranceActionIdSchema } from "../tables/EnduranceActions";
@@ -37,6 +38,7 @@ type LogEnduranceActionHistoryArgsBase = Readonly<{
     project_id: typeof ProjectSchema.Type.id;
     action_id: typeof EnduranceActionHistoriesSchema.Type.action_id | null;
     action_history_type: typeof EnduranceActionHistoriesSchema.Type.action_type;
+    is_reversal: typeof EnduranceActionHistoriesSchema.Type.is_reversal;
 }>;
 
 const LogEnduranceActionHistoryArgsSchemaBase: Schema.Schema<
@@ -49,6 +51,9 @@ const LogEnduranceActionHistoryArgsSchemaBase: Schema.Schema<
     ),
     action_history_type: EnduranceActionHistoryTypeSchema.pipe(
         mapFrom("p_action_history_type"),
+    ),
+    is_reversal: EnduranceActionHistoryIsReversalSchema.pipe(
+        mapFrom("p_is_reversal"),
     ),
 });
 

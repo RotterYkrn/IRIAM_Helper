@@ -80,6 +80,7 @@ const CreateEnduranceProjectLayout = () => {
                         rescueCount={Schema.decodeSync(
                             EnduranceRescueCountSchema,
                         )(0)}
+                        isWide={false}
                         onIncrement={() => () => {}}
                     />
                     <EnduranceView.SabotageActionsField
@@ -87,6 +88,7 @@ const CreateEnduranceProjectLayout = () => {
                         sabotageCount={Schema.decodeSync(
                             EnduranceSabotageCountSchema,
                         )(0)}
+                        isWide={false}
                         onIncrement={() => () => {}}
                     />
                 </EnduranceView.ActionsField>

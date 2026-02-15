@@ -10,6 +10,7 @@ import {
     editTargetCountAtom,
     editTargetCountErrorAtom,
 } from "@/atoms/endurances/EditTargetCountAtom";
+import type { EnduranceActionHistoriesSchema } from "@/domain/endurances/tables/EnduranceActionHistories";
 import {
     EnduranceActionTypeSchema,
     type EnduranceActionsSchema,
@@ -114,7 +115,9 @@ const Count = ({ currentCount, targetCount }: CountProps) => {
 
 type NormalActionProps = {
     normalCount: typeof EnduranceProgressSchema.Type.normal_count;
-    onIncrementNormal: () => void;
+    onIncrementNormal: (
+        isReversal: typeof EnduranceActionHistoriesSchema.Encoded.is_reversal,
+    ) => void;
 };
 
 const NormalAction = ({
@@ -128,6 +131,8 @@ const NormalAction = ({
     }
 
     const isActive = projectStatus === "active";
+
+    const isDisabledMinus = normalCount === 0;
 
     return (
         <div
@@ -143,6 +148,18 @@ const NormalAction = ({
                 </p>
             )}
             <div className="flex flex-row justify-center gap-2">
+                {isActive && (
+                    <button
+                        onClick={() => onIncrementNormal(true)}
+                        disabled={isDisabledMinus}
+                        className={`w-7 h-7 flex items-center justify-center
+                        rounded-full text-xl font-bold transition text-white
+                        ${isDisabledMinus ? "bg-gray-400" : " bg-red-500 hover:bg-red-600 active:scale-95"}
+                        `}
+                    >
+                        -
+                    </button>
+                )}
                 <p
                     className="flex items-center justify-center font-mono
                         text-2xl"
@@ -151,7 +168,7 @@ const NormalAction = ({
                 </p>
                 {isActive && (
                     <button
-                        onClick={onIncrementNormal}
+                        onClick={() => onIncrementNormal(false)}
                         className={`w-7 h-7 flex items-center justify-center
                         rounded-full text-xl font-bold transition bg-blue-500
                         hover:bg-blue-600 active:scale-95 text-white`}
@@ -168,15 +185,34 @@ const ActionsField = ({ children }: { children: React.ReactNode }) => {
     return <div className="flex flex-row gap-4">{children}</div>;
 };
 
+const ActionColumnClass = (actionLength: number) => {
+    switch (actionLength) {
+        case 1:
+            return "grid-cols-1";
+        case 2:
+            return "grid-cols-2";
+        case 3:
+            return "grid-cols-3";
+        default:
+            return "grid-cols-4";
+    }
+};
+
 type RescueActionsFieldProps = {
     actions: typeof EnduranceActionStatsViewSchema.Type.rescue_actions;
     rescueCount: typeof EnduranceProgressSchema.Type.rescue_count;
-    onIncrement: (id: typeof EnduranceActionsSchema.Type.id) => void;
+    isWide: boolean;
+    onIncrement: (
+        id: typeof EnduranceActionsSchema.Type.id,
+    ) => (
+        isReversal: typeof EnduranceActionHistoriesSchema.Encoded.is_reversal,
+    ) => void;
 };
 
 const RescueActionsField = ({
     actions,
     rescueCount,
+    isWide,
     onIncrement,
 }: RescueActionsFieldProps) => {
     const { projectStatus, isEdit } = useEndurance();
@@ -216,7 +252,10 @@ const RescueActionsField = ({
                     </p>
                 )}
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div
+                className={`grid gap-4
+                    ${isWide && !isEdit ? ActionColumnClass(actions.length) : "grid-cols-2"}`}
+            >
                 {isEdit
                     ? Chunk.map(state, (action) => (
                           <Action
@@ -241,7 +280,7 @@ const RescueActionsField = ({
                               label={action.label}
                               amount={action.amount}
                               actionCount={action.action_times}
-                              onIncrement={() => onIncrement(action.id)}
+                              onIncrement={onIncrement(action.id)}
                           />
                       ))}
             </div>
@@ -252,12 +291,18 @@ const RescueActionsField = ({
 type SabotageActionsFieldProps = {
     actions: typeof EnduranceActionStatsViewSchema.Type.sabotage_actions;
     sabotageCount: typeof EnduranceProgressSchema.Type.sabotage_count;
-    onIncrement: (id: typeof EnduranceActionsSchema.Type.id) => void;
+    isWide: boolean;
+    onIncrement: (
+        id: typeof EnduranceActionsSchema.Type.id,
+    ) => (
+        isReversal: typeof EnduranceActionHistoriesSchema.Encoded.is_reversal,
+    ) => void;
 };
 
 const SabotageActionsField = ({
     actions,
     sabotageCount,
+    isWide,
     onIncrement,
 }: SabotageActionsFieldProps) => {
     const { projectStatus, isEdit } = useEndurance();
@@ -297,7 +342,10 @@ const SabotageActionsField = ({
                     </p>
                 )}
             </div>
-            <div className="grid grid-cols-2 gap-4">
+            <div
+                className={`grid gap-4
+                    ${isWide && !isEdit ? ActionColumnClass(actions.length) : "grid-cols-2"}`}
+            >
                 {isEdit
                     ? Chunk.map(state, (action) => (
                           <Action
@@ -322,7 +370,7 @@ const SabotageActionsField = ({
                               label={action.label}
                               amount={action.amount}
                               actionCount={action.action_times}
-                              onIncrement={() => onIncrement(action.id)}
+                              onIncrement={onIncrement(action.id)}
                           />
                       ))}
             </div>
@@ -336,7 +384,9 @@ type ActionProps = {
     label: typeof EnduranceActionsSchema.Type.label;
     amount: typeof EnduranceActionsSchema.Type.amount;
     actionCount: typeof EnduranceActionStatSchema.Type.action_times;
-    onIncrement: () => void;
+    onIncrement: (
+        isReversal: typeof EnduranceActionHistoriesSchema.Encoded.is_reversal,
+    ) => void;
 };
 
 const Action = ({
@@ -495,7 +545,9 @@ const Amount = ({ id, actionType, amount }: AmountProps) => {
 
 type ProgressProps = {
     actionCount: typeof EnduranceActionStatSchema.Type.action_times;
-    onIncrement: () => void;
+    onIncrement: (
+        isReversal: typeof EnduranceActionHistoriesSchema.Encoded.is_reversal,
+    ) => void;
 };
 
 const Progress = ({ actionCount, onIncrement }: ProgressProps) => {
@@ -506,15 +558,28 @@ const Progress = ({ actionCount, onIncrement }: ProgressProps) => {
     }
 
     const isActive = projectStatus === "active";
+    const isDisabledMinus = actionCount === 0;
 
     return (
         <div className="flex flex-row justify-center gap-2">
+            {isActive && (
+                <button
+                    onClick={() => onIncrement(true)}
+                    disabled={isDisabledMinus}
+                    className={`w-7 h-7 flex items-center justify-center
+                    rounded-full text-xl font-bold transition text-white
+                    ${isDisabledMinus ? "bg-gray-400" : " bg-red-500 hover:bg-red-600 active:scale-95"}
+                    `}
+                >
+                    -
+                </button>
+            )}
             <p className="flex items-center justify-center font-mono text-2xl">
                 {actionCount}
             </p>
             {isActive && (
                 <button
-                    onClick={onIncrement}
+                    onClick={() => onIncrement(false)}
                     className={`w-7 h-7 flex items-center justify-center
                     rounded-full text-xl font-bold transition bg-blue-500
                     hover:bg-blue-600 active:scale-95 text-white`}
