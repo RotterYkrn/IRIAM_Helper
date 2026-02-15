@@ -10,7 +10,7 @@ create type endurance_action_stat as (
     action_times integer
 );
 
-create or replace view endurance_action_stats_view as
+create view endurance_action_stats_view as
 select
     p.id as project_id,
 
@@ -23,7 +23,12 @@ select
                 a.label,
                 a.amount,
                 (
-                    select count(*)
+                    select coalesce(sum(
+                        case 
+                            when h.is_reversal = true then -1 
+                            else 1 
+                        end
+                    ), 0)
                     from endurance_action_histories h
                     where h.action_id = a.id
                 )
@@ -42,7 +47,12 @@ select
                 a.label,
                 a.amount,
                 (
-                    select count(*)
+                    select coalesce(sum(
+                        case 
+                            when h.is_reversal = true then -1 
+                            else 1 
+                        end
+                    ), 0)
                     from endurance_action_histories h
                     where h.action_id = a.id
                 )
