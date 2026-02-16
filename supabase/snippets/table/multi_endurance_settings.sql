@@ -2,6 +2,8 @@ create table multi_endurance_settings (
     id uuid primary key default gen_random_uuid(),
     project_id uuid not null,
 
+    position integer not null,
+
     label text not null check (length(trim(label)) > 0),
     
     target_count integer not null check (target_count > 0),
