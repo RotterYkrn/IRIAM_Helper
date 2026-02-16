@@ -286,6 +286,7 @@ export type Database = {
           created_at: string
           id: string
           label: string
+          position: number
           project_id: string
           target_count: number
           updated_at: string
@@ -294,6 +295,7 @@ export type Database = {
           created_at?: string
           id?: string
           label: string
+          position: number
           project_id: string
           target_count: number
           updated_at?: string
@@ -302,6 +304,7 @@ export type Database = {
           created_at?: string
           id?: string
           label?: string
+          position?: number
           project_id?: string
           target_count?: number
           updated_at?: string
@@ -396,11 +399,18 @@ export type Database = {
         }
         Returns: string
       }
+      create_multi_endurance_project: {
+        Args: {
+          p_settings: Database["public"]["CompositeTypes"]["create_multi_endurance_setting_args"][]
+          p_title: string
+        }
+        Returns: string
+      }
       delete_project: { Args: { p_project_id: string }; Returns: undefined }
       duplicate_project: { Args: { p_project_id: string }; Returns: string }
       finish_project: { Args: { p_project_id: string }; Returns: string }
       increment_multi_endurance: {
-        Args: { p_setting_id: string }
+        Args: { p_is_reversal: boolean; p_setting_id: string }
         Returns: string
       }
       log_endurance_action_history: {
@@ -422,6 +432,14 @@ export type Database = {
         }
         Returns: string
       }
+      update_multi_endurance_project: {
+        Args: {
+          p_project_id: string
+          p_settings: Database["public"]["CompositeTypes"]["update_multi_endurance_setting_args"][]
+          p_title: string
+        }
+        Returns: string
+      }
     }
     Enums: {
       [_ in never]: never
@@ -431,6 +449,11 @@ export type Database = {
         position: number | null
         label: string | null
         amount: number | null
+      }
+      create_multi_endurance_setting_args: {
+        position: number | null
+        label: string | null
+        target_count: number | null
       }
       endurance_action_stat: {
         id: string | null
@@ -445,6 +468,12 @@ export type Database = {
         position: number | null
         label: string | null
         amount: number | null
+      }
+      update_multi_endurance_setting_args: {
+        id: string | null
+        position: number | null
+        label: string | null
+        target_count: number | null
       }
     }
   }
