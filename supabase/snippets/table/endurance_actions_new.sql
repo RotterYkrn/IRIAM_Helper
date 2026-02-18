@@ -1,4 +1,4 @@
-drop table if exists endurance_actions_new;
+drop table if exists endurance_actions_new cascade;
 
 create table endurance_actions_new (
     id uuid primary key default gen_random_uuid(),
@@ -29,9 +29,9 @@ create table endurance_actions_new (
         references endurance_units(id)
         on delete cascade,
 
-    constraint unique_action_per_unit
-        unique (unit_id)
+    constraint unique_action_per_unit_type_position
+        unique (unit_id, type, position)
 );
 
-create index idx_endurance_unit
-    on endurance_actions_new(unit_id);
+create index idx_endurance_unit_type_position
+    on endurance_actions_new(unit_id, type, position);
