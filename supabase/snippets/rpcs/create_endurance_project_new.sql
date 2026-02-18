@@ -1,11 +1,11 @@
 DROP function IF EXISTS create_endurance_project_new cascade;
-DROP TYPE IF EXISTS create_endurance_action_args cascade;
+-- DROP TYPE IF EXISTS create_endurance_action_args cascade;
 
-create type create_endurance_action_args as (
-    position integer,
-    label text,
-    amount integer
-);
+-- create type create_endurance_action_args as (
+--     position integer,
+--     label text,
+--     amount integer
+-- );
 
 create function create_endurance_project_new(
     p_title text,

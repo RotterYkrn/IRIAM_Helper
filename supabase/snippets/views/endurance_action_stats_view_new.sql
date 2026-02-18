@@ -7,8 +7,7 @@ create type endurance_action_stat_new as (
     position integer,
     label text,
     amount integer,
-    count integer,
-    action_times integer
+    count integer
 );
 
 create view endurance_action_stats_view_new as
@@ -24,10 +23,10 @@ select
                 a.label,
                 a.amount,
                 a.count
-            )::endurance_action_stat
+            )::endurance_action_stat_new
             order by a.position ASC
         ) filter (where a.type = 'rescue'),
-        '{}'::endurance_action_stat[]
+        '{}'::endurance_action_stat_new[]
     ) as rescue_actions,
 
     coalesce(
@@ -39,10 +38,10 @@ select
                 a.label,
                 a.amount,
                 a.count
-            )::endurance_action_stat
+            )::endurance_action_stat_new
             order by a.position ASC
         ) filter (where a.type = 'sabotage'),
-        '{}'::endurance_action_stat[]
+        '{}'::endurance_action_stat_new[]
     ) as sabotage_actions
 
 from projects p
