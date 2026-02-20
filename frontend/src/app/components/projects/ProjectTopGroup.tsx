@@ -5,11 +5,12 @@ import { Link } from "react-router-dom";
 import type { ProjectForSideBer } from "@/domain/projects/tables/Project";
 
 type ProjectGroupProps = {
+    isLoading: boolean;
     title: string;
     projects: Chunk.Chunk<ProjectForSideBer>;
 };
 
-const ProjectTopGroup = ({ title, projects }: ProjectGroupProps) => {
+const ProjectTopGroup = ({ isLoading, title, projects }: ProjectGroupProps) => {
     const [isOpen, setIsOpen] = useState(true);
 
     return (
@@ -25,7 +26,11 @@ const ProjectTopGroup = ({ title, projects }: ProjectGroupProps) => {
 
             {/* 子リンク一覧（開いている時だけ表示） */}
             {isOpen &&
-                (projects.length !== 0 ? (
+                (isLoading ? (
+                    <p className="flex p-3 items-center justify-center">
+                        読み込み中...
+                    </p>
+                ) : projects.length !== 0 ? (
                     Chunk.map(projects, (p) => (
                         <Link
                             key={p.id}
