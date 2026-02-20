@@ -1,9 +1,6 @@
-DROP TYPE IF EXISTS update_endurance_action_input cascade;
-
--- 定義したカスタム型を一覧表示する
-SELECT n.nspname as schema, t.typname as type_name
-FROM pg_type t
-LEFT JOIN pg_namespace n ON n.oid = t.typnamespace
-WHERE n.nspname = 'public' 
-  AND t.typtype = 'c' -- 'c' は composite type (複合型)
-order by type_name;
+SELECT
+    pc.conname AS constraint_name,
+    pg_get_constraintdef(pc.oid) AS constraint_definition
+FROM pg_constraint pc
+JOIN pg_class pt ON pt.oid = pc.conrelid
+WHERE pt.relname = 'projects'; -- ここに対象のテーブル名を入れる
