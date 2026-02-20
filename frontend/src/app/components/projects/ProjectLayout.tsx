@@ -61,6 +61,12 @@ const ProjectLayout = ({
         if (!confirm("この企画を削除しますか？")) {
             return;
         }
+        if (
+            project.status === "finished" &&
+            !confirm("開催済みの企画です。本当に削除しますか？")
+        ) {
+            return;
+        }
         deleteMutation.mutate(
             { p_project_id: project.id },
             {
