@@ -105,6 +105,13 @@ export type Database = {
             foreignKeyName: "fk_endurance_action_counts_unit"
             columns: ["unit_id"]
             isOneToOne: true
+            referencedRelation: "endurance_project_view_new"
+            referencedColumns: ["unit_id"]
+          },
+          {
+            foreignKeyName: "fk_endurance_action_counts_unit"
+            columns: ["unit_id"]
+            isOneToOne: true
             referencedRelation: "endurance_units"
             referencedColumns: ["id"]
           },
@@ -219,7 +226,7 @@ export type Database = {
             foreignKeyName: "fk_endurance_histories_actions"
             columns: ["action_id"]
             isOneToOne: false
-            referencedRelation: "endurance_actions"
+            referencedRelation: "endurance_actions_new"
             referencedColumns: ["id"]
           },
           {
@@ -256,6 +263,13 @@ export type Database = {
             isOneToOne: false
             referencedRelation: "projects"
             referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_endurance_histories_unit"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "endurance_project_view_new"
+            referencedColumns: ["unit_id"]
           },
           {
             foreignKeyName: "fk_endurance_histories_unit"
@@ -350,7 +364,7 @@ export type Database = {
         }
         Insert: {
           amount: number
-          count: number
+          count?: number
           created_at?: string
           id?: string
           label: string
@@ -411,7 +425,14 @@ export type Database = {
           {
             foreignKeyName: "fk_action_unit"
             columns: ["unit_id"]
-            isOneToOne: true
+            isOneToOne: false
+            referencedRelation: "endurance_project_view_new"
+            referencedColumns: ["unit_id"]
+          },
+          {
+            foreignKeyName: "fk_action_unit"
+            columns: ["unit_id"]
+            isOneToOne: false
             referencedRelation: "endurance_units"
             referencedColumns: ["id"]
           },
@@ -558,7 +579,7 @@ export type Database = {
         }
         Insert: {
           created_at?: string
-          current_count: number
+          current_count?: number
           id?: string
           label: string
           project_id: string
@@ -688,6 +709,7 @@ export type Database = {
           status: string | null
           target_count: number | null
           title: string | null
+          unit_id: string | null
         }
         Relationships: []
       }

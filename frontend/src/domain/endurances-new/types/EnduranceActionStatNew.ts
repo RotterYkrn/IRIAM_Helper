@@ -2,13 +2,11 @@ import { Schema } from "effect";
 
 import {
     EnduranceActionAmountSchema,
+    EnduranceActionCountSchema,
     EnduranceActionIdSchema,
     EnduranceActionLabelSchema,
     EnduranceActionPositionSchema,
     EnduranceActionTypeSchema,
-} from "../tables/EnduranceActions";
-import {
-    EnduranceActionCountSchema,
     type EnduranceActionsNewSchema,
 } from "../tables/EnduranceActionsNew";
 

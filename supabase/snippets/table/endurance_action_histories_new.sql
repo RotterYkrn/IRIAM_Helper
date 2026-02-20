@@ -27,7 +27,7 @@ create table endurance_action_histories_new (
 
     constraint fk_endurance_histories_actions
         foreign key (action_id)
-        references endurance_actions(id)
+        references endurance_actions_new(id)
         on delete set null
 );
 

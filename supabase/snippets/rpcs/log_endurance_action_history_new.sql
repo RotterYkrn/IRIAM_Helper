@@ -80,10 +80,10 @@ begin
     -----------------------------
     -- 4) action_count を更新
     -----------------------------
-    if p_action_id != null then
-        update endurance_actions
+    if p_action_id is not null then
+        update endurance_actions_new
         set
-            count = p_action_count,
+            count = count + p_action_count,
             updated_at = now()
         where id = p_action_id;
     end if;
@@ -96,13 +96,13 @@ begin
         current_count =
             case
                 when p_action_history_type = 'normal'
-                    then current_count + v_amount * action_count
+                    then current_count + v_amount * p_action_count
 
                 when p_action_history_type = 'rescue'
-                    then current_count + v_amount * action_count
+                    then current_count + v_amount * p_action_count
 
                 when p_action_history_type = 'sabotage'
-                    then current_count - v_amount * action_count
+                    then current_count - v_amount * p_action_count
             end,
 
         updated_at = now()
@@ -113,17 +113,17 @@ begin
     set
         normal_count =
             case when p_action_history_type = 'normal'
-                then normal_count + v_amount * action_count
+                then normal_count + v_amount * p_action_count
                 else normal_count end,
 
         rescue_count =
             case when p_action_history_type = 'rescue'
-                then rescue_count + v_amount * action_count
+                then rescue_count + v_amount * p_action_count
                 else rescue_count end,
 
         sabotage_count =
             case when p_action_history_type = 'sabotage'
-                then sabotage_count + v_amount * action_count
+                then sabotage_count + v_amount * p_action_count
                 else sabotage_count end,
 
         updated_at = now()

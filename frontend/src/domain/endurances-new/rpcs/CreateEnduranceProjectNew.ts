@@ -4,10 +4,12 @@ import {
     EnduranceActionAmountSchema,
     EnduranceActionLabelSchema,
     EnduranceActionPositionSchema,
-} from "../tables/EnduranceActions";
-import type { EnduranceActionsNewSchema } from "../tables/EnduranceActionsNew";
-import { EnduranceTargetCountSchema } from "../tables/EnduranceSettings";
-import type { EnduranceUnitsSchema } from "../tables/EnduranceUnits";
+    type EnduranceActionsNewSchema,
+} from "../tables/EnduranceActionsNew";
+import {
+    EnduranceTargetCountSchema,
+    type EnduranceUnitsSchema,
+} from "../tables/EnduranceUnits";
 
 import {
     ProjectIdSchema,

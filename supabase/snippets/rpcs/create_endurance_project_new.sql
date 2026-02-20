@@ -61,7 +61,7 @@ begin
     -- 救済
     foreach v_action in array p_rescue_actions
     loop
-        insert into endurance_actions (
+        insert into endurance_actions_new (
             project_id,
             unit_id,
             type,
@@ -82,7 +82,7 @@ begin
     -- 妨害
     foreach v_action in array p_sabotage_actions
     loop
-        insert into endurance_actions (
+        insert into endurance_actions_new (
             project_id,
             unit_id,
             type,

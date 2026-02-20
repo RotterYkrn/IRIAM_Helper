@@ -6,27 +6,31 @@ import {
     ProjectStatusSchema,
     ProjectTitleSchema,
 } from "../../projects/tables/Project";
-import type { EnduranceActionCountsSchema } from "../tables/EnduranceActionCounts";
 import {
-    EnduranceCurrentCountSchema,
     EnduranceNormalCountSchema,
     EnduranceRescueCountSchema,
     EnduranceSabotageCountSchema,
-} from "../tables/EnduranceProgress";
-import { EnduranceTargetCountSchema } from "../tables/EnduranceSettings";
-import type { EnduranceUnitsSchema } from "../tables/EnduranceUnits";
+    type EnduranceActionCountsSchema,
+} from "../tables/EnduranceActionCounts";
+import {
+    EnduranceCurrentCountSchema,
+    EnduranceTargetCountSchema,
+    EnduranceUnitIdSchema,
+    type EnduranceUnitsSchema,
+} from "../tables/EnduranceUnits";
 
 import type { Database } from "@/lib/database.types";
 import { withStrictNullCheck } from "@/utils/schema";
 
-export type EnduranceProjectViewEncoded = Readonly<
+export type EnduranceProjectViewNewEncoded = Readonly<
     Database["public"]["Views"]["endurance_project_view_new"]["Row"]
 >;
 
-export type EnduranceProjectView = Readonly<{
+export type EnduranceProjectViewNew = Readonly<{
     id: typeof ProjectSchema.Type.id;
     title: typeof ProjectSchema.Type.title;
     status: typeof ProjectSchema.Type.status;
+    unit_id: typeof EnduranceUnitsSchema.Type.id;
     target_count: typeof EnduranceUnitsSchema.Type.target_count;
     current_count: typeof EnduranceUnitsSchema.Type.current_count;
     normal_count: typeof EnduranceActionCountsSchema.Type.normal_count;
@@ -34,13 +38,14 @@ export type EnduranceProjectView = Readonly<{
     sabotage_count: typeof EnduranceActionCountsSchema.Type.sabotage_count;
 }>;
 
-export const EnduranceProjectViewSchema: Schema.Schema<
-    EnduranceProjectView,
-    EnduranceProjectViewEncoded
+export const EnduranceProjectViewNewSchema: Schema.Schema<
+    EnduranceProjectViewNew,
+    EnduranceProjectViewNewEncoded
 > = Schema.Struct({
     id: withStrictNullCheck(ProjectIdSchema),
     title: withStrictNullCheck(ProjectTitleSchema),
     status: withStrictNullCheck(ProjectStatusSchema),
+    unit_id: withStrictNullCheck(EnduranceUnitIdSchema),
     target_count: withStrictNullCheck(EnduranceTargetCountSchema),
     normal_count: withStrictNullCheck(EnduranceNormalCountSchema),
     rescue_count: withStrictNullCheck(EnduranceRescueCountSchema),

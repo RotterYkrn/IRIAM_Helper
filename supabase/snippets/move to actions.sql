@@ -1,4 +1,5 @@
 insert into endurance_actions_new (
+  id,
   project_id,
   unit_id,
   type,
@@ -10,6 +11,7 @@ insert into endurance_actions_new (
   updated_at
 )
 select
+  ea.id,
   p.id,
   eu.id,
   ea.type,
@@ -29,6 +31,7 @@ join endurance_units eu on eu.project_id = p.id
 join endurance_actions ea on ea.project_id = p.id
 join endurance_action_histories eh on eh.action_id = ea.id
 group by
+  ea.id,
   p.id,
   eu.id,
   ea.type,

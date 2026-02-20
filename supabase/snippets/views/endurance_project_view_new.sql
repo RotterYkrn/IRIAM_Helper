@@ -5,6 +5,7 @@ select
     p.id,
     p.title,
     p.status,
+    u.id as unit_id,
     u.target_count,
     u.current_count,
     ac.normal_count,

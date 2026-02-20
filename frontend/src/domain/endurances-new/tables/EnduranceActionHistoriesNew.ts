@@ -1,15 +1,15 @@
 import { Schema } from "effect";
 
 import {
-    EnduranceActionAmountSchema,
     EnduranceActionIdSchema,
-    EnduranceActionsSchema,
-} from "./EnduranceActions";
+    EnduranceActionAmountSchema,
+} from "./EnduranceActionsNew";
 import {
     EnduranceUnitIdSchema,
     type EnduranceUnitsSchema,
 } from "./EnduranceUnits";
 
+import type { EnduranceActionsSchema } from "@/domain/endurances/tables/EnduranceActions";
 import {
     ProjectIdSchema,
     type ProjectSchema,

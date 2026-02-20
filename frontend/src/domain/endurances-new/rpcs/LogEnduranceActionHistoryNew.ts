@@ -1,11 +1,11 @@
 import { Option, Schema } from "effect";
 
-import { EnduranceActionHistoryTypeSchema } from "../tables/EnduranceActionHistories";
 import {
     EnduranceActionHistoryActionCountSchema,
+    EnduranceActionHistoryTypeSchema,
     type EnduranceActionHistoriesNewSchema,
 } from "../tables/EnduranceActionHistoriesNew";
-import { EnduranceActionIdSchema } from "../tables/EnduranceActions";
+import { EnduranceActionIdSchema } from "../tables/EnduranceActionsNew";
 import {
     EnduranceUnitIdSchema,
     type EnduranceUnitsSchema,
@@ -115,3 +115,14 @@ export const LogEnduranceActionHistoryNewArgsSchema: Schema.Schema<
     LogEnduranceActionHistoryNewArgsSchemaNormal,
     LogEnduranceActionHistoryNewArgsSchemaRescueSabotage,
 );
+
+export type LogEnduranceActionHistoryNewReturnsEncoded = Readonly<
+    Database["public"]["Functions"]["log_endurance_action_history_new"]["Returns"]
+>;
+
+export type LogEnduranceActionHistoryNewReturns = typeof ProjectSchema.Type.id;
+
+export const LogEnduranceActionHistoryNewReturnsSchema: Schema.Schema<
+    LogEnduranceActionHistoryNewReturns,
+    LogEnduranceActionHistoryNewReturnsEncoded
+> = ProjectIdSchema;

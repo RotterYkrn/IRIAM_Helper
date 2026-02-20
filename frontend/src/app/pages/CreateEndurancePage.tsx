@@ -1,11 +1,11 @@
 import { Provider } from "jotai";
 
-import CreateEnduranceProjectLayout from "../components/endurances/CreateEnduranceProjectLayout";
+import CreateEnduranceProjectLayoutNew from "../components/endurances-new/CreateEnduranceProjectLayout";
 
 const CreateEndurancePage = () => {
     return (
         <Provider>
-            <CreateEnduranceProjectLayout />
+            <CreateEnduranceProjectLayoutNew />
         </Provider>
     );
 };

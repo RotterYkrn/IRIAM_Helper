@@ -9,7 +9,7 @@ import { ProjectIdSchema } from "@/domain/projects/tables/Project";
 import type { Database } from "@/lib/database.types";
 import { withStrictNullCheck, type RecursiveReadonly } from "@/utils/schema";
 
-export type EnduranceActionStatNewsViewNewEncoded = RecursiveReadonly<
+export type EnduranceActionStatViewNewEncoded = RecursiveReadonly<
     Database["public"]["Views"]["endurance_action_stats_view_new"]["Row"]
 >;
 
@@ -41,15 +41,15 @@ export const EnduranceSabotageActionChunkSchema = Schema.Chunk(
     EnduranceSabotageActionSchema,
 );
 
-export type EnduranceActionStatNewsViewNew = Readonly<{
+export type EnduranceActionStatViewNew = Readonly<{
     project_id: typeof ProjectIdSchema.Type;
     rescue_actions: typeof EnduranceRescueActionChunkSchema.Type;
     sabotage_actions: typeof EnduranceSabotageActionChunkSchema.Type;
 }>;
 
-export const EnduranceActionStatNewsViewNewSchema: Schema.Schema<
-    EnduranceActionStatNewsViewNew,
-    EnduranceActionStatNewsViewNewEncoded
+export const EnduranceActionStatsViewNewSchema: Schema.Schema<
+    EnduranceActionStatViewNew,
+    EnduranceActionStatViewNewEncoded
 > = Schema.Struct({
     project_id: withStrictNullCheck(ProjectIdSchema),
     rescue_actions: withStrictNullCheck(EnduranceRescueActionChunkSchema),

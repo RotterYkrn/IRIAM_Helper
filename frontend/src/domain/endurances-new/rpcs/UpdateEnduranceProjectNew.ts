@@ -6,10 +6,9 @@ import {
     EnduranceActionLabelSchema,
     EnduranceActionPositionSchema,
     EnduranceActionsNewSchema,
-    type EnduranceActionsNew,
 } from "../tables/EnduranceActionsNew";
-import { EnduranceTargetCountSchema } from "../tables/EnduranceSettings";
 import {
+    EnduranceTargetCountSchema,
     EnduranceUnitIdSchema,
     type EnduranceUnitsSchema,
 } from "../tables/EnduranceUnits";
@@ -29,12 +28,12 @@ import {
 export type UpdateEnduranceActionArgsEncoded = Readonly<
     Database["public"]["CompositeTypes"]["update_endurance_action_args"]
 >;
-export type UpdateEnduranceActionArgs = Pick<
-    EnduranceActionsNew,
-    "position" | "label" | "amount"
-> & {
+export type UpdateEnduranceActionArgs = Readonly<{
     id: typeof EnduranceActionsNewSchema.Type.id | null;
-};
+    position: typeof EnduranceActionsNewSchema.Type.position;
+    label: typeof EnduranceActionsNewSchema.Type.label;
+    amount: typeof EnduranceActionsNewSchema.Type.amount;
+}>;
 export const UpdateEnduranceActionArgsSchema: Schema.Schema<
     UpdateEnduranceActionArgs,
     UpdateEnduranceActionArgsEncoded
