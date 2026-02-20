@@ -220,7 +220,7 @@ type DeleteButtonProps = {
 const DeleteButton = ({ onDelete }: DeleteButtonProps) => {
     const { projectStatus, isEdit } = useProject();
 
-    if (projectStatus !== "scheduled" || isEdit) {
+    if (projectStatus === "active" || isEdit) {
         return null;
     }
 

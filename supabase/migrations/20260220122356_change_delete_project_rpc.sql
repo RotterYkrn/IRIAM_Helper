@@ -1,12 +1,10 @@
-DROP function if exists delete_project;
+set check_function_bodies = off;
 
-create function delete_project(
-    p_project_id uuid
-)
-returns void
-language plpgsql
-SET search_path = public
-as $$
+CREATE OR REPLACE FUNCTION public.delete_project(p_project_id uuid)
+ RETURNS void
+ LANGUAGE plpgsql
+ SET search_path TO 'public'
+AS $function$
 declare
     v_status text;
 begin
@@ -29,4 +27,7 @@ begin
     delete from projects
     where id = p_project_id;
 end;
-$$;
+$function$
+;
+
+

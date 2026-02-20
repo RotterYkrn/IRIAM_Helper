@@ -3,6 +3,7 @@ import { Outlet } from "react-router-dom";
 
 import MainHeader from "./MainHeader";
 import SideBarLayout from "./SideBarLayout";
+import VersionLabel from "./VersionLabel";
 
 const Layout = () => {
     const [open, setOpen] = useState(false);
@@ -46,6 +47,7 @@ const Layout = () => {
                         </Suspense>
                     </div>
                 </main>
+                <VersionLabel />
             </div>
         </>
     );
