@@ -1,5 +1,5 @@
 import { useAtom, useAtomValue, useSetAtom, type WritableAtom } from "jotai";
-import { createContext, useContext } from "react";
+import React, { createContext, useContext } from "react";
 
 import {
     editRescueActionsAtomsNew,
@@ -11,8 +11,7 @@ import {
 } from "@/atoms/endurances-new/EditTargetCountAtom";
 import type { EnduranceActionCountsSchema } from "@/domain/endurances-new/tables/EnduranceActionCounts";
 import type { EnduranceActionHistoriesNewSchema } from "@/domain/endurances-new/tables/EnduranceActionHistoriesNew";
-import { type EnduranceActionsNewSchema } from "@/domain/endurances-new/tables/EnduranceActionsNew";
-import type { EnduranceActionStatsViewNewSchema } from "@/domain/endurances-new/views/EnduranceActionStatsViewNew";
+import type { EnduranceActionsNewSchema } from "@/domain/endurances-new/tables/EnduranceActionsNew";
 import type { ProjectSchema } from "@/domain/projects/tables/Project";
 import MinusButton from "@/utils/components/MinusButton";
 import PlusButton from "@/utils/components/PlusButton";
@@ -42,82 +41,146 @@ const EnduranceView = ({ children, ...contextValue }: Props) => {
     return <EnduranceContext value={contextValue}>{children}</EnduranceContext>;
 };
 
-type CountProps = {
-    currentCount: number;
-    targetCount: number;
+type CountProgressProps = {
+    left: React.ReactNode;
+    center: React.ReactNode;
+    right: React.ReactNode;
 };
 
-const Count = ({ currentCount, targetCount }: CountProps) => {
-    const { isEdit } = useEndurance();
-    const setState = useSetAtom(editTargetCountAtomNew);
-    const error = useAtomValue(editTargetCountErrorAtomNew);
-
-    if (isEdit) {
-        return (
-            <>
-                <label
-                    htmlFor="project-title"
-                    className="relative flex flex-col items-center"
-                >
-                    {/* 左上に配置されるキャプション */}
-                    <span
-                        className="absolute -top-6 -left-6 text-md font-medium
-                            text-gray-600"
-                    >
-                        目標数
-                    </span>
-
-                    <div className="flex items-center">
-                        <input
-                            type="text"
-                            className="text-4xl font-mono w-30 text-center
-                                outline-none border-b-2 border-gray-300
-                                focus:border-gray-500 transition-colors"
-                            defaultValue={targetCount}
-                            onChange={(e) => setState(Number(e.target.value))}
-                        />
-                        {error && (
-                            <p
-                                className="absolute top-full mt-1 text-red-500
-                                    text-sm whitespace-nowrap"
-                            >
-                                {error}
-                            </p>
-                        )}
-                    </div>
-                </label>
-            </>
-        );
-    }
-
+const CountProgress = ({ left, center, right }: CountProgressProps) => {
     return (
-        <div
-            className="grid grid-cols-[1fr_auto_1fr] items-center gap-4 text-4xl
-                font-mono w-full"
-        >
-            {/* 左側：右寄せにする */}
-            <div className="text-right">{currentCount}</div>
-
-            {/* 中央：スラッシュ（動かない） */}
-            <div className="text-5xl text-gray-400">/</div>
-
-            {/* 右側：左寄せにする */}
-            <div className="text-left">{targetCount}</div>
+        <div className="w-full grid grid-cols-[1fr_auto_1fr] items-center gap-4">
+            {left}
+            {center}
+            {right}
         </div>
     );
 };
 
-type NormalActionProps = {
-    normalCount: typeof EnduranceActionCountsSchema.Type.normal_count;
-    onIncrementNormal: (
+const EditTargetCount = () => {
+    const [state, setState] = useAtom(editTargetCountAtomNew);
+    const error = useAtomValue(editTargetCountErrorAtomNew);
+
+    return (
+        <>
+            <label
+                htmlFor="project-title"
+                className="relative flex flex-col items-center"
+            >
+                {/* 左上に配置されるキャプション */}
+                <span
+                    className="absolute -top-6 -left-6 text-md font-medium
+                        text-gray-600"
+                >
+                    目標数
+                </span>
+
+                <div className="flex items-center">
+                    <input
+                        type="text"
+                        className="text-4xl font-mono w-30 text-center
+                            outline-none border-b-2 border-gray-300
+                            focus:border-gray-500 transition-colors"
+                        defaultValue={state}
+                        onChange={(e) => setState(Number(e.target.value))}
+                    />
+                    {error && (
+                        <p
+                            className="absolute top-full mt-1 text-red-500
+                                text-sm whitespace-nowrap"
+                        >
+                            {error}
+                        </p>
+                    )}
+                </div>
+            </label>
+        </>
+    );
+};
+
+type ActionCountProps = {
+    actionCount:
+        | typeof EnduranceActionCountsSchema.Type.normal_count
+        | typeof EnduranceActionsNewSchema.Type.count
+        | typeof EnduranceActionsNewSchema.Encoded.count;
+};
+
+const ActionCount = ({ actionCount }: ActionCountProps) => {
+    return (
+        <p className="flex items-center justify-center font-mono text-2xl">
+            {actionCount}
+        </p>
+    );
+};
+
+type CountButtonConfig = {
+    label: string;
+    count: typeof EnduranceActionHistoriesNewSchema.Encoded.action_count;
+    disabled?: boolean;
+};
+
+type PlusButtonsProps = {
+    buttonConfigs: CountButtonConfig[];
+    onIncrement: (
         actionCount: typeof EnduranceActionHistoriesNewSchema.Encoded.action_count,
     ) => void;
 };
 
-const NormalAction = ({
-    normalCount,
-    onIncrementNormal,
-}: NormalActionProps) => {
+const PlusButtons = ({ buttonConfigs, onIncrement }: PlusButtonsProps) => {
+    const { projectStatus } = useEndurance();
+
+    if (projectStatus !== "active") {
+        return null;
+    }
+
+    return (
+        <>
+            {buttonConfigs.map((config) => (
+                <PlusButton
+                    key={config.label}
+                    onClick={() => onIncrement(config.count)}
+                >
+                    {config.label}
+                </PlusButton>
+            ))}
+        </>
+    );
+};
+
+type MinusButtonsProps = {
+    buttonConfigs: CountButtonConfig[];
+    onIncrement: (
+        actionCount: typeof EnduranceActionHistoriesNewSchema.Encoded.action_count,
+    ) => void;
+};
+
+const MinusButtons = ({ buttonConfigs, onIncrement }: MinusButtonsProps) => {
+    const { projectStatus } = useEndurance();
+
+    if (projectStatus !== "active") {
+        return null;
+    }
+
+    return (
+        <>
+            {buttonConfigs.map((config) => (
+                <MinusButton
+                    key={config.label}
+                    onClick={() => onIncrement(config.count)}
+                    disabled={config.disabled ?? false}
+                >
+                    {config.label}
+                </MinusButton>
+            ))}
+        </>
+    );
+};
+
+type NormalActionProps = {
+    children: React.ReactNode;
+};
+
+const NormalAction = ({ children }: NormalActionProps) => {
     const { projectStatus } = useEndurance();
 
     if (projectStatus === "scheduled") {
@@ -125,8 +188,6 @@ const NormalAction = ({
     }
 
     const isActive = projectStatus === "active";
-
-    const isDisabledMinus = normalCount === 0;
 
     return (
         <div
@@ -141,27 +202,7 @@ const NormalAction = ({
                     +1
                 </p>
             )}
-            <div className="flex flex-row justify-center gap-2">
-                {isActive && (
-                    <MinusButton
-                        onClick={() => onIncrementNormal(-1)}
-                        disabled={isDisabledMinus}
-                    >
-                        -
-                    </MinusButton>
-                )}
-                <p
-                    className="flex items-center justify-center font-mono
-                        text-2xl"
-                >
-                    {normalCount}
-                </p>
-                {isActive && (
-                    <PlusButton onClick={() => onIncrementNormal(1)}>
-                        +
-                    </PlusButton>
-                )}
-            </div>
+            <div className="flex flex-row justify-center gap-2">{children}</div>
         </div>
     );
 };
@@ -185,14 +226,14 @@ const ActionColumnClass = (actionLength: number) => {
 
 type RescueActionsFieldProps = {
     children: React.ReactNode;
-    actions: typeof EnduranceActionStatsViewNewSchema.Type.rescue_actions;
+    actionLength: number;
     rescueCount: typeof EnduranceActionCountsSchema.Type.rescue_count;
     isWide: boolean;
 };
 
 const RescueActionsField = ({
     children,
-    actions,
+    actionLength,
     rescueCount,
     isWide,
 }: RescueActionsFieldProps) => {
@@ -203,7 +244,7 @@ const RescueActionsField = ({
         createAction();
     };
 
-    if (!isEdit && actions.length === 0) {
+    if (!isEdit && actionLength === 0) {
         return null;
     }
 
@@ -234,7 +275,7 @@ const RescueActionsField = ({
             </div>
             <div
                 className={`grid gap-4
-                    ${isWide && !isEdit ? ActionColumnClass(actions.length) : "grid-cols-2"}`}
+                    ${isWide && !isEdit ? ActionColumnClass(actionLength) : "grid-cols-2"}`}
             >
                 {children}
             </div>
@@ -244,14 +285,14 @@ const RescueActionsField = ({
 
 type SabotageActionsFieldProps = {
     children: React.ReactNode;
-    actions: typeof EnduranceActionStatsViewNewSchema.Type.sabotage_actions;
+    actionLength: number;
     sabotageCount: typeof EnduranceActionCountsSchema.Type.sabotage_count;
     isWide: boolean;
 };
 
 const SabotageActionsField = ({
     children,
-    actions,
+    actionLength,
     sabotageCount,
     isWide,
 }: SabotageActionsFieldProps) => {
@@ -262,7 +303,7 @@ const SabotageActionsField = ({
         createAction();
     };
 
-    if (!isEdit && actions.length === 0) {
+    if (!isEdit && actionLength === 0) {
         return null;
     }
 
@@ -293,7 +334,7 @@ const SabotageActionsField = ({
             </div>
             <div
                 className={`grid gap-4
-                    ${isWide && !isEdit ? ActionColumnClass(actions.length) : "grid-cols-2"}`}
+                    ${isWide && !isEdit ? ActionColumnClass(actionLength) : "grid-cols-2"}`}
             >
                 {children}
             </div>
@@ -303,13 +344,15 @@ const SabotageActionsField = ({
 
 type ActionProps = {
     children: React.ReactNode;
+    className?: string;
 };
 
-const Action = ({ children }: ActionProps) => {
+const Action = ({ children, className }: ActionProps) => {
     return (
         <div
-            className="flex flex-col items-center justify-center p-2 gap-1
-                bg-white rounded-xl border border-slate-300 shadow-sm w-32"
+            className={`flex flex-col items-center justify-center p-2 gap-1
+                bg-white rounded-xl border border-slate-300 shadow-sm
+                ${className ?? "w-32"}`}
         >
             {children}
         </div>
@@ -342,10 +385,15 @@ const EditSettingsLayout = ({ children }: EditSettingsLayoutProps) => {
 
 type LabelProps = {
     label: string;
+    className?: string;
 };
 
-const Label = ({ label }: LabelProps) => {
-    return <div className="whitespace-nowrap font-medium">{label}</div>;
+const Label = ({ label, className }: LabelProps) => {
+    return (
+        <div className={`whitespace-nowrap ${className ?? "font-medium"}`}>
+            {label}
+        </div>
+    );
 };
 
 type EditLabelProps = {
@@ -422,40 +470,17 @@ const EditAmount = ({ editAmountAtom }: EditAmountProps) => {
 };
 
 type ProgressProps = {
-    actionCount: typeof EnduranceActionsNewSchema.Type.count;
-    onIncrement: (
-        actionCount: typeof EnduranceActionHistoriesNewSchema.Encoded.action_count,
-    ) => void;
+    children: React.ReactNode;
 };
 
-const Progress = ({ actionCount, onIncrement }: ProgressProps) => {
+const ActionProgress = ({ children }: ProgressProps) => {
     const { projectStatus, isEdit } = useEndurance();
 
     if (projectStatus === "scheduled" || isEdit) {
         return null;
     }
 
-    const isActive = projectStatus === "active";
-    const isDisabledMinus = actionCount === 0;
-
-    return (
-        <div className="flex flex-row justify-center gap-2">
-            {isActive && (
-                <MinusButton
-                    onClick={() => onIncrement(-1)}
-                    disabled={isDisabledMinus}
-                >
-                    -
-                </MinusButton>
-            )}
-            <p className="flex items-center justify-center font-mono text-2xl">
-                {actionCount}
-            </p>
-            {isActive && (
-                <PlusButton onClick={() => onIncrement(1)}>+</PlusButton>
-            )}
-        </div>
-    );
+    return <div className="flex flex-row justify-center gap-2">{children}</div>;
 };
 
 type DeleteActionButtonProps = {
@@ -478,7 +503,13 @@ const DeleteActionButton = ({ deleteActionAtom }: DeleteActionButtonProps) => {
     );
 };
 
-EnduranceView.Count = Count;
+EnduranceView.CountProgress = CountProgress;
+EnduranceView.EditTargetCount = EditTargetCount;
+
+EnduranceView.ActionCount = ActionCount;
+EnduranceView.PlusButtons = PlusButtons;
+EnduranceView.MinusButtons = MinusButtons;
+
 EnduranceView.NormalAction = NormalAction;
 EnduranceView.ActionsField = ActionsField;
 EnduranceView.RescueActionsField = RescueActionsField;
@@ -491,7 +522,7 @@ EnduranceView.Label = Label;
 EnduranceView.EditLabel = EditLabel;
 EnduranceView.Amount = Amount;
 EnduranceView.EditAmount = EditAmount;
-EnduranceView.Progress = Progress;
+EnduranceView.ActionProgress = ActionProgress;
 EnduranceView.DeleteActionButton = DeleteActionButton;
 
 export default EnduranceView;

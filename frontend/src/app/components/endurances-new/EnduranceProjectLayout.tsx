@@ -128,17 +128,53 @@ const EnduranceProjectLayout = ({ projectId }: Props) => {
                 projectStatus={project.status}
                 isEdit={isEdit}
             >
-                <EnduranceView.Count
-                    currentCount={project.current_count}
-                    targetCount={project.target_count}
-                />
-                <EnduranceView.NormalAction
-                    normalCount={project.normal_count}
-                    onIncrementNormal={onIncrementNormal}
-                />
+                {isEdit ? (
+                    <EnduranceView.EditTargetCount />
+                ) : (
+                    <EnduranceView.CountProgress
+                        left={
+                            <div className="text-right text-4xl font-mono">
+                                {project.current_count}
+                            </div>
+                        }
+                        center={
+                            <div className="text-5xl font-mono text-gray-400">
+                                /
+                            </div>
+                        }
+                        right={
+                            <div className="text-left text-4xl font-mono">
+                                {project.target_count}
+                            </div>
+                        }
+                    />
+                )}
+                <EnduranceView.NormalAction>
+                    <EnduranceView.MinusButtons
+                        buttonConfigs={[
+                            {
+                                label: "-",
+                                count: -1,
+                            },
+                        ]}
+                        onIncrement={onIncrementNormal}
+                    />
+                    <EnduranceView.ActionCount
+                        actionCount={project.normal_count}
+                    />
+                    <EnduranceView.PlusButtons
+                        buttonConfigs={[
+                            {
+                                label: "+",
+                                count: 1,
+                            },
+                        ]}
+                        onIncrement={onIncrementNormal}
+                    />
+                </EnduranceView.NormalAction>
                 <EnduranceView.ActionsField>
                     <EnduranceView.RescueActionsField
-                        actions={actionStats.rescue_actions}
+                        actionLength={actionStats.rescue_actions.length}
                         rescueCount={project.rescue_count}
                         isWide={isWideRescue}
                     >
@@ -177,19 +213,41 @@ const EnduranceProjectLayout = ({ projectId }: Props) => {
                                                   amount={action.amount}
                                               />
                                           </EnduranceView.SettingsLayout>
-                                          <EnduranceView.Progress
-                                              actionCount={action.count}
-                                              onIncrement={onIncrement(
-                                                  action.type,
-                                                  action.id,
-                                              )}
-                                          />
+                                          <EnduranceView.ActionProgress>
+                                              <EnduranceView.MinusButtons
+                                                  buttonConfigs={[
+                                                      {
+                                                          label: "-",
+                                                          count: -1,
+                                                      },
+                                                  ]}
+                                                  onIncrement={onIncrement(
+                                                      action.type,
+                                                      action.id,
+                                                  )}
+                                              />
+                                              <EnduranceView.ActionCount
+                                                  actionCount={action.count}
+                                              />
+                                              <EnduranceView.PlusButtons
+                                                  buttonConfigs={[
+                                                      {
+                                                          label: "+",
+                                                          count: 1,
+                                                      },
+                                                  ]}
+                                                  onIncrement={onIncrement(
+                                                      action.type,
+                                                      action.id,
+                                                  )}
+                                              />
+                                          </EnduranceView.ActionProgress>
                                       </EnduranceView.Action>
                                   ),
                               )}
                     </EnduranceView.RescueActionsField>
                     <EnduranceView.SabotageActionsField
-                        actions={actionStats.sabotage_actions}
+                        actionLength={actionStats.sabotage_actions.length}
                         sabotageCount={project.sabotage_count}
                         isWide={isWideSabotage}
                     >
@@ -228,13 +286,35 @@ const EnduranceProjectLayout = ({ projectId }: Props) => {
                                                   amount={action.amount}
                                               />
                                           </EnduranceView.SettingsLayout>
-                                          <EnduranceView.Progress
-                                              actionCount={action.count}
-                                              onIncrement={onIncrement(
-                                                  action.type,
-                                                  action.id,
-                                              )}
-                                          />
+                                          <EnduranceView.ActionProgress>
+                                              <EnduranceView.MinusButtons
+                                                  buttonConfigs={[
+                                                      {
+                                                          label: "-",
+                                                          count: -1,
+                                                      },
+                                                  ]}
+                                                  onIncrement={onIncrement(
+                                                      action.type,
+                                                      action.id,
+                                                  )}
+                                              />
+                                              <EnduranceView.ActionCount
+                                                  actionCount={action.count}
+                                              />
+                                              <EnduranceView.PlusButtons
+                                                  buttonConfigs={[
+                                                      {
+                                                          label: "+",
+                                                          count: 1,
+                                                      },
+                                                  ]}
+                                                  onIncrement={onIncrement(
+                                                      action.type,
+                                                      action.id,
+                                                  )}
+                                              />
+                                          </EnduranceView.ActionProgress>
                                       </EnduranceView.Action>
                                   ),
                               )}

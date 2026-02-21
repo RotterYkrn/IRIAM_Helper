@@ -79,13 +79,10 @@ const CreateEnduranceProjectLayout = () => {
                 )}
                 isEdit={true}
             >
-                <EnduranceView.Count
-                    currentCount={0}
-                    targetCount={100}
-                />
+                <EnduranceView.EditTargetCount />
                 <EnduranceView.ActionsField>
                     <EnduranceView.RescueActionsField
-                        actions={Chunk.empty()}
+                        actionLength={0}
                         rescueCount={Schema.decodeSync(
                             EnduranceRescueCountSchema,
                         )(0)}
@@ -114,7 +111,7 @@ const CreateEnduranceProjectLayout = () => {
                         ))}
                     </EnduranceView.RescueActionsField>
                     <EnduranceView.SabotageActionsField
-                        actions={Chunk.empty()}
+                        actionLength={0}
                         sabotageCount={Schema.decodeSync(
                             EnduranceSabotageCountSchema,
                         )(0)}
