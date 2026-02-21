@@ -19,6 +19,8 @@ import {
 } from "@/domain/endurances-new/tables/EnduranceActionsNew";
 import type { EnduranceActionStatsViewNewSchema } from "@/domain/endurances-new/views/EnduranceActionStatsViewNew";
 import type { ProjectSchema } from "@/domain/projects/tables/Project";
+import MinusButton from "@/utils/components/MinusButton";
+import PlusButton from "@/utils/components/PlusButton";
 
 type EnduranceContextType = {
     projectStatus: typeof ProjectSchema.Type.status;
@@ -146,16 +148,12 @@ const NormalAction = ({
             )}
             <div className="flex flex-row justify-center gap-2">
                 {isActive && (
-                    <button
+                    <MinusButton
                         onClick={() => onIncrementNormal(-1)}
                         disabled={isDisabledMinus}
-                        className={`w-7 h-7 flex items-center justify-center
-                        rounded-full text-xl font-bold transition text-white
-                        ${isDisabledMinus ? "bg-gray-400" : " bg-red-500 hover:bg-red-600 active:scale-95"}
-                        `}
                     >
                         -
-                    </button>
+                    </MinusButton>
                 )}
                 <p
                     className="flex items-center justify-center font-mono
@@ -164,14 +162,9 @@ const NormalAction = ({
                     {normalCount}
                 </p>
                 {isActive && (
-                    <button
-                        onClick={() => onIncrementNormal(1)}
-                        className={`w-7 h-7 flex items-center justify-center
-                        rounded-full text-xl font-bold transition bg-blue-500
-                        hover:bg-blue-600 active:scale-95 text-white`}
-                    >
+                    <PlusButton onClick={() => onIncrementNormal(1)}>
                         +
-                    </button>
+                    </PlusButton>
                 )}
             </div>
         </div>
@@ -560,29 +553,18 @@ const Progress = ({ actionCount, onIncrement }: ProgressProps) => {
     return (
         <div className="flex flex-row justify-center gap-2">
             {isActive && (
-                <button
+                <MinusButton
                     onClick={() => onIncrement(-1)}
                     disabled={isDisabledMinus}
-                    className={`w-7 h-7 flex items-center justify-center
-                    rounded-full text-xl font-bold transition text-white
-                    ${isDisabledMinus ? "bg-gray-400" : " bg-red-500 hover:bg-red-600 active:scale-95"}
-                    `}
                 >
                     -
-                </button>
+                </MinusButton>
             )}
             <p className="flex items-center justify-center font-mono text-2xl">
                 {actionCount}
             </p>
             {isActive && (
-                <button
-                    onClick={() => onIncrement(1)}
-                    className={`w-7 h-7 flex items-center justify-center
-                    rounded-full text-xl font-bold transition bg-blue-500
-                    hover:bg-blue-600 active:scale-95 text-white`}
-                >
-                    +
-                </button>
+                <PlusButton onClick={() => onIncrement(1)}>+</PlusButton>
             )}
         </div>
     );
@@ -612,7 +594,7 @@ const DeleteActionButton = ({ id, actionType }: DeleteActionButtonProps) => {
     return (
         <button
             className="bg-gray-300 hover:bg-gray-200 px-2 py-1 rounded-md border
-                border-gray-400"
+                border-gray-400 cursor-pointer"
             onClick={deleteAction}
         >
             削除

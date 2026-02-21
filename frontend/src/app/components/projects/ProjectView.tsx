@@ -160,11 +160,7 @@ const SaveButton = ({ disabled, onSave }: SaveButtonProps) => {
         <ProjectButton
             disabled={disabled}
             onClick={onSave}
-            className={
-                disabled
-                    ? "bg-gray-500 opacity-50"
-                    : "bg-gray-500 hover:bg-gray-600"
-            }
+            className="bg-gray-500 hover:bg-gray-600"
         >
             保存
         </ProjectButton>
@@ -248,7 +244,7 @@ const ActivateButton = ({ onActivate }: ActivateButtonProps) => {
     return (
         <ProjectButton
             onClick={onActivate}
-            className="bg-green-600 hover:bg-green-700 disabled:opacity-50"
+            className="bg-green-600 hover:bg-green-700"
         >
             企画開始
         </ProjectButton>
