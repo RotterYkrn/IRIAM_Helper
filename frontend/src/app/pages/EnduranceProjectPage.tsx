@@ -1,7 +1,7 @@
 import { Provider } from "jotai";
 import { useParams } from "react-router-dom";
 
-import EnduranceProjectLayoutNew from "../components/endurances-new/EnduranceProjectLayout";
+import EnduranceProjectLayout from "../components/endurances-new/EnduranceProjectLayout";
 
 const EnduranceProjectPage = () => {
     const { projectId } = useParams<{ projectId: string }>();
@@ -12,7 +12,7 @@ const EnduranceProjectPage = () => {
 
     return (
         <Provider>
-            <EnduranceProjectLayoutNew
+            <EnduranceProjectLayout
                 key={projectId}
                 projectId={projectId}
             />

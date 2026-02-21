@@ -193,9 +193,9 @@ type DuplicateButtonProps = {
 };
 
 const DuplicateButton = ({ onDuplicate }: DuplicateButtonProps) => {
-    const { projectStatus } = useProject();
+    const { projectStatus, isEdit } = useProject();
 
-    if (projectStatus === "active") {
+    if (projectStatus === "active" || isEdit) {
         return null;
     }
 

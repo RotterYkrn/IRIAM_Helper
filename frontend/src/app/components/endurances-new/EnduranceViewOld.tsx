@@ -1,5 +1,6 @@
-import { useAtom, useAtomValue, useSetAtom, type WritableAtom } from "jotai";
-import { createContext, useContext } from "react";
+import { Chunk, Schema } from "effect";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
+import { createContext, useContext, useMemo } from "react";
 
 import {
     editRescueActionsAtomsNew,
@@ -9,9 +10,13 @@ import {
     editTargetCountAtomNew,
     editTargetCountErrorAtomNew,
 } from "@/atoms/endurances-new/EditTargetCountAtom";
+import { EnduranceActionTypeSchema } from "@/domain/endurances/tables/EnduranceActions";
 import type { EnduranceActionCountsSchema } from "@/domain/endurances-new/tables/EnduranceActionCounts";
 import type { EnduranceActionHistoriesNewSchema } from "@/domain/endurances-new/tables/EnduranceActionHistoriesNew";
-import { type EnduranceActionsNewSchema } from "@/domain/endurances-new/tables/EnduranceActionsNew";
+import {
+    EnduranceActionCountSchema,
+    type EnduranceActionsNewSchema,
+} from "@/domain/endurances-new/tables/EnduranceActionsNew";
 import type { EnduranceActionStatsViewNewSchema } from "@/domain/endurances-new/views/EnduranceActionStatsViewNew";
 import type { ProjectSchema } from "@/domain/projects/tables/Project";
 import MinusButton from "@/utils/components/MinusButton";
@@ -38,7 +43,7 @@ type Props = EnduranceContextType & {
     children: React.ReactNode;
 };
 
-const EnduranceView = ({ children, ...contextValue }: Props) => {
+const EnduranceViewNew = ({ children, ...contextValue }: Props) => {
     return <EnduranceContext value={contextValue}>{children}</EnduranceContext>;
 };
 
@@ -184,19 +189,24 @@ const ActionColumnClass = (actionLength: number) => {
 };
 
 type RescueActionsFieldProps = {
-    children: React.ReactNode;
     actions: typeof EnduranceActionStatsViewNewSchema.Type.rescue_actions;
     rescueCount: typeof EnduranceActionCountsSchema.Type.rescue_count;
     isWide: boolean;
+    onIncrement: (
+        id: typeof EnduranceActionsNewSchema.Type.id,
+    ) => (
+        actionCount: typeof EnduranceActionHistoriesNewSchema.Encoded.action_count,
+    ) => void;
 };
 
 const RescueActionsField = ({
-    children,
     actions,
     rescueCount,
     isWide,
+    onIncrement,
 }: RescueActionsFieldProps) => {
     const { projectStatus, isEdit } = useEndurance();
+    const state = useAtomValue(editRescueActionsAtomsNew.editActions);
     const createAction = useSetAtom(editRescueActionsAtomsNew.createAction);
 
     const onAddAction = () => {
@@ -236,26 +246,57 @@ const RescueActionsField = ({
                 className={`grid gap-4
                     ${isWide && !isEdit ? ActionColumnClass(actions.length) : "grid-cols-2"}`}
             >
-                {children}
+                {isEdit
+                    ? Chunk.map(state, (action) => (
+                          <Action
+                              key={action.id}
+                              id={action.id}
+                              actionType={Schema.decodeSync(
+                                  EnduranceActionTypeSchema,
+                              )("rescue")}
+                              label={action.label}
+                              amount={action.amount}
+                              actionCount={Schema.decodeSync(
+                                  EnduranceActionCountSchema,
+                              )(0)}
+                              onIncrement={() => {}}
+                          />
+                      ))
+                    : Chunk.map(actions, (action) => (
+                          <Action
+                              key={action.id}
+                              id={action.id}
+                              actionType={action.type}
+                              label={action.label}
+                              amount={action.amount}
+                              actionCount={action.count}
+                              onIncrement={onIncrement(action.id)}
+                          />
+                      ))}
             </div>
         </div>
     );
 };
 
 type SabotageActionsFieldProps = {
-    children: React.ReactNode;
     actions: typeof EnduranceActionStatsViewNewSchema.Type.sabotage_actions;
     sabotageCount: typeof EnduranceActionCountsSchema.Type.sabotage_count;
     isWide: boolean;
+    onIncrement: (
+        id: typeof EnduranceActionsNewSchema.Type.id,
+    ) => (
+        actionCount: typeof EnduranceActionHistoriesNewSchema.Encoded.action_count,
+    ) => void;
 };
 
 const SabotageActionsField = ({
-    children,
     actions,
     sabotageCount,
     isWide,
+    onIncrement,
 }: SabotageActionsFieldProps) => {
     const { projectStatus, isEdit } = useEndurance();
+    const state = useAtomValue(editSabotageActionsAtomsNew.editActions);
     const createAction = useSetAtom(editSabotageActionsAtomsNew.createAction);
 
     const onAddAction = () => {
@@ -295,129 +336,200 @@ const SabotageActionsField = ({
                 className={`grid gap-4
                     ${isWide && !isEdit ? ActionColumnClass(actions.length) : "grid-cols-2"}`}
             >
-                {children}
+                {isEdit
+                    ? Chunk.map(state, (action) => (
+                          <Action
+                              key={action.id}
+                              id={action.id}
+                              actionType={Schema.decodeSync(
+                                  EnduranceActionTypeSchema,
+                              )("sabotage")}
+                              label={action.label}
+                              amount={action.amount}
+                              actionCount={Schema.decodeSync(
+                                  EnduranceActionCountSchema,
+                              )(0)}
+                              onIncrement={() => {}}
+                          />
+                      ))
+                    : Chunk.map(actions, (action) => (
+                          <Action
+                              key={action.id}
+                              id={action.id}
+                              actionType={action.type}
+                              label={action.label}
+                              amount={action.amount}
+                              actionCount={action.count}
+                              onIncrement={onIncrement(action.id)}
+                          />
+                      ))}
             </div>
         </div>
     );
 };
 
 type ActionProps = {
-    children: React.ReactNode;
+    id: typeof EnduranceActionsNewSchema.Type.id;
+    actionType: typeof EnduranceActionsNewSchema.Type.type;
+    label: typeof EnduranceActionsNewSchema.Type.label;
+    amount: typeof EnduranceActionsNewSchema.Type.amount;
+    actionCount: typeof EnduranceActionsNewSchema.Type.count;
+    onIncrement: (
+        actionCount: typeof EnduranceActionHistoriesNewSchema.Encoded.action_count,
+    ) => void;
 };
 
-const Action = ({ children }: ActionProps) => {
+const Action = ({
+    id,
+    actionType,
+    label,
+    amount,
+    actionCount,
+    onIncrement,
+}: ActionProps) => {
     return (
         <div
             className="flex flex-col items-center justify-center p-2 gap-1
                 bg-white rounded-xl border border-slate-300 shadow-sm w-32"
         >
-            {children}
+            <Settings
+                id={id}
+                actionType={actionType}
+                label={label}
+                amount={amount}
+            />
+            <Progress
+                actionCount={actionCount}
+                onIncrement={onIncrement}
+            />
+            <DeleteActionButton
+                id={id}
+                actionType={actionType}
+            />
         </div>
     );
 };
 
-type SettingsLayoutProps = {
-    children: React.ReactNode;
+type SettingsProps = {
+    id: typeof EnduranceActionsNewSchema.Type.id;
+    actionType: typeof EnduranceActionsNewSchema.Type.type;
+    label: typeof EnduranceActionsNewSchema.Type.label;
+    amount: typeof EnduranceActionsNewSchema.Type.amount;
 };
 
-const SettingsLayout = ({ children }: SettingsLayoutProps) => {
+const Settings = ({ id, actionType, label, amount }: SettingsProps) => {
+    const { isEdit } = useEndurance();
+
+    if (isEdit) {
+        return (
+            <div className="flex flex-col items-center justify-center space-y-2">
+                <Label
+                    id={id}
+                    actionType={actionType}
+                    label={label}
+                />
+                <Amount
+                    id={id}
+                    actionType={actionType}
+                    amount={amount}
+                />
+            </div>
+        );
+    }
+
     return (
         <div className="flex flex-col items-center justify-center">
-            {children}
-        </div>
-    );
-};
-
-type EditSettingsLayoutProps = {
-    children: React.ReactNode;
-};
-
-const EditSettingsLayout = ({ children }: EditSettingsLayoutProps) => {
-    return (
-        <div className="flex flex-col items-center justify-center space-y-2">
-            {children}
+            <Label
+                id={id}
+                actionType={actionType}
+                label={label}
+            />
+            <Amount
+                id={id}
+                actionType={actionType}
+                amount={amount}
+            />
         </div>
     );
 };
 
 type LabelProps = {
+    id: typeof EnduranceActionsNewSchema.Type.id;
+    actionType: typeof EnduranceActionsNewSchema.Type.type;
     label: string;
 };
 
-const Label = ({ label }: LabelProps) => {
+const Label = ({ id, actionType, label }: LabelProps) => {
+    const { isEdit } = useEndurance();
+    const [state, setState] = useAtom(
+        useMemo(
+            () =>
+                actionType === "rescue"
+                    ? editRescueActionsAtomsNew.editLabel(id)
+                    : editSabotageActionsAtomsNew.editLabel(id),
+            [id, actionType],
+        ),
+    );
+
+    if (isEdit) {
+        return (
+            <>
+                <input
+                    className="w-20 text-center outline-none border-b-2
+                        border-gray-300 focus:border-gray-500 transition-colors"
+                    defaultValue={state.value}
+                    placeholder="ラベルを入力"
+                    onChange={(e) => setState(e.target.value)}
+                />
+                {state.error && (
+                    <p className="text-red-600 text-sm">{state.error}</p>
+                )}
+            </>
+        );
+    }
+
     return <div className="whitespace-nowrap font-medium">{label}</div>;
 };
 
-type EditLabelProps = {
-    editLabelAtom: WritableAtom<
-        {
-            value: typeof EnduranceActionsNewSchema.Type.label;
-            error: string | null;
-        },
-        [newLabel: typeof EnduranceActionsNewSchema.Encoded.label],
-        void
-    >;
-};
-
-const EditLabel = ({ editLabelAtom }: EditLabelProps) => {
-    const [state, setState] = useAtom(editLabelAtom);
-
-    return (
-        <>
-            <input
-                className="w-20 text-center outline-none border-b-2
-                    border-gray-300 focus:border-gray-500 transition-colors"
-                defaultValue={state.value}
-                placeholder="ラベルを入力"
-                onChange={(e) => setState(e.target.value)}
-            />
-            {state.error && (
-                <p className="text-red-600 text-sm">{state.error}</p>
-            )}
-        </>
-    );
-};
-
 type AmountProps = {
+    id: typeof EnduranceActionsNewSchema.Type.id;
     actionType: typeof EnduranceActionsNewSchema.Type.type;
     amount: typeof EnduranceActionsNewSchema.Type.amount;
 };
 
-const Amount = ({ actionType, amount }: AmountProps) => {
+const Amount = ({ id, actionType, amount }: AmountProps) => {
+    const { isEdit } = useEndurance();
+    const [state, setState] = useAtom(
+        useMemo(
+            () =>
+                actionType === "rescue"
+                    ? editRescueActionsAtomsNew.editAmount(id)
+                    : editSabotageActionsAtomsNew.editAmount(id),
+            [id, actionType],
+        ),
+    );
+
+    if (isEdit) {
+        return (
+            <>
+                <input
+                    className="w-20 text-center outline-none border-b-2
+                        border-gray-300 focus:border-gray-500 transition-colors"
+                    defaultValue={state.value}
+                    placeholder="数値を入力"
+                    onChange={(e) => setState(Number(e.target.value))}
+                />
+                {state.error && (
+                    <p className="text-red-600 text-sm">{state.error}</p>
+                )}
+            </>
+        );
+    }
+
     return (
         <div className="font-mono whitespace-nowrap text-lg">
             {actionType === "rescue" ? `(+${amount})` : `(-${amount})`}
         </div>
-    );
-};
-
-type EditAmountProps = {
-    editAmountAtom: WritableAtom<
-        {
-            value: typeof EnduranceActionsNewSchema.Type.amount;
-            error: string | null;
-        },
-        [newLabel: typeof EnduranceActionsNewSchema.Encoded.amount],
-        void
-    >;
-};
-
-const EditAmount = ({ editAmountAtom }: EditAmountProps) => {
-    const [state, setState] = useAtom(editAmountAtom);
-
-    return (
-        <>
-            <input
-                className="w-20 text-center outline-none border-b-2
-                    border-gray-300 focus:border-gray-500 transition-colors"
-                defaultValue={state.value}
-                placeholder="数値を入力"
-                onChange={(e) => setState(Number(e.target.value))}
-            />
-            {state.error && (
-                <p className="text-red-600 text-sm">{state.error}</p>
-            )}
-        </>
     );
 };
 
@@ -459,39 +571,41 @@ const Progress = ({ actionCount, onIncrement }: ProgressProps) => {
 };
 
 type DeleteActionButtonProps = {
-    deleteActionAtom: WritableAtom<null, [], void> & {
-        init: null;
-    };
+    id: typeof EnduranceActionsNewSchema.Type.id;
+    actionType: typeof EnduranceActionsNewSchema.Type.type;
 };
 
-const DeleteActionButton = ({ deleteActionAtom }: DeleteActionButtonProps) => {
-    const onDelete = useSetAtom(deleteActionAtom);
+const DeleteActionButton = ({ id, actionType }: DeleteActionButtonProps) => {
+    const { isEdit } = useEndurance();
+    const deleteAction = useSetAtom(
+        useMemo(
+            () =>
+                actionType === "rescue"
+                    ? editRescueActionsAtomsNew.deleteAction(id)
+                    : editSabotageActionsAtomsNew.deleteAction(id),
+            [id, actionType],
+        ),
+    );
+
+    if (!isEdit) {
+        return null;
+    }
 
     return (
         <button
             className="bg-gray-300 hover:bg-gray-200 px-2 py-1 rounded-md border
                 border-gray-400 cursor-pointer"
-            onClick={onDelete}
+            onClick={deleteAction}
         >
             削除
         </button>
     );
 };
 
-EnduranceView.Count = Count;
-EnduranceView.NormalAction = NormalAction;
-EnduranceView.ActionsField = ActionsField;
-EnduranceView.RescueActionsField = RescueActionsField;
-EnduranceView.SabotageActionsField = SabotageActionsField;
+EnduranceViewNew.Count = Count;
+EnduranceViewNew.NormalAction = NormalAction;
+EnduranceViewNew.ActionsField = ActionsField;
+EnduranceViewNew.RescueActionsField = RescueActionsField;
+EnduranceViewNew.SabotageActionsField = SabotageActionsField;
 
-EnduranceView.Action = Action;
-EnduranceView.SettingsLayout = SettingsLayout;
-EnduranceView.EditSettingsLayout = EditSettingsLayout;
-EnduranceView.Label = Label;
-EnduranceView.EditLabel = EditLabel;
-EnduranceView.Amount = Amount;
-EnduranceView.EditAmount = EditAmount;
-EnduranceView.Progress = Progress;
-EnduranceView.DeleteActionButton = DeleteActionButton;
-
-export default EnduranceView;
+export default EnduranceViewNew;
