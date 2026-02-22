@@ -22,15 +22,13 @@ export const EnduranceUnitLabelSchema = Schema.String.pipe(
 );
 
 export const EnduranceTargetCountSchema = Schema.Number.pipe(
-    Schema.int({ message: () => "整数で入力してください" }),
-    Schema.greaterThanOrEqualTo(1, {
-        message: () => "1以上の数を入力してください",
+    Schema.positive({
+        message: () => "0より大きいの数を入力してください",
     }),
     Schema.brand("EnduranceTargetCount"),
 );
 
 export const EnduranceCurrentCountSchema = Schema.Number.pipe(
-    Schema.int(),
     Schema.brand("EnduranceCurrentCount"),
 );
 

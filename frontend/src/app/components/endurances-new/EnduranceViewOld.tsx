@@ -3,24 +3,21 @@ import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { createContext, useContext, useMemo } from "react";
 
 import {
-    editRescueActionsAtoms,
-    editSabotageActionsAtoms,
-} from "@/atoms/endurances/EditActionAtom";
+    editRescueActionsAtomsNew,
+    editSabotageActionsAtomsNew,
+} from "@/atoms/endurances-new/EditActionAtom";
 import {
-    editTargetCountAtom,
-    editTargetCountErrorAtom,
-} from "@/atoms/endurances/EditTargetCountAtom";
-import type { EnduranceActionHistoriesSchema } from "@/domain/endurances/tables/EnduranceActionHistories";
+    editTargetCountAtomNew,
+    editTargetCountErrorAtomNew,
+} from "@/atoms/endurances-new/EditTargetCountAtom";
+import { EnduranceActionTypeSchema } from "@/domain/endurances/tables/EnduranceActions";
+import type { EnduranceActionCountsSchema } from "@/domain/endurances-new/tables/EnduranceActionCounts";
+import type { EnduranceActionHistoriesNewSchema } from "@/domain/endurances-new/tables/EnduranceActionHistoriesNew";
 import {
-    EnduranceActionTypeSchema,
-    type EnduranceActionsSchema,
-} from "@/domain/endurances/tables/EnduranceActions";
-import { type EnduranceProgressSchema } from "@/domain/endurances/tables/EnduranceProgress";
-import {
-    EnduranceActionTimesSchema,
-    type EnduranceActionStatSchema,
-} from "@/domain/endurances/types/EnduranceActionStat";
-import type { EnduranceActionStatsViewSchema } from "@/domain/endurances/views/EnduranceActionStatsView";
+    EnduranceActionCountSchema,
+    type EnduranceActionsNewSchema,
+} from "@/domain/endurances-new/tables/EnduranceActionsNew";
+import type { EnduranceActionStatsViewNewSchema } from "@/domain/endurances-new/views/EnduranceActionStatsViewNew";
 import type { ProjectSchema } from "@/domain/projects/tables/Project";
 import MinusButton from "@/utils/components/MinusButton";
 import PlusButton from "@/utils/components/PlusButton";
@@ -46,7 +43,7 @@ type Props = EnduranceContextType & {
     children: React.ReactNode;
 };
 
-const EnduranceView = ({ children, ...contextValue }: Props) => {
+const EnduranceViewNew = ({ children, ...contextValue }: Props) => {
     return <EnduranceContext value={contextValue}>{children}</EnduranceContext>;
 };
 
@@ -57,8 +54,8 @@ type CountProps = {
 
 const Count = ({ currentCount, targetCount }: CountProps) => {
     const { isEdit } = useEndurance();
-    const setState = useSetAtom(editTargetCountAtom);
-    const error = useAtomValue(editTargetCountErrorAtom);
+    const setState = useSetAtom(editTargetCountAtomNew);
+    const error = useAtomValue(editTargetCountErrorAtomNew);
 
     if (isEdit) {
         return (
@@ -116,9 +113,9 @@ const Count = ({ currentCount, targetCount }: CountProps) => {
 };
 
 type NormalActionProps = {
-    normalCount: typeof EnduranceProgressSchema.Type.normal_count;
+    normalCount: typeof EnduranceActionCountsSchema.Type.normal_count;
     onIncrementNormal: (
-        isReversal: typeof EnduranceActionHistoriesSchema.Encoded.is_reversal,
+        actionCount: typeof EnduranceActionHistoriesNewSchema.Encoded.action_count,
     ) => void;
 };
 
@@ -152,7 +149,7 @@ const NormalAction = ({
             <div className="flex flex-row justify-center gap-2">
                 {isActive && (
                     <MinusButton
-                        onClick={() => onIncrementNormal(true)}
+                        onClick={() => onIncrementNormal(-1)}
                         disabled={isDisabledMinus}
                     >
                         -
@@ -165,7 +162,7 @@ const NormalAction = ({
                     {normalCount}
                 </p>
                 {isActive && (
-                    <PlusButton onClick={() => onIncrementNormal(false)}>
+                    <PlusButton onClick={() => onIncrementNormal(1)}>
                         +
                     </PlusButton>
                 )}
@@ -192,13 +189,13 @@ const ActionColumnClass = (actionLength: number) => {
 };
 
 type RescueActionsFieldProps = {
-    actions: typeof EnduranceActionStatsViewSchema.Type.rescue_actions;
-    rescueCount: typeof EnduranceProgressSchema.Type.rescue_count;
+    actions: typeof EnduranceActionStatsViewNewSchema.Type.rescue_actions;
+    rescueCount: typeof EnduranceActionCountsSchema.Type.rescue_count;
     isWide: boolean;
     onIncrement: (
-        id: typeof EnduranceActionsSchema.Type.id,
+        id: typeof EnduranceActionsNewSchema.Type.id,
     ) => (
-        isReversal: typeof EnduranceActionHistoriesSchema.Encoded.is_reversal,
+        actionCount: typeof EnduranceActionHistoriesNewSchema.Encoded.action_count,
     ) => void;
 };
 
@@ -209,8 +206,8 @@ const RescueActionsField = ({
     onIncrement,
 }: RescueActionsFieldProps) => {
     const { projectStatus, isEdit } = useEndurance();
-    const state = useAtomValue(editRescueActionsAtoms.editActions);
-    const createAction = useSetAtom(editRescueActionsAtoms.createAction);
+    const state = useAtomValue(editRescueActionsAtomsNew.editActions);
+    const createAction = useSetAtom(editRescueActionsAtomsNew.createAction);
 
     const onAddAction = () => {
         createAction();
@@ -260,7 +257,7 @@ const RescueActionsField = ({
                               label={action.label}
                               amount={action.amount}
                               actionCount={Schema.decodeSync(
-                                  EnduranceActionTimesSchema,
+                                  EnduranceActionCountSchema,
                               )(0)}
                               onIncrement={() => {}}
                           />
@@ -272,7 +269,7 @@ const RescueActionsField = ({
                               actionType={action.type}
                               label={action.label}
                               amount={action.amount}
-                              actionCount={action.action_times}
+                              actionCount={action.count}
                               onIncrement={onIncrement(action.id)}
                           />
                       ))}
@@ -282,13 +279,13 @@ const RescueActionsField = ({
 };
 
 type SabotageActionsFieldProps = {
-    actions: typeof EnduranceActionStatsViewSchema.Type.sabotage_actions;
-    sabotageCount: typeof EnduranceProgressSchema.Type.sabotage_count;
+    actions: typeof EnduranceActionStatsViewNewSchema.Type.sabotage_actions;
+    sabotageCount: typeof EnduranceActionCountsSchema.Type.sabotage_count;
     isWide: boolean;
     onIncrement: (
-        id: typeof EnduranceActionsSchema.Type.id,
+        id: typeof EnduranceActionsNewSchema.Type.id,
     ) => (
-        isReversal: typeof EnduranceActionHistoriesSchema.Encoded.is_reversal,
+        actionCount: typeof EnduranceActionHistoriesNewSchema.Encoded.action_count,
     ) => void;
 };
 
@@ -299,8 +296,8 @@ const SabotageActionsField = ({
     onIncrement,
 }: SabotageActionsFieldProps) => {
     const { projectStatus, isEdit } = useEndurance();
-    const state = useAtomValue(editSabotageActionsAtoms.editActions);
-    const createAction = useSetAtom(editSabotageActionsAtoms.createAction);
+    const state = useAtomValue(editSabotageActionsAtomsNew.editActions);
+    const createAction = useSetAtom(editSabotageActionsAtomsNew.createAction);
 
     const onAddAction = () => {
         createAction();
@@ -350,7 +347,7 @@ const SabotageActionsField = ({
                               label={action.label}
                               amount={action.amount}
                               actionCount={Schema.decodeSync(
-                                  EnduranceActionTimesSchema,
+                                  EnduranceActionCountSchema,
                               )(0)}
                               onIncrement={() => {}}
                           />
@@ -362,7 +359,7 @@ const SabotageActionsField = ({
                               actionType={action.type}
                               label={action.label}
                               amount={action.amount}
-                              actionCount={action.action_times}
+                              actionCount={action.count}
                               onIncrement={onIncrement(action.id)}
                           />
                       ))}
@@ -372,13 +369,13 @@ const SabotageActionsField = ({
 };
 
 type ActionProps = {
-    id: typeof EnduranceActionsSchema.Type.id;
-    actionType: typeof EnduranceActionsSchema.Type.type;
-    label: typeof EnduranceActionsSchema.Type.label;
-    amount: typeof EnduranceActionsSchema.Type.amount;
-    actionCount: typeof EnduranceActionStatSchema.Type.action_times;
+    id: typeof EnduranceActionsNewSchema.Type.id;
+    actionType: typeof EnduranceActionsNewSchema.Type.type;
+    label: typeof EnduranceActionsNewSchema.Type.label;
+    amount: typeof EnduranceActionsNewSchema.Type.amount;
+    actionCount: typeof EnduranceActionsNewSchema.Type.count;
     onIncrement: (
-        isReversal: typeof EnduranceActionHistoriesSchema.Encoded.is_reversal,
+        actionCount: typeof EnduranceActionHistoriesNewSchema.Encoded.action_count,
     ) => void;
 };
 
@@ -414,10 +411,10 @@ const Action = ({
 };
 
 type SettingsProps = {
-    id: typeof EnduranceActionsSchema.Type.id;
-    actionType: typeof EnduranceActionsSchema.Type.type;
-    label: typeof EnduranceActionsSchema.Type.label;
-    amount: typeof EnduranceActionsSchema.Type.amount;
+    id: typeof EnduranceActionsNewSchema.Type.id;
+    actionType: typeof EnduranceActionsNewSchema.Type.type;
+    label: typeof EnduranceActionsNewSchema.Type.label;
+    amount: typeof EnduranceActionsNewSchema.Type.amount;
 };
 
 const Settings = ({ id, actionType, label, amount }: SettingsProps) => {
@@ -457,8 +454,8 @@ const Settings = ({ id, actionType, label, amount }: SettingsProps) => {
 };
 
 type LabelProps = {
-    id: typeof EnduranceActionsSchema.Type.id;
-    actionType: typeof EnduranceActionsSchema.Type.type;
+    id: typeof EnduranceActionsNewSchema.Type.id;
+    actionType: typeof EnduranceActionsNewSchema.Type.type;
     label: string;
 };
 
@@ -468,8 +465,8 @@ const Label = ({ id, actionType, label }: LabelProps) => {
         useMemo(
             () =>
                 actionType === "rescue"
-                    ? editRescueActionsAtoms.editLabel(id)
-                    : editSabotageActionsAtoms.editLabel(id),
+                    ? editRescueActionsAtomsNew.editLabel(id)
+                    : editSabotageActionsAtomsNew.editLabel(id),
             [id, actionType],
         ),
     );
@@ -495,9 +492,9 @@ const Label = ({ id, actionType, label }: LabelProps) => {
 };
 
 type AmountProps = {
-    id: typeof EnduranceActionsSchema.Type.id;
-    actionType: typeof EnduranceActionsSchema.Type.type;
-    amount: typeof EnduranceActionsSchema.Type.amount;
+    id: typeof EnduranceActionsNewSchema.Type.id;
+    actionType: typeof EnduranceActionsNewSchema.Type.type;
+    amount: typeof EnduranceActionsNewSchema.Type.amount;
 };
 
 const Amount = ({ id, actionType, amount }: AmountProps) => {
@@ -506,8 +503,8 @@ const Amount = ({ id, actionType, amount }: AmountProps) => {
         useMemo(
             () =>
                 actionType === "rescue"
-                    ? editRescueActionsAtoms.editAmount(id)
-                    : editSabotageActionsAtoms.editAmount(id),
+                    ? editRescueActionsAtomsNew.editAmount(id)
+                    : editSabotageActionsAtomsNew.editAmount(id),
             [id, actionType],
         ),
     );
@@ -537,9 +534,9 @@ const Amount = ({ id, actionType, amount }: AmountProps) => {
 };
 
 type ProgressProps = {
-    actionCount: typeof EnduranceActionStatSchema.Type.action_times;
+    actionCount: typeof EnduranceActionsNewSchema.Type.count;
     onIncrement: (
-        isReversal: typeof EnduranceActionHistoriesSchema.Encoded.is_reversal,
+        actionCount: typeof EnduranceActionHistoriesNewSchema.Encoded.action_count,
     ) => void;
 };
 
@@ -557,7 +554,7 @@ const Progress = ({ actionCount, onIncrement }: ProgressProps) => {
         <div className="flex flex-row justify-center gap-2">
             {isActive && (
                 <MinusButton
-                    onClick={() => onIncrement(true)}
+                    onClick={() => onIncrement(-1)}
                     disabled={isDisabledMinus}
                 >
                     -
@@ -567,15 +564,15 @@ const Progress = ({ actionCount, onIncrement }: ProgressProps) => {
                 {actionCount}
             </p>
             {isActive && (
-                <PlusButton onClick={() => onIncrement(false)}>+</PlusButton>
+                <PlusButton onClick={() => onIncrement(1)}>+</PlusButton>
             )}
         </div>
     );
 };
 
 type DeleteActionButtonProps = {
-    id: typeof EnduranceActionsSchema.Type.id;
-    actionType: typeof EnduranceActionsSchema.Type.type;
+    id: typeof EnduranceActionsNewSchema.Type.id;
+    actionType: typeof EnduranceActionsNewSchema.Type.type;
 };
 
 const DeleteActionButton = ({ id, actionType }: DeleteActionButtonProps) => {
@@ -584,8 +581,8 @@ const DeleteActionButton = ({ id, actionType }: DeleteActionButtonProps) => {
         useMemo(
             () =>
                 actionType === "rescue"
-                    ? editRescueActionsAtoms.deleteAction(id)
-                    : editSabotageActionsAtoms.deleteAction(id),
+                    ? editRescueActionsAtomsNew.deleteAction(id)
+                    : editSabotageActionsAtomsNew.deleteAction(id),
             [id, actionType],
         ),
     );
@@ -597,7 +594,7 @@ const DeleteActionButton = ({ id, actionType }: DeleteActionButtonProps) => {
     return (
         <button
             className="bg-gray-300 hover:bg-gray-200 px-2 py-1 rounded-md border
-                border-gray-400"
+                border-gray-400 cursor-pointer"
             onClick={deleteAction}
         >
             削除
@@ -605,10 +602,10 @@ const DeleteActionButton = ({ id, actionType }: DeleteActionButtonProps) => {
     );
 };
 
-EnduranceView.Count = Count;
-EnduranceView.NormalAction = NormalAction;
-EnduranceView.ActionsField = ActionsField;
-EnduranceView.RescueActionsField = RescueActionsField;
-EnduranceView.SabotageActionsField = SabotageActionsField;
+EnduranceViewNew.Count = Count;
+EnduranceViewNew.NormalAction = NormalAction;
+EnduranceViewNew.ActionsField = ActionsField;
+EnduranceViewNew.RescueActionsField = RescueActionsField;
+EnduranceViewNew.SabotageActionsField = SabotageActionsField;
 
-export default EnduranceView;
+export default EnduranceViewNew;

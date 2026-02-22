@@ -5,8 +5,12 @@ import { useNavigate } from "react-router-dom";
 
 import CreateProjectLayout from "../projects/CreateProjectLayout";
 
-import EnduranceViewNew from "./EnduranceView";
+import EnduranceView from "./EnduranceView";
 
+import {
+    editSabotageActionsAtomsNew,
+    editRescueActionsAtomsNew,
+} from "@/atoms/endurances-new/EditActionAtom";
 import {
     editEnduranceAtomNew,
     initEditEnduranceAtomNew,
@@ -16,7 +20,7 @@ import {
     EnduranceRescueCountSchema,
     EnduranceSabotageCountSchema,
 } from "@/domain/endurances/tables/EnduranceProgress";
-import { EnduranceTargetCountSchema } from "@/domain/endurances/tables/EnduranceSettings";
+import { EnduranceTargetCountSchema } from "@/domain/endurances-new/tables/EnduranceUnits";
 import {
     ProjectStatusSchema,
     ProjectTitleSchema,
@@ -24,12 +28,17 @@ import {
 import { useCreateEnduranceProjectNew } from "@/hooks/endurances-new/useCreateEnduranceProject";
 import { errorToast, successToast } from "@/utils/toast";
 
-const CreateEnduranceProjectLayoutNew = () => {
+const CreateEnduranceProjectLayout = () => {
     const navigate = useNavigate();
 
     const editState = useAtomValue(editEnduranceAtomNew);
     const initEditEndurance = useSetAtom(initEditEnduranceAtomNew);
     const disabled = !useAtomValue(isEnduranceValidAtomNew);
+
+    const editRescueState = useAtomValue(editRescueActionsAtomsNew.editActions);
+    const editSabotageState = useAtomValue(
+        editSabotageActionsAtomsNew.editActions,
+    );
 
     const createMutation = useCreateEnduranceProjectNew();
 
@@ -64,37 +73,76 @@ const CreateEnduranceProjectLayoutNew = () => {
             disabled={disabled}
             onSave={onSave}
         >
-            <EnduranceViewNew
+            <EnduranceView
                 projectStatus={Schema.decodeSync(ProjectStatusSchema)(
                     "scheduled",
                 )}
                 isEdit={true}
             >
-                <EnduranceViewNew.Count
-                    currentCount={0}
-                    targetCount={100}
-                />
-                <EnduranceViewNew.ActionsField>
-                    <EnduranceViewNew.RescueActionsField
-                        actions={Chunk.empty()}
+                <EnduranceView.EditTargetCount />
+                <EnduranceView.ActionsField>
+                    <EnduranceView.RescueActionsField
+                        actionLength={0}
                         rescueCount={Schema.decodeSync(
                             EnduranceRescueCountSchema,
                         )(0)}
                         isWide={false}
-                        onIncrement={() => () => {}}
-                    />
-                    <EnduranceViewNew.SabotageActionsField
-                        actions={Chunk.empty()}
+                    >
+                        {Chunk.map(editRescueState, (action) => (
+                            <EnduranceView.Action key={action.id}>
+                                <EnduranceView.EditSettingsLayout>
+                                    <EnduranceView.EditLabel
+                                        editLabelAtom={editRescueActionsAtomsNew.editLabel(
+                                            action.id,
+                                        )}
+                                    />
+                                    <EnduranceView.EditAmount
+                                        editAmountAtom={editRescueActionsAtomsNew.editAmount(
+                                            action.id,
+                                        )}
+                                    />
+                                </EnduranceView.EditSettingsLayout>
+                                <EnduranceView.DeleteActionButton
+                                    deleteActionAtom={editRescueActionsAtomsNew.deleteAction(
+                                        action.id,
+                                    )}
+                                />
+                            </EnduranceView.Action>
+                        ))}
+                    </EnduranceView.RescueActionsField>
+                    <EnduranceView.SabotageActionsField
+                        actionLength={0}
                         sabotageCount={Schema.decodeSync(
                             EnduranceSabotageCountSchema,
                         )(0)}
                         isWide={false}
-                        onIncrement={() => () => {}}
-                    />
-                </EnduranceViewNew.ActionsField>
-            </EnduranceViewNew>
+                    >
+                        {Chunk.map(editSabotageState, (action) => (
+                            <EnduranceView.Action key={action.id}>
+                                <EnduranceView.EditSettingsLayout>
+                                    <EnduranceView.EditLabel
+                                        editLabelAtom={editSabotageActionsAtomsNew.editLabel(
+                                            action.id,
+                                        )}
+                                    />
+                                    <EnduranceView.EditAmount
+                                        editAmountAtom={editSabotageActionsAtomsNew.editAmount(
+                                            action.id,
+                                        )}
+                                    />
+                                </EnduranceView.EditSettingsLayout>
+                                <EnduranceView.DeleteActionButton
+                                    deleteActionAtom={editSabotageActionsAtomsNew.deleteAction(
+                                        action.id,
+                                    )}
+                                />
+                            </EnduranceView.Action>
+                        ))}
+                    </EnduranceView.SabotageActionsField>
+                </EnduranceView.ActionsField>
+            </EnduranceView>
         </CreateProjectLayout>
     );
 };
 
-export default CreateEnduranceProjectLayoutNew;
+export default CreateEnduranceProjectLayout;

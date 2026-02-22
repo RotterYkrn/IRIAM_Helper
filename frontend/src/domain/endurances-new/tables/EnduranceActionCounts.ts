@@ -19,15 +19,15 @@ export const EnduranceActionCountIdSchema = Schema.UUID.pipe(
     Schema.brand("EnduranceActionCountId"),
 );
 
-export const EnduranceNormalCountSchema = Schema.NonNegativeInt.pipe(
+export const EnduranceNormalCountSchema = Schema.NonNegative.pipe(
     Schema.brand("EnduranceNormalCount"),
 );
 
-export const EnduranceRescueCountSchema = Schema.NonNegativeInt.pipe(
+export const EnduranceRescueCountSchema = Schema.NonNegative.pipe(
     Schema.brand("EnduranceRescueCount"),
 );
 
-export const EnduranceSabotageCountSchema = Schema.NonNegativeInt.pipe(
+export const EnduranceSabotageCountSchema = Schema.NonNegative.pipe(
     Schema.brand("EnduranceSabotageCount"),
 );
 

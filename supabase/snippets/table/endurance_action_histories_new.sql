@@ -9,7 +9,7 @@ create table endurance_action_histories_new (
     action_type text not null
         check (action_type in ('normal','rescue','sabotage')),
 
-    action_amount integer not null check (action_amount > 0),
+    action_amount numeric(10, 2) not null check (action_amount > 0),
 
     action_count integer not null,
 

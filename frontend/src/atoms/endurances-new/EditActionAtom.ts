@@ -6,8 +6,8 @@ import {
     EnduranceActionIdSchema,
     EnduranceActionLabelSchema,
     EnduranceActionPositionSchema,
-} from "@/domain/endurances/tables/EnduranceActions";
-import type { EnduranceActionsNewSchema } from "@/domain/endurances-new/tables/EnduranceActionsNew";
+    type EnduranceActionsNewSchema,
+} from "@/domain/endurances-new/tables/EnduranceActionsNew";
 import type { EnduranceActionStatNewSchema } from "@/domain/endurances-new/types/EnduranceActionStatNew";
 
 type EditAction = Readonly<{
