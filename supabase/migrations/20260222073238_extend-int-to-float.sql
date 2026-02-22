@@ -70,6 +70,8 @@ alter table "public"."endurance_units" validate constraint "endurance_units_targ
 
 set check_function_bodies = off;
 
+create type "public"."create_endurance_action_args" as ("position" integer, "label" text, "amount" numeric(10,2));
+
 CREATE OR REPLACE FUNCTION public.create_endurance_project_new(p_title text, p_target_count numeric, p_rescue_actions public.create_endurance_action_args[], p_sabotage_actions public.create_endurance_action_args[])
  RETURNS uuid
  LANGUAGE plpgsql
@@ -292,6 +294,8 @@ end;
 $function$
 ;
 
+create type "public"."update_endurance_action_args" as ("id" uuid, "position" integer, "label" text, "amount" numeric(10,2));
+
 CREATE OR REPLACE FUNCTION public.update_endurance_project_new(p_project_id uuid, p_unit_id uuid, p_title text, p_target_count numeric, p_rescue_actions public.update_endurance_action_args[], p_sabotage_actions public.update_endurance_action_args[])
  RETURNS uuid
  LANGUAGE plpgsql
@@ -387,8 +391,6 @@ end;
 $function$
 ;
 
-create type "public"."create_endurance_action_args" as ("position" integer, "label" text, "amount" numeric(10,2));
-
 create type "public"."endurance_action_stat_new" as ("id" uuid, "type" text, "position" integer, "label" text, "amount" numeric(10,2), "count" integer);
 
 create or replace view "public"."endurance_action_stats_view_new" as  SELECT p.id AS project_id,
@@ -413,8 +415,6 @@ create or replace view "public"."endurance_project_view_new" as  SELECT p.id,
      JOIN public.endurance_action_counts ac ON ((ac.project_id = p.id)))
   WHERE (p.type = 'endurance'::text);
 
-
-create type "public"."update_endurance_action_args" as ("id" uuid, "position" integer, "label" text, "amount" numeric(10,2));
 
 grant delete on table "public"."endurance_action_counts" to "postgres";
 
