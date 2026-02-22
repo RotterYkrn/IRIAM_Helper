@@ -4,7 +4,7 @@ create function log_endurance_action_history_new(
     p_project_id uuid,
     p_unit_id uuid,
     p_action_history_type text,
-    p_action_count integer,
+    p_action_count numeric(10, 2),
     p_action_id uuid default null
 )
 returns uuid
@@ -13,7 +13,7 @@ set search_path = public
 as $$
 declare
     v_status text;
-    v_amount integer;
+    v_amount numeric(10, 2);
 begin
     -----------------------------
     -- 1) 企画の状態チェック

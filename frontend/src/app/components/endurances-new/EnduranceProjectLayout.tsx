@@ -15,8 +15,8 @@ import {
     initEditEnduranceAtomNew,
 } from "@/atoms/endurances-new/EditEnduranceAtom";
 import { isEnduranceValidAtomNew } from "@/atoms/endurances-new/isEditEnduranceValidAtom";
-import { type EnduranceActionsSchema } from "@/domain/endurances/tables/EnduranceActions";
 import type { EnduranceActionHistoriesNewSchema } from "@/domain/endurances-new/tables/EnduranceActionHistoriesNew";
+import type { EnduranceActionsNewSchema } from "@/domain/endurances-new/tables/EnduranceActionsNew";
 import { ProjectTypeSchema } from "@/domain/projects/tables/Project";
 import { useFetchEnduranceProjectNew } from "@/hooks/endurances-new/useFetchEnduranceProject";
 import { useLogEnduranceActionHistoryNew } from "@/hooks/endurances-new/useLogEnduranceActionHistory";
@@ -97,8 +97,8 @@ const EnduranceProjectLayout = ({ projectId }: Props) => {
 
     const onIncrement =
         (
-            actionType: typeof EnduranceActionsSchema.Type.type,
-            actionId: typeof EnduranceActionsSchema.Type.id,
+            actionType: typeof EnduranceActionsNewSchema.Type.type,
+            actionId: typeof EnduranceActionsNewSchema.Type.id,
         ) =>
         (
             actionCount: typeof EnduranceActionHistoriesNewSchema.Encoded.action_count,

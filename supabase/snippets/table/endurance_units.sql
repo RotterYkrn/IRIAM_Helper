@@ -6,9 +6,9 @@ create table endurance_units (
 
     label text not null check(length(trim(label)) > 0),
 
-    target_count integer not null check (target_count > 0),
+    target_count numeric(10, 2) not null check (target_count > 0),
 
-    current_count integer not null default 0,
+    current_count numeric(10, 2) not null default 0,
 
     created_at timestamp with time zone not null default now(),
     updated_at timestamp with time zone not null default now(),

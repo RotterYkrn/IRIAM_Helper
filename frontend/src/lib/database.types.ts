@@ -716,15 +716,6 @@ export type Database = {
     }
     Functions: {
       activate_project: { Args: { p_project_id: string }; Returns: string }
-      create_endurance_project: {
-        Args: {
-          p_rescue_actions: Database["public"]["CompositeTypes"]["create_endurance_action_args"][]
-          p_sabotage_actions: Database["public"]["CompositeTypes"]["create_endurance_action_args"][]
-          p_target_count: number
-          p_title: string
-        }
-        Returns: string
-      }
       create_endurance_project_new: {
         Args: {
           p_rescue_actions: Database["public"]["CompositeTypes"]["create_endurance_action_args"][]
@@ -753,16 +744,6 @@ export type Database = {
           p_action_id?: string
           p_project_id: string
           p_unit_id: string
-        }
-        Returns: string
-      }
-      update_endurance_project: {
-        Args: {
-          p_project_id: string
-          p_rescue_actions: Database["public"]["CompositeTypes"]["update_endurance_action_args"][]
-          p_sabotage_actions: Database["public"]["CompositeTypes"]["update_endurance_action_args"][]
-          p_target_count: number
-          p_title: string
         }
         Returns: string
       }

@@ -6,7 +6,7 @@ create type endurance_action_stat_new as (
     type text,
     position integer,
     label text,
-    amount integer,
+    amount numeric(10, 2),
     count integer
 );
 
