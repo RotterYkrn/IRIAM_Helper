@@ -12,7 +12,7 @@ create table endurance_actions_new (
 
     label text not null check(length(trim(label)) > 0),
 
-    amount integer not null check(amount > 0),
+    amount numeric(10, 2) not null check(amount > 0),
 
     count integer not null default 0 check(count >= 0),
 

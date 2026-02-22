@@ -20,7 +20,7 @@ import {
     EnduranceRescueCountSchema,
     EnduranceSabotageCountSchema,
 } from "@/domain/endurances/tables/EnduranceProgress";
-import { EnduranceTargetCountSchema } from "@/domain/endurances/tables/EnduranceSettings";
+import { EnduranceTargetCountSchema } from "@/domain/endurances-new/tables/EnduranceUnits";
 import {
     ProjectStatusSchema,
     ProjectTitleSchema,

@@ -5,13 +5,13 @@ create table endurance_action_counts (
     project_id uuid not null,
     unit_id uuid not null,
     
-    normal_count integer not null default 0
+    normal_count numeric(10, 2) not null default 0
         check (normal_count >= 0),
 
-    rescue_count integer not null default 0
+    rescue_count numeric(10, 2) not null default 0
         check (rescue_count >= 0),
 
-    sabotage_count integer not null default 0
+    sabotage_count numeric(10, 2) not null default 0
         check (sabotage_count >= 0),
     
     created_at timestamp with time zone not null default now(),

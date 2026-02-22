@@ -1,18 +1,18 @@
 DROP function if exists update_endurance_project_new cascade;
--- DROP TYPE IF EXISTS update_endurance_action_args cascade;
+DROP TYPE IF EXISTS update_endurance_action_args cascade;
 
--- create type update_endurance_action_args as (
---     id uuid,
---     position integer,
---     label text,
---     amount integer
--- );
+create type update_endurance_action_args as (
+    id uuid,
+    position integer,
+    label text,
+    amount numeric(10, 2)
+);
 
 create function update_endurance_project_new(
     p_project_id uuid,
     p_unit_id uuid,
     p_title text,
-    p_target_count integer,
+    p_target_count numeric(10, 2),
     p_rescue_actions update_endurance_action_args[],
     p_sabotage_actions update_endurance_action_args[]
 )
