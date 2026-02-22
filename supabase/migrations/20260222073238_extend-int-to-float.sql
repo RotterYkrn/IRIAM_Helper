@@ -22,9 +22,9 @@ drop function if exists "public"."update_endurance_project_new"(p_project_id uui
 
 drop type "public"."create_endurance_action_args";
 
-drop type "public"."endurance_action_stat_new";
-
 drop view if exists "public"."endurance_action_stats_view_new";
+
+drop type "public"."endurance_action_stat_new";
 
 drop view if exists "public"."endurance_project_view_new";
 
