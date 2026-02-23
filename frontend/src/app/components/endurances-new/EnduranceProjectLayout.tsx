@@ -44,8 +44,14 @@ const EnduranceProjectLayout = ({ projectId }: Props) => {
         editSabotageActionsAtomsNew.editActions,
     );
 
+    if (projectQuery.isLoading || actionStatsQuery.isLoading) {
+        return <div className="flex justify-center">読み込み中...</div>;
+    }
+
     if (!projectQuery.data || !actionStatsQuery.data) {
-        return <>企画の取得に失敗しました</>;
+        return (
+            <div className="flex justify-center">企画の取得に失敗しました</div>
+        );
     }
 
     const project = projectQuery.data;
