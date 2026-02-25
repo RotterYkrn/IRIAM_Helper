@@ -36,8 +36,6 @@ export const useLogEnduranceActionHistoryNew = () => {
     return useMutation({
         mutationFn: async (args: UseLogEnduranceActionHistoryNewArgs) => {
             try {
-                await new Promise((resolve) => setTimeout(resolve, 1 * 1000));
-
                 const result = await Effect.runPromise(
                     logEnduranceActionHistoryNew(args),
                 );
