@@ -1,17 +1,17 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Effect } from "effect";
 
-import type { UpdateEnduranceProjectNewArgs } from "@/domain/endurances-new/rpcs/UpdateEnduranceProjectNew";
-import { updateEnduranceProjectNew } from "@/use-cases/endurances-new/updateEnduranceProject";
+import type { UpdateEnduranceProjectArgs } from "@/domain/endurances/rpcs/UpdateEnduranceProject";
+import { updateEnduranceProject } from "@/use-cases/endurances/updateEnduranceProject";
 
-export const useUpdateEnduranceProjectNew = () => {
+export const useUpdateEnduranceProject = () => {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: async (args: UpdateEnduranceProjectNewArgs) => {
+        mutationFn: async (args: UpdateEnduranceProjectArgs) => {
             try {
                 const result = await Effect.runPromise(
-                    updateEnduranceProjectNew(args),
+                    updateEnduranceProject(args),
                 );
                 return result;
             } catch (error) {

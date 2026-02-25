@@ -10,8 +10,7 @@ const MinusButton = ({
             className={`w-7 h-7 flex items-center justify-center rounded-full
                 text-xl font-bold transition text-white bg-red-500
                 hover:bg-red-600 active:scale-95 cursor-pointer
-                disabled:bg-gray-400 disabled:active:scale-100
-                disabled:cursor-not-allowed`}
+                disabled:bg-gray-400 disabled:cursor-not-allowed`}
         >
             {children}
         </button>

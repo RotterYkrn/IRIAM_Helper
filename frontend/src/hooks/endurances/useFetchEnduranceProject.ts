@@ -2,10 +2,10 @@ import { keepPreviousData, useQueries } from "@tanstack/react-query";
 import { Effect } from "effect";
 
 import type { ProjectIdEncoded } from "@/domain/projects/tables/Project";
-import { fetchEnduranceActionStatsNew } from "@/use-cases/endurances-new/fetchEnduranceActionStats";
-import { fetchEnduranceProjectNew } from "@/use-cases/endurances-new/fetchEnduranceProject";
+import { fetchEnduranceActionStats } from "@/use-cases/endurances/fetchEnduranceActionStats";
+import { fetchEnduranceProject } from "@/use-cases/endurances/fetchEnduranceProject";
 
-export const useFetchEnduranceProjectNew = (projectId: ProjectIdEncoded) => {
+export const useFetchEnduranceProject = (projectId: ProjectIdEncoded) => {
     return useQueries({
         queries: [
             {
@@ -13,7 +13,7 @@ export const useFetchEnduranceProjectNew = (projectId: ProjectIdEncoded) => {
                 queryFn: async () => {
                     try {
                         const result = await Effect.runPromise(
-                            fetchEnduranceProjectNew(projectId),
+                            fetchEnduranceProject(projectId),
                         );
                         return result;
                     } catch (error) {
@@ -28,7 +28,7 @@ export const useFetchEnduranceProjectNew = (projectId: ProjectIdEncoded) => {
                 queryFn: async () => {
                     try {
                         const result = await Effect.runPromise(
-                            fetchEnduranceActionStatsNew(projectId),
+                            fetchEnduranceActionStats(projectId),
                         );
                         return result;
                     } catch (error) {

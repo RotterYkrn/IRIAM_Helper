@@ -1,0 +1,35 @@
+import { pipe, Schema, Either } from "effect";
+import { atom } from "jotai";
+
+import {
+    EnduranceTargetCountSchema,
+    type EnduranceSettingsSchema,
+} from "@/domain/endurances/tables/EnduranceSettings";
+
+const baseTargetCountAtom = atom<
+    typeof EnduranceSettingsSchema.Type.target_count
+>(Schema.decodeSync(EnduranceTargetCountSchema)(1));
+export const editTargetCountErrorAtom = atom<string | null>(null);
+
+export const editTargetCountAtom = atom(
+    (get) => get(baseTargetCountAtom),
+    (
+        _,
+        set,
+        newTargetCount: typeof EnduranceSettingsSchema.Encoded.target_count,
+    ) => {
+        pipe(
+            newTargetCount,
+            Schema.decodeEither(EnduranceTargetCountSchema),
+            Either.match({
+                onRight: (targetCount) => {
+                    set(baseTargetCountAtom, targetCount);
+                    set(editTargetCountErrorAtom, null);
+                },
+                onLeft: (error) => {
+                    set(editTargetCountErrorAtom, error.message);
+                },
+            }),
+        );
+    },
+);
