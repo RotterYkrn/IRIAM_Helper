@@ -101,7 +101,8 @@ const EditTargetCount = () => {
 type ActionCountProps = {
     actionCount:
         | typeof EnduranceActionCountsSchema.Type.normal_count
-        | typeof EnduranceActionsNewSchema.Type.count;
+        | typeof EnduranceActionsNewSchema.Type.count
+        | typeof EnduranceActionsNewSchema.Encoded.count;
 };
 
 const ActionCount = ({ actionCount }: ActionCountProps) => {

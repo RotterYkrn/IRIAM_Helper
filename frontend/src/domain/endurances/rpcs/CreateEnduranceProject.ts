@@ -4,16 +4,17 @@ import {
     EnduranceActionAmountSchema,
     EnduranceActionLabelSchema,
     EnduranceActionPositionSchema,
-    type EnduranceActionsNewSchema,
-} from "../tables/EnduranceActionsNew";
+    type EnduranceActions,
+} from "../tables/EnduranceActions";
 import {
     EnduranceTargetCountSchema,
-    type EnduranceUnitsSchema,
-} from "../tables/EnduranceUnits";
+    type EnduranceSettings,
+} from "../tables/EnduranceSettings";
 
 import {
     ProjectIdSchema,
     ProjectTitleSchema,
+    type Project,
     type ProjectSchema,
 } from "@/domain/projects/tables/Project";
 import type { Database } from "@/lib/database.types";
@@ -26,11 +27,10 @@ import {
 export type CreateEnduranceActionArgsEncoded = Readonly<
     Database["public"]["CompositeTypes"]["create_endurance_action_args"]
 >;
-export type CreateEnduranceActionArgs = Readonly<{
-    position: typeof EnduranceActionsNewSchema.Type.position;
-    label: typeof EnduranceActionsNewSchema.Type.label;
-    amount: typeof EnduranceActionsNewSchema.Type.amount;
-}>;
+export type CreateEnduranceActionArgs = Pick<
+    EnduranceActions,
+    "position" | "label" | "amount"
+>;
 export const CreateEnduranceActionArgsSchema: Schema.Schema<
     CreateEnduranceActionArgs,
     CreateEnduranceActionArgsEncoded
@@ -43,18 +43,18 @@ export const CreateEnduranceActionArgsChunkSchema = Schema.Chunk(
     CreateEnduranceActionArgsSchema,
 );
 
-export type CreateEnduranceProjectNewArgsEncoded = RecursiveReadonly<
-    Database["public"]["Functions"]["create_endurance_project_new"]["Args"]
+export type CreateEnduranceProjectArgsEncoded = RecursiveReadonly<
+    Database["public"]["Functions"]["create_endurance_project"]["Args"]
 >;
-export type CreateEnduranceProjectNewArgs = Readonly<{
-    title: typeof ProjectSchema.Type.title;
-    target_count: typeof EnduranceUnitsSchema.Type.target_count;
-    rescue_actions: typeof CreateEnduranceActionArgsChunkSchema.Type;
-    sabotage_actions: typeof CreateEnduranceActionArgsChunkSchema.Type;
-}>;
-export const CreateEnduranceProjectNewArgsSchema: Schema.Schema<
-    CreateEnduranceProjectNewArgs,
-    CreateEnduranceProjectNewArgsEncoded
+export type CreateEnduranceProjectArgs = Pick<Project, "title"> &
+    Pick<EnduranceSettings, "target_count"> &
+    Readonly<{
+        rescue_actions: typeof CreateEnduranceActionArgsChunkSchema.Type;
+        sabotage_actions: typeof CreateEnduranceActionArgsChunkSchema.Type;
+    }>;
+export const CreateEnduranceProjectArgsSchema: Schema.Schema<
+    CreateEnduranceProjectArgs,
+    CreateEnduranceProjectArgsEncoded
 > = Schema.Struct({
     title: ProjectTitleSchema.pipe(mapFrom("p_title")),
     target_count: EnduranceTargetCountSchema.pipe(mapFrom("p_target_count")),
@@ -66,11 +66,11 @@ export const CreateEnduranceProjectNewArgsSchema: Schema.Schema<
     ),
 });
 
-export type CreateEnduranceProjectNewReturnsEncoded = Readonly<
+export type CreateEnduranceProjectReturnsEncoded = Readonly<
     Database["public"]["Functions"]["create_endurance_project"]["Returns"]
 >;
-export type CreateEnduranceProjectNewReturns = typeof ProjectSchema.Type.id;
-export const CreateEnduranceProjectNewReturnsSchema: Schema.Schema<
-    CreateEnduranceProjectNewReturns,
-    CreateEnduranceProjectNewReturnsEncoded
+export type CreateEnduranceProjectReturns = typeof ProjectSchema.Type.id;
+export const CreateEnduranceProjectReturnsSchema: Schema.Schema<
+    CreateEnduranceProjectReturns,
+    CreateEnduranceProjectReturnsEncoded
 > = ProjectIdSchema;
