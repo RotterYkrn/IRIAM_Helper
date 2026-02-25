@@ -1,11 +1,17 @@
-import { keepPreviousData, useQueries } from "@tanstack/react-query";
-import { Effect } from "effect";
+import {
+    keepPreviousData,
+    useQueries,
+    useQueryClient,
+} from "@tanstack/react-query";
+import { Chunk, Effect } from "effect";
 
 import type { ProjectIdEncoded } from "@/domain/projects/tables/Project";
 import { fetchEnduranceActionStatsNew } from "@/use-cases/endurances-new/fetchEnduranceActionStats";
 import { fetchEnduranceProjectNew } from "@/use-cases/endurances-new/fetchEnduranceProject";
 
 export const useFetchEnduranceProjectNew = (projectId: ProjectIdEncoded) => {
+    const queryClient = useQueryClient();
+
     return useQueries({
         queries: [
             {
@@ -21,21 +27,48 @@ export const useFetchEnduranceProjectNew = (projectId: ProjectIdEncoded) => {
                         throw error;
                     }
                 },
+                staleTime: 5 * 60 * 1000,
                 placeholderData: keepPreviousData,
             },
             {
-                queryKey: ["actionStats", projectId],
+                queryKey: ["actionStat", projectId],
                 queryFn: async () => {
                     try {
                         const result = await Effect.runPromise(
                             fetchEnduranceActionStatsNew(projectId),
                         );
-                        return result;
+
+                        Chunk.map(result.rescue_actions, (action) => {
+                            queryClient.setQueryData(
+                                ["action", action.id],
+                                action,
+                            );
+                        });
+
+                        Chunk.map(result.sabotage_actions, (action) => {
+                            queryClient.setQueryData(
+                                ["action", action.id],
+                                action,
+                            );
+                        });
+
+                        return {
+                            ...result,
+                            rescue_actions: Chunk.map(
+                                result.rescue_actions,
+                                (action) => action.id,
+                            ),
+                            sabotage_actions: Chunk.map(
+                                result.sabotage_actions,
+                                (action) => action.id,
+                            ),
+                        };
                     } catch (error) {
                         console.error(error);
                         throw error;
                     }
                 },
+                staleTime: 5 * 60 * 1000,
                 placeholderData: keepPreviousData,
             },
         ],

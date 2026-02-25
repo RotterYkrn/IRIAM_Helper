@@ -1,9 +1,11 @@
-import { Chunk, Schema } from "effect";
+import { useQueryClient } from "@tanstack/react-query";
+import { Chunk, pipe, Schema } from "effect";
 import { useAtomValue, useSetAtom } from "jotai";
 import { useState } from "react";
 
 import ProjectLayout from "../projects/ProjectLayout";
 
+import EnduranceActionRow from "./EnduranceActionRow";
 import EnduranceView from "./EnduranceView";
 
 import {
@@ -16,7 +18,10 @@ import {
 } from "@/atoms/endurances-new/EditEnduranceAtom";
 import { isEnduranceValidAtomNew } from "@/atoms/endurances-new/isEditEnduranceValidAtom";
 import type { EnduranceActionHistoriesNewSchema } from "@/domain/endurances-new/tables/EnduranceActionHistoriesNew";
-import type { EnduranceActionsNewSchema } from "@/domain/endurances-new/tables/EnduranceActionsNew";
+import type {
+    EnduranceRescueActionSchema,
+    EnduranceSabotageActionSchema,
+} from "@/domain/endurances-new/views/EnduranceActionStatsViewNew";
 import { ProjectTypeSchema } from "@/domain/projects/tables/Project";
 import { useFetchEnduranceProjectNew } from "@/hooks/endurances-new/useFetchEnduranceProject";
 import { useLogEnduranceActionHistoryNew } from "@/hooks/endurances-new/useLogEnduranceActionHistory";
@@ -28,6 +33,7 @@ type Props = {
 };
 
 const EnduranceProjectLayout = ({ projectId }: Props) => {
+    const queryClient = useQueryClient();
     const [isEdit, setIsEdit] = useState(false);
 
     const [projectQuery, actionStatsQuery] =
@@ -44,8 +50,14 @@ const EnduranceProjectLayout = ({ projectId }: Props) => {
         editSabotageActionsAtomsNew.editActions,
     );
 
+    if (projectQuery.isLoading || actionStatsQuery.isLoading) {
+        return <div className="flex justify-center">読み込み中...</div>;
+    }
+
     if (!projectQuery.data || !actionStatsQuery.data) {
-        return <>企画の取得に失敗しました</>;
+        return (
+            <div className="flex justify-center">企画の取得に失敗しました</div>
+        );
     }
 
     const project = projectQuery.data;
@@ -55,8 +67,34 @@ const EnduranceProjectLayout = ({ projectId }: Props) => {
         initEditEndurance({
             title: project.title,
             target_count: project.target_count,
-            rescue_actions: actionStats.rescue_actions,
-            sabotage_actions: actionStats.sabotage_actions,
+            rescue_actions: pipe(
+                actionStats.rescue_actions,
+                Chunk.map((id) =>
+                    queryClient.getQueryData<
+                        typeof EnduranceRescueActionSchema.Type
+                    >(["action", id]),
+                ),
+                Chunk.filter(
+                    (
+                        action,
+                    ): action is typeof EnduranceRescueActionSchema.Type =>
+                        action !== undefined,
+                ),
+            ),
+            sabotage_actions: pipe(
+                actionStats.sabotage_actions,
+                Chunk.map((id) =>
+                    queryClient.getQueryData<
+                        typeof EnduranceSabotageActionSchema.Type
+                    >(["action", id]),
+                ),
+                Chunk.filter(
+                    (
+                        action,
+                    ): action is typeof EnduranceSabotageActionSchema.Type =>
+                        action !== undefined,
+                ),
+            ),
         });
         setIsEdit(true);
     };
@@ -94,23 +132,6 @@ const EnduranceProjectLayout = ({ projectId }: Props) => {
 
     const isWideRescue = actionStats.sabotage_actions.length === 0;
     const isWideSabotage = actionStats.rescue_actions.length === 0;
-
-    const onIncrement =
-        (
-            actionType: typeof EnduranceActionsNewSchema.Type.type,
-            actionId: typeof EnduranceActionsNewSchema.Type.id,
-        ) =>
-        (
-            actionCount: typeof EnduranceActionHistoriesNewSchema.Encoded.action_count,
-        ) => {
-            logEnduranceActionHistory.mutate({
-                p_project_id: project.id,
-                p_unit_id: project.unit_id,
-                p_action_history_type: actionType,
-                p_action_id: actionId,
-                p_action_count: actionCount,
-            });
-        };
 
     return (
         <ProjectLayout
@@ -155,6 +176,7 @@ const EnduranceProjectLayout = ({ projectId }: Props) => {
                             {
                                 label: "-",
                                 count: -1,
+                                disabled: project.normal_count <= 0,
                             },
                         ]}
                         onIncrement={onIncrementNormal}
@@ -202,47 +224,13 @@ const EnduranceProjectLayout = ({ projectId }: Props) => {
                               ))
                             : Chunk.map(
                                   actionStats.rescue_actions,
-                                  (action) => (
-                                      <EnduranceView.Action key={action.id}>
-                                          <EnduranceView.SettingsLayout>
-                                              <EnduranceView.Label
-                                                  label={action.label}
-                                              />
-                                              <EnduranceView.Amount
-                                                  actionType={action.type}
-                                                  amount={action.amount}
-                                              />
-                                          </EnduranceView.SettingsLayout>
-                                          <EnduranceView.ActionProgress>
-                                              <EnduranceView.MinusButtons
-                                                  buttonConfigs={[
-                                                      {
-                                                          label: "-",
-                                                          count: -1,
-                                                      },
-                                                  ]}
-                                                  onIncrement={onIncrement(
-                                                      action.type,
-                                                      action.id,
-                                                  )}
-                                              />
-                                              <EnduranceView.ActionCount
-                                                  actionCount={action.count}
-                                              />
-                                              <EnduranceView.PlusButtons
-                                                  buttonConfigs={[
-                                                      {
-                                                          label: "+",
-                                                          count: 1,
-                                                      },
-                                                  ]}
-                                                  onIncrement={onIncrement(
-                                                      action.type,
-                                                      action.id,
-                                                  )}
-                                              />
-                                          </EnduranceView.ActionProgress>
-                                      </EnduranceView.Action>
+                                  (actionId) => (
+                                      <EnduranceActionRow
+                                          key={actionId}
+                                          projectId={project.id}
+                                          unitId={project.unit_id}
+                                          actionId={actionId}
+                                      />
                                   ),
                               )}
                     </EnduranceView.RescueActionsField>
@@ -275,47 +263,13 @@ const EnduranceProjectLayout = ({ projectId }: Props) => {
                               ))
                             : Chunk.map(
                                   actionStats.sabotage_actions,
-                                  (action) => (
-                                      <EnduranceView.Action key={action.id}>
-                                          <EnduranceView.SettingsLayout>
-                                              <EnduranceView.Label
-                                                  label={action.label}
-                                              />
-                                              <EnduranceView.Amount
-                                                  actionType={action.type}
-                                                  amount={action.amount}
-                                              />
-                                          </EnduranceView.SettingsLayout>
-                                          <EnduranceView.ActionProgress>
-                                              <EnduranceView.MinusButtons
-                                                  buttonConfigs={[
-                                                      {
-                                                          label: "-",
-                                                          count: -1,
-                                                      },
-                                                  ]}
-                                                  onIncrement={onIncrement(
-                                                      action.type,
-                                                      action.id,
-                                                  )}
-                                              />
-                                              <EnduranceView.ActionCount
-                                                  actionCount={action.count}
-                                              />
-                                              <EnduranceView.PlusButtons
-                                                  buttonConfigs={[
-                                                      {
-                                                          label: "+",
-                                                          count: 1,
-                                                      },
-                                                  ]}
-                                                  onIncrement={onIncrement(
-                                                      action.type,
-                                                      action.id,
-                                                  )}
-                                              />
-                                          </EnduranceView.ActionProgress>
-                                      </EnduranceView.Action>
+                                  (actionId) => (
+                                      <EnduranceActionRow
+                                          key={actionId}
+                                          projectId={project.id}
+                                          unitId={project.unit_id}
+                                          actionId={actionId}
+                                      />
                                   ),
                               )}
                     </EnduranceView.SabotageActionsField>

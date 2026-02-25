@@ -67,7 +67,7 @@ export const CreateEnduranceProjectNewArgsSchema: Schema.Schema<
 });
 
 export type CreateEnduranceProjectNewReturnsEncoded = Readonly<
-    Database["public"]["Functions"]["create_endurance_project"]["Returns"]
+    Database["public"]["Functions"]["create_endurance_project_new"]["Returns"]
 >;
 export type CreateEnduranceProjectNewReturns = typeof ProjectSchema.Type.id;
 export const CreateEnduranceProjectNewReturnsSchema: Schema.Schema<

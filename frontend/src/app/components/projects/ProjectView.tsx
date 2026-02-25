@@ -137,7 +137,7 @@ const EditButton = ({ onEdit }: EditButtonProps) => {
     return (
         <ProjectButton
             onClick={onEdit}
-            className="bg-gray-500 hover:bg-gray-600"
+            className="bg-gray-500 enabled:hover:bg-gray-600"
         >
             編集
         </ProjectButton>
@@ -160,7 +160,7 @@ const SaveButton = ({ disabled, onSave }: SaveButtonProps) => {
         <ProjectButton
             disabled={disabled}
             onClick={onSave}
-            className="bg-gray-500 hover:bg-gray-600"
+            className="bg-gray-500 enabled:hover:bg-gray-600"
         >
             保存
         </ProjectButton>
@@ -181,7 +181,7 @@ const CancelButton = ({ onCancel }: CancelButtonProps) => {
     return (
         <ProjectButton
             onClick={onCancel}
-            className="bg-gray-500 hover:bg-gray-600"
+            className="bg-gray-500 enabled:hover:bg-gray-600"
         >
             キャンセル
         </ProjectButton>
@@ -202,7 +202,7 @@ const DuplicateButton = ({ onDuplicate }: DuplicateButtonProps) => {
     return (
         <ProjectButton
             onClick={onDuplicate}
-            className="bg-gray-500 hover:bg-gray-600"
+            className="bg-gray-500 enabled:hover:bg-gray-600"
         >
             コピー
         </ProjectButton>
@@ -223,7 +223,7 @@ const DeleteButton = ({ onDelete }: DeleteButtonProps) => {
     return (
         <ProjectButton
             onClick={onDelete}
-            className="bg-gray-500 hover:bg-red-600"
+            className="bg-gray-500 enabled:hover:bg-red-600"
         >
             削除
         </ProjectButton>
@@ -244,7 +244,7 @@ const ActivateButton = ({ onActivate }: ActivateButtonProps) => {
     return (
         <ProjectButton
             onClick={onActivate}
-            className="bg-green-600 hover:bg-green-700"
+            className="bg-green-600 enabled:hover:bg-green-700"
         >
             企画開始
         </ProjectButton>
@@ -265,7 +265,7 @@ const FinishButton = ({ onFinish }: FinishButtonProps) => {
     return (
         <ProjectButton
             onClick={onFinish}
-            className="bg-red-600 hover:bg-red-700"
+            className="bg-red-600 enabled:hover:bg-red-700"
         >
             企画終了
         </ProjectButton>
