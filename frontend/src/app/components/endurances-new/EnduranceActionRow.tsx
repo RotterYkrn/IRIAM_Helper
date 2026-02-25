@@ -44,7 +44,7 @@ const EnduranceActionRow = ({ projectId, unitId, actionId }: Props) => {
         };
 
     return (
-        <EnduranceView.Action key={action.id}>
+        <EnduranceView.Action>
             <EnduranceView.SettingsLayout>
                 <EnduranceView.Label label={action.label} />
                 <EnduranceView.Amount
