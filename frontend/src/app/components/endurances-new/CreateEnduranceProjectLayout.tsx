@@ -19,7 +19,7 @@ import { isEnduranceValidAtomNew } from "@/atoms/endurances-new/isEditEnduranceV
 import {
     EnduranceRescueCountSchema,
     EnduranceSabotageCountSchema,
-} from "@/domain/endurances/tables/EnduranceProgress";
+} from "@/domain/endurances-new/tables/EnduranceActionCounts";
 import { EnduranceTargetCountSchema } from "@/domain/endurances-new/tables/EnduranceUnits";
 import {
     ProjectStatusSchema,

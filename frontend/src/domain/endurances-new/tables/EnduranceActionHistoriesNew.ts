@@ -3,13 +3,13 @@ import { Schema } from "effect";
 import {
     EnduranceActionIdSchema,
     EnduranceActionAmountSchema,
+    EnduranceActionsNewSchema,
 } from "./EnduranceActionsNew";
 import {
     EnduranceUnitIdSchema,
     type EnduranceUnitsSchema,
 } from "./EnduranceUnits";
 
-import type { EnduranceActionsSchema } from "@/domain/endurances/tables/EnduranceActions";
 import {
     ProjectIdSchema,
     type ProjectSchema,
@@ -43,7 +43,7 @@ export type EnduranceActionHistoriesNew = Readonly<{
     unit_id: typeof EnduranceUnitsSchema.Type.id;
     action_id: typeof EnduranceActionHistoryActionIdSchema.Type;
     action_type: typeof EnduranceActionHistoryTypeSchema.Type;
-    action_amount: typeof EnduranceActionsSchema.Type.amount;
+    action_amount: typeof EnduranceActionsNewSchema.Type.amount;
     action_count: typeof EnduranceActionHistoryActionCountSchema.Type;
     created_at: Date;
 }>;
