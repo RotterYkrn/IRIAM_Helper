@@ -24,7 +24,7 @@ export const useUpdateEnduranceProjectNew = () => {
                 queryKey: ["project", projectId],
             });
             queryClient.invalidateQueries({
-                queryKey: ["actionStats", projectId],
+                queryKey: ["actionStat", projectId],
             });
         },
     });

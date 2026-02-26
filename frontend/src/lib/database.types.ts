@@ -726,6 +726,10 @@ export type Database = {
         Returns: string
       }
       delete_project: { Args: { p_project_id: string }; Returns: undefined }
+      duplicate_endurance_project: {
+        Args: { p_project_id: string }
+        Returns: string
+      }
       duplicate_project: { Args: { p_project_id: string }; Returns: string }
       finish_project: { Args: { p_project_id: string }; Returns: string }
       log_endurance_action_history: {
