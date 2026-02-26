@@ -2,6 +2,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { Chunk, pipe, Schema } from "effect";
 import { useAtomValue, useSetAtom } from "jotai";
 import { useState } from "react";
+import { useNavigate } from "react-router-dom";
 
 import ProjectLayout from "../projects/ProjectLayout";
 
@@ -23,6 +24,7 @@ import type {
     EnduranceSabotageActionSchema,
 } from "@/domain/endurances-new/views/EnduranceActionStatsViewNew";
 import { ProjectTypeSchema } from "@/domain/projects/tables/Project";
+import { useDuplicateEnduranceProjectNew } from "@/hooks/endurances-new/useDuplicateEnduranceProject";
 import { useFetchEnduranceProjectNew } from "@/hooks/endurances-new/useFetchEnduranceProject";
 import { useLogEnduranceActionHistoryNew } from "@/hooks/endurances-new/useLogEnduranceActionHistory";
 import { useUpdateEnduranceProjectNew } from "@/hooks/endurances-new/useUpdateEnduranceProject";
@@ -34,11 +36,13 @@ type Props = {
 
 const EnduranceProjectLayout = ({ projectId }: Props) => {
     const queryClient = useQueryClient();
+    const navigate = useNavigate();
     const [isEdit, setIsEdit] = useState(false);
 
     const [projectQuery, actionStatsQuery] =
         useFetchEnduranceProjectNew(projectId);
     const updateEnduranceProject = useUpdateEnduranceProjectNew();
+    const duplicateEnduranceProject = useDuplicateEnduranceProjectNew();
     const logEnduranceActionHistory = useLogEnduranceActionHistoryNew();
 
     const editState = useAtomValue(editEnduranceAtomNew);
@@ -119,6 +123,25 @@ const EnduranceProjectLayout = ({ projectId }: Props) => {
         );
     };
 
+    const onDuplicate = () => {
+        if (!confirm("この企画をコピーしますか？")) {
+            return;
+        }
+        duplicateEnduranceProject.mutate(
+            { project_id: project.id },
+            {
+                onSuccess: (id) => {
+                    successToast(`「${project.title}」がコピーされました`);
+                    navigate(`/projects/endurance/${id}`);
+                },
+                onError: (error) => {
+                    console.error(error);
+                    errorToast(`「${project.title}」のコピーに失敗しました`);
+                },
+            },
+        );
+    };
+
     const onIncrementNormal = (
         actionCount: typeof EnduranceActionHistoriesNewSchema.Encoded.action_count,
     ) => {
@@ -141,9 +164,10 @@ const EnduranceProjectLayout = ({ projectId }: Props) => {
             }}
             isEdit={isEdit}
             setIsEdit={setIsEdit}
+            isSaveDisabled={disabled}
             onEdit={onEdit}
-            disabled={disabled}
             onSave={onSave}
+            onDuplicate={onDuplicate}
         >
             <EnduranceView
                 projectStatus={project.status}

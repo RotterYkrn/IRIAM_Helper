@@ -1,17 +1,17 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Effect } from "effect";
 
-import type { ProjectId } from "@/domain/projects/tables/Project";
-import { duplicateProject } from "@/use-cases/projects/duplicateProject";
+import type { DuplicateEnduranceProjectArgs } from "@/domain/endurances-new/rpcs/DuplicateEnduranceProject";
+import { duplicateEnduranceProject } from "@/use-cases/endurances-new/duplicateEnduranceProject";
 
-export const useDuplicateProject = () => {
+export const useDuplicateEnduranceProjectNew = () => {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: async (projectId: ProjectId) => {
+        mutationFn: async (args: DuplicateEnduranceProjectArgs) => {
             try {
                 const result = await Effect.runPromise(
-                    duplicateProject(projectId),
+                    duplicateEnduranceProject(args),
                 );
                 return result;
             } catch (error) {
