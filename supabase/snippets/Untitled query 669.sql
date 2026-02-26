@@ -1,9 +1,12 @@
-DROP TYPE IF EXISTS update_endurance_action_input cascade;
 
--- 定義したカスタム型を一覧表示する
-SELECT n.nspname as schema, t.typname as type_name
-FROM pg_type t
-LEFT JOIN pg_namespace n ON n.oid = t.typnamespace
-WHERE n.nspname = 'public' 
-  AND t.typtype = 'c' -- 'c' は composite type (複合型)
-order by type_name;
+insert into endurance_units (
+    project_id,
+    label,
+    target_count
+)
+select
+    'e61f2f88-fa0a-4d07-929c-b55f37eeaea2',
+    label,
+    target_count
+from endurance_units
+where project_id = '6245de45-4897-4ffd-984a-81e535329bbd';
