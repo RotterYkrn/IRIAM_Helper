@@ -6,6 +6,10 @@ import {
 } from "@/domain/projects/rpcs/DeleteProject";
 import { supabase } from "@/lib/supabase";
 
+/**
+ * 企画を削除します。
+ * @param args rpcに渡す引数
+ */
 export const deleteProject = (args: DeleteProjectArgsEncoded) =>
     pipe(
         args,

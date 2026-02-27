@@ -7,6 +7,11 @@ import {
 } from "@/domain/endurances-new/rpcs/DuplicateEnduranceProject";
 import { supabase } from "@/lib/supabase";
 
+/**
+ * 耐久企画（単体）を複製します。
+ * @param args rpcに渡す引数
+ * @returns 複製した企画のID
+ */
 export const duplicateEnduranceProject = (
     args: DuplicateEnduranceProjectArgs,
 ) =>

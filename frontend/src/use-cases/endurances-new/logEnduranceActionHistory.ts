@@ -8,6 +8,11 @@ import {
 import { type ProjectId } from "@/domain/projects/tables/Project";
 import { supabase } from "@/lib/supabase";
 
+/**
+ * カウントの履歴を記録します。
+ * @param args rpcに渡す引数
+ * @returns 対応する企画のID
+ */
 export const logEnduranceActionHistoryNew = (
     args: LogEnduranceActionHistoryNewArgsEncoded,
 ): Effect.Effect<ProjectId, unknown> =>

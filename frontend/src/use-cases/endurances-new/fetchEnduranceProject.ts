@@ -7,6 +7,11 @@ import {
 } from "@/domain/projects/tables/Project";
 import { supabase } from "@/lib/supabase";
 
+/**
+ * 耐久企画（単体）の基本情報を取得する
+ * @param projectId 企画ID
+ * @returns 耐久企画（単体）の基本情報
+ */
 export const fetchEnduranceProjectNew = (projectId: ProjectIdEncoded) =>
     pipe(
         projectId,
