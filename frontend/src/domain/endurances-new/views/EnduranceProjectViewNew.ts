@@ -22,10 +22,12 @@ import {
 import type { Database } from "@/lib/database.types";
 import { withStrictNullCheck } from "@/utils/schema";
 
+/** {@link EnduranceProjectViewNewSchema} */
 export type EnduranceProjectViewNewEncoded = Readonly<
     Database["public"]["Views"]["endurance_project_view_new"]["Row"]
 >;
 
+/** {@link EnduranceProjectViewNewSchema} */
 export type EnduranceProjectViewNew = Readonly<{
     id: typeof ProjectSchema.Type.id;
     title: typeof ProjectSchema.Type.title;
@@ -38,6 +40,10 @@ export type EnduranceProjectViewNew = Readonly<{
     sabotage_count: typeof EnduranceActionCountsSchema.Type.sabotage_count;
 }>;
 
+/**
+ * endurance_project_view_new ビュー
+ * 耐久企画の情報（救済・妨害アクションを除く）
+ */
 export const EnduranceProjectViewNewSchema: Schema.Schema<
     EnduranceProjectViewNew,
     EnduranceProjectViewNewEncoded
