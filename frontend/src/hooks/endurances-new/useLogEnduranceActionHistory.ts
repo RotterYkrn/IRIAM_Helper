@@ -20,6 +20,13 @@ import type {
 import type { EnduranceProjectViewNew } from "@/domain/endurances-new/views/EnduranceProjectViewNew";
 import { logEnduranceActionHistoryNew } from "@/use-cases/endurances-new/logEnduranceActionHistory";
 
+/**
+ * {@link useLogEnduranceActionHistoryNew} の mutate の引数
+ *
+ * @description
+ * - `p_action_history_type = "normal"` の場合、`p_action_id` は不要
+ * - `p_action_history_type = "rescue" | "sabotage"` の場合、`p_action_id` および `amount` を設定する
+ */
 type UseLogEnduranceActionHistoryNewArgs =
     | (Omit<LogEnduranceActionHistoryNewArgsEncoded, "p_action_id"> & {
           p_action_history_type: "normal";
@@ -30,6 +37,19 @@ type UseLogEnduranceActionHistoryNewArgs =
           amount: typeof EnduranceActionsNewSchema.Encoded.amount;
       });
 
+/**
+ * 耐久企画のアクション履歴（通常・救済・妨害）を記録するカスタムフック。
+ *
+ * @description
+ * 楽観的更新を実装しています。
+ * ### キャッシュ更新の挙動:
+ * - `onMutate`: アクションの種類（normal/rescue/sabotage）に応じて、\
+ * プロジェクト(`["project", id]`)およびアクション詳細(`["action", id]`)のキャッシュを先行更新します。
+ * - `onError`: サーバー通信に失敗した場合、実行前のカウント数へ正確にロールバックします。
+ *
+ * @returns  TanStack QueryのMutationオブジェクト。\
+ * `mutate`関数には {@link UseLogEnduranceActionHistoryNewArgs} を渡してください。
+ */
 export const useLogEnduranceActionHistoryNew = () => {
     const queryClient = useQueryClient();
 
@@ -220,65 +240,3 @@ const updateProjectSabotage =
                 }),
             ),
         };
-
-// const updateActionStatRescue =
-//     (
-//         actionId: typeof EnduranceActionsNewSchema.Encoded.id,
-//         actionCount: typeof EnduranceActionHistoriesNewSchema.Encoded.action_count,
-//     ) =>
-//     (
-//         old: EnduranceActionStatViewNew | undefined,
-//     ): EnduranceActionStatViewNew | undefined => {
-//         if (!old) {
-//             return undefined;
-//         }
-
-//         const prevCount = pipe(
-//             old.rescue_actions,
-//             Chunk.findFirst((action) => action.id === actionId),
-//             Option.match({
-//                 onNone: () => 0,
-//                 onSome: (action) => action.count,
-//             }),
-//             (count) => count + actionCount,
-//             Schema.decodeEither(EnduranceActionCountSchema),
-//             Either.getOrElse((error) => {
-//                 console.error(error.toJSON());
-//                 return Schema.decodeSync(EnduranceActionCountSchema)(0);
-//             }),
-//         );
-
-//         return {
-//             ...old,
-//             rescue_actions: Chunk.map(old.rescue_actions, (action) =>
-//                 action.id === actionId
-//                     ? {
-//                           ...action,
-//                           count: prevCount,
-//                       }
-//                     : action,
-//             ),
-//         };
-//     };
-
-// const updateActionStatSabotage =
-//     (
-//         actionId: typeof EnduranceActionsNewSchema.Encoded.id,
-//         actionCount: typeof EnduranceActionHistoriesNewSchema.Encoded.action_count,
-//     ) =>
-//     (
-//         old: EnduranceActionStatViewNew | undefined,
-//     ): EnduranceActionStatViewNew | undefined =>
-//         old && {
-//             ...old,
-//             sabotage_actions: Chunk.map(old.sabotage_actions, (action) =>
-//                 action.id === actionId
-//                     ? {
-//                           ...action,
-//                           count: Schema.decodeSync(EnduranceActionCountSchema)(
-//                               action.count + actionCount,
-//                           ),
-//                       }
-//                     : action,
-//             ),
-//         };
