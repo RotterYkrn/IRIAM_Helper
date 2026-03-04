@@ -12,6 +12,11 @@ type Props = {
     actionId: typeof EnduranceActionsNewSchema.Type.id;
 };
 
+/**
+ * 耐久企画の救済・妨害アクションの各要素を描画します
+ *
+ * @note {@link EnduranceView} 内で使用する必要があります。
+ */
 const EnduranceActionRow = ({ projectId, unitId, actionId }: Props) => {
     const queryClient = useQueryClient();
     const logEnduranceActionHistory = useLogEnduranceActionHistoryNew();

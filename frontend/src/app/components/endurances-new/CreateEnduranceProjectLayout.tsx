@@ -28,6 +28,9 @@ import {
 import { useCreateEnduranceProjectNew } from "@/hooks/endurances-new/useCreateEnduranceProject";
 import { errorToast, successToast } from "@/utils/toast";
 
+/**
+ * 耐久企画新規作成ページのレイアウト
+ */
 const CreateEnduranceProjectLayout = () => {
     const navigate = useNavigate();
 

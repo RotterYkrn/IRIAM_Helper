@@ -28,7 +28,7 @@ const SideBarLayout = ({ onToggle }: SideBarProps) => {
             </div>
 
             <div className="h-full w-70 flex-1 space-y-4 p-2">
-                <CreateProjectButton toggleSidebar={onToggle} />
+                <CreateProjectButton />
                 <Suspense fallback={<div>読込中...</div>}>
                     <ProjectSideBarLayout toggleSidebar={onToggle} />
                 </Suspense>

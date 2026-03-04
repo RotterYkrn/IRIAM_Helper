@@ -47,6 +47,7 @@ const ProjectLayout = ({
         if (!confirm("この企画を削除しますか？")) {
             return;
         }
+        // 開催済みの場合は 2 重で確認します。
         if (
             project.status === "finished" &&
             !confirm("開催済みの企画です。本当に削除しますか？")
