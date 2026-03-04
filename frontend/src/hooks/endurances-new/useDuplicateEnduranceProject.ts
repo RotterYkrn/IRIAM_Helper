@@ -1,6 +1,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Effect } from "effect";
 
+import { ProjectKey } from "../query-keys/projects";
+
 import type { DuplicateEnduranceProjectArgs } from "@/domain/endurances-new/rpcs/DuplicateEnduranceProject";
 import { duplicateEnduranceProject } from "@/use-cases/endurances-new/duplicateEnduranceProject";
 
@@ -30,7 +32,7 @@ export const useDuplicateEnduranceProjectNew = () => {
             }
         },
         onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ["projects"] });
+            queryClient.invalidateQueries({ queryKey: ProjectKey.list });
         },
     });
 };

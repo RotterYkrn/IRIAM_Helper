@@ -1,6 +1,8 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Effect } from "effect";
 
+import { ProjectKey } from "../query-keys/projects";
+
 import type { UpdateEnduranceProjectNewArgs } from "@/domain/endurances-new/rpcs/UpdateEnduranceProjectNew";
 import { updateEnduranceProjectNew } from "@/use-cases/endurances-new/updateEnduranceProject";
 
@@ -31,7 +33,7 @@ export const useUpdateEnduranceProjectNew = () => {
         },
         onSuccess: (projectId) => {
             queryClient.invalidateQueries({
-                queryKey: ["project", projectId],
+                queryKey: ProjectKey.detail(projectId),
             });
             queryClient.invalidateQueries({
                 queryKey: ["actionStat", projectId],

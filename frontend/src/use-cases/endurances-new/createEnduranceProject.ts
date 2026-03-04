@@ -20,6 +20,8 @@ export const createEnduranceProjectNew = (
             try: () =>
                 supabase.rpc(
                     "create_endurance_project_new",
+                    // 要求される型に readonly がついておらず渡すことができないため、
+                    // encodeSync を通したうえで any を使っています。
                     Schema.encodeSync(CreateEnduranceProjectNewArgsSchema)(
                         args,
                     ) as any,

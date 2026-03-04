@@ -1,6 +1,9 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
 import { Effect, pipe, Schema, Either } from "effect";
 
+import { EnduranceKey } from "../query-keys/endurances";
+import { ProjectKey } from "../query-keys/projects";
+
 import type { LogEnduranceActionHistoryNewArgsEncoded } from "@/domain/endurances-new/rpcs/LogEnduranceActionHistoryNew";
 import {
     EnduranceNormalCountSchema,
@@ -71,20 +74,20 @@ export const useLogEnduranceActionHistoryNew = () => {
             switch (args.p_action_history_type) {
                 case "normal":
                     queryClient.setQueryData<EnduranceProjectViewNew>(
-                        ["project", args.p_project_id],
+                        ProjectKey.detail(args.p_project_id),
                         updateProjectNormal(args.p_action_count),
                     );
                     break;
 
                 case "rescue":
                     queryClient.setQueryData<EnduranceProjectViewNew>(
-                        ["project", args.p_project_id],
+                        ProjectKey.detail(args.p_project_id),
                         updateProjectRescue(args.amount, args.p_action_count),
                     );
                     queryClient.setQueryData<
                         typeof EnduranceRescueActionSchema.Type
                     >(
-                        ["action", args.p_action_id],
+                        EnduranceKey.action(args.p_action_id),
                         (old) =>
                             old && {
                                 ...old,
@@ -97,13 +100,13 @@ export const useLogEnduranceActionHistoryNew = () => {
 
                 case "sabotage":
                     queryClient.setQueryData<EnduranceProjectViewNew>(
-                        ["project", args.p_project_id],
+                        ProjectKey.detail(args.p_project_id),
                         updateProjectSabotage(args.amount, args.p_action_count),
                     );
                     queryClient.setQueryData<
                         typeof EnduranceSabotageActionSchema.Type
                     >(
-                        ["action", args.p_action_id],
+                        EnduranceKey.action(args.p_action_id),
                         (old) =>
                             old && {
                                 ...old,
@@ -126,20 +129,20 @@ export const useLogEnduranceActionHistoryNew = () => {
             switch (args.p_action_history_type) {
                 case "normal":
                     queryClient.setQueryData<EnduranceProjectViewNew>(
-                        ["project", args.p_project_id],
+                        ProjectKey.detail(args.p_project_id),
                         updateProjectNormal(-args.p_action_count),
                     );
                     break;
 
                 case "rescue":
                     queryClient.setQueryData<EnduranceProjectViewNew>(
-                        ["project", args.p_project_id],
+                        ProjectKey.detail(args.p_project_id),
                         updateProjectRescue(args.amount, -args.p_action_count),
                     );
                     queryClient.setQueryData<
                         typeof EnduranceRescueActionSchema.Type
                     >(
-                        ["action", args.p_action_id],
+                        EnduranceKey.action(args.p_action_id),
                         (old) =>
                             old && {
                                 ...old,
@@ -152,7 +155,7 @@ export const useLogEnduranceActionHistoryNew = () => {
 
                 case "sabotage":
                     queryClient.setQueryData<EnduranceProjectViewNew>(
-                        ["project", args.p_project_id],
+                        ProjectKey.detail(args.p_project_id),
                         updateProjectSabotage(
                             args.amount,
                             -args.p_action_count,
@@ -161,7 +164,7 @@ export const useLogEnduranceActionHistoryNew = () => {
                     queryClient.setQueryData<
                         typeof EnduranceSabotageActionSchema.Type
                     >(
-                        ["action", args.p_action_id],
+                        EnduranceKey.action(args.p_action_id),
                         (old) =>
                             old && {
                                 ...old,

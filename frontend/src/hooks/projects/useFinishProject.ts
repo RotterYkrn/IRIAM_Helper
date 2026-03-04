@@ -31,6 +31,7 @@ export const useFinishProject = () => {
             }
         },
         onSuccess: (projectId) => {
+            // 一覧のリストグループにも影響するため、一覧も更新
             queryClient.invalidateQueries({ queryKey: ProjectKey.list });
             queryClient.invalidateQueries({
                 queryKey: ProjectKey.detail(projectId),

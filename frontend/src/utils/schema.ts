@@ -36,7 +36,12 @@ export const withStrictNullCheck = <A, I, R>(self: Schema.Schema<A, I, R>) =>
 
 /**
  * propertySignatureを通してfromKeyを付与する操作をまとめて行います。
+ *
+ * @note 変換元のが既に `Schema.propertySignature` である場合は、\
+ * これを使わずに直接 `Schema.fromKey` を使用して変換できます。
+ *
  * @param fromKey decode前のプロパティ名
+ *
  * @returns decode前のプロパティ名を追加したSchemaを返す関数
  */
 export const mapFrom =

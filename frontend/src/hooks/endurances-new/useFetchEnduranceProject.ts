@@ -48,7 +48,7 @@ export const useFetchEnduranceProjectNew = (projectId: ProjectIdEncoded) => {
                 placeholderData: keepPreviousData,
             },
             {
-                queryKey: EnduranceKey.actionStat,
+                queryKey: EnduranceKey.actionStat(projectId),
                 queryFn: async () => {
                     try {
                         const result = await Effect.runPromise(
