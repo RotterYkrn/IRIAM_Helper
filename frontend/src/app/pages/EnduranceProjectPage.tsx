@@ -3,6 +3,12 @@ import { useParams } from "react-router-dom";
 
 import EnduranceProjectLayout from "../components/endurances-new/EnduranceProjectLayout";
 
+/**
+ * 耐久企画ページ用レイアウト\
+ * Routeに使用できます。
+ *
+ * @note URLが`/projects/endurance/:projectId`である必要があります。
+ */
 const EnduranceProjectPage = () => {
     const { projectId } = useParams<{ projectId: string }>();
 

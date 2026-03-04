@@ -4,9 +4,13 @@ import CreateProjectButton from "./projects/CreateProjectButton";
 import ProjectSideBarLayout from "./projects/ProjectSideBarLayout";
 
 type SideBarProps = {
+    /** サイドバーを開閉を制御するハンドラ */
     onToggle: () => void;
 };
 
+/**
+ * サイドバーのレイアウトを定義します。
+ */
 const SideBarLayout = ({ onToggle }: SideBarProps) => {
     return (
         <div>

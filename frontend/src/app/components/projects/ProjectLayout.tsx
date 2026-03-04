@@ -9,6 +9,7 @@ import { useFinishProject } from "@/hooks/projects/useFinishProject";
 import { errorToast, successToast } from "@/utils/toast";
 
 type ProjectLayoutProps = {
+    /** 各企画固有のコンテンツ */
     children: React.ReactNode;
     project: Omit<Project, "created_at" | "updated_at">;
     isEdit: boolean;
@@ -19,6 +20,7 @@ type ProjectLayoutProps = {
     onDuplicate: () => void;
 };
 
+/** 企画の共通レイアウト */
 const ProjectLayout = ({
     children,
     project,

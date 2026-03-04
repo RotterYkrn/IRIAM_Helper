@@ -70,7 +70,7 @@ const CreateEnduranceProjectLayout = () => {
 
     return (
         <CreateProjectLayout
-            disabled={disabled}
+            isSaveDisabled={disabled}
             onSave={onSave}
         >
             <EnduranceView

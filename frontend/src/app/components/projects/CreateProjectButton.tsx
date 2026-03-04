@@ -3,9 +3,14 @@ import { useState } from "react";
 import SelectProjectTypeDialog from "./SelectProjectTypeDialog";
 
 type Props = {
+    /** サイドバーの開閉を切り替えるハンドラ */
     toggleSidebar: () => void;
 };
 
+/**
+ * 企画新規作成遷移用ボタン\
+ * 押下されると、企画タイプを選択するダイアログ {@link SelectProjectTypeDialog} を開く
+ */
 const CreateProjectButton = ({ toggleSidebar }: Props) => {
     const [open, setOpen] = useState(false);
 

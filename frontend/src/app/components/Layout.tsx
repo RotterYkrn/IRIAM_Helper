@@ -5,6 +5,10 @@ import MainHeader from "./MainHeader";
 import SideBarLayout from "./SideBarLayout";
 import VersionLabel from "./VersionLabel";
 
+/**
+ * ページ全体の基礎レイアウトを定義します。
+ * Routeの最上位に配置してください。
+ */
 const Layout = () => {
     const [open, setOpen] = useState(false);
 

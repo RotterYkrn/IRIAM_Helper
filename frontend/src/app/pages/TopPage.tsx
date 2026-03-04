@@ -1,6 +1,12 @@
 import CreateProjectButton from "../components/projects/CreateProjectButton";
 import ProjectTopLayout from "../components/projects/ProjectTopLayout";
 
+/**
+ * トップページ用レイアウト
+ * Routeにそのまま使用できます。
+ *
+ * @note URLが`/`である必要があります。
+ */
 const TopPage = () => {
     return (
         <div className="flex flex-col items-center justify-center space-y-4">
