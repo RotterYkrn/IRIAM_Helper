@@ -9,8 +9,14 @@ import {
 const baseTargetCountAtom = atom<typeof EnduranceUnitsSchema.Type.target_count>(
     Schema.decodeSync(EnduranceTargetCountSchema)(1),
 );
+/**
+ * 企画目標回数入力時のバリデーションエラーメッセージを格納するAtom
+ */
 export const editTargetCountErrorAtomNew = atom<string | null>(null);
 
+/**
+ * 耐久企画の目標回数の入力を管理するAtom
+ */
 export const editTargetCountAtomNew = atom(
     (get) => get(baseTargetCountAtom),
     (

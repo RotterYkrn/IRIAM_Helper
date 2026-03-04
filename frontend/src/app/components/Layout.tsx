@@ -5,11 +5,16 @@ import MainHeader from "./MainHeader";
 import SideBarLayout from "./SideBarLayout";
 import VersionLabel from "./VersionLabel";
 
+/**
+ * ページ全体の基礎レイアウトを定義します。
+ * Routeの最上位に配置してください。
+ */
 const Layout = () => {
     const [open, setOpen] = useState(false);
 
     return (
         <>
+            {/* 開いたら、左からメインにかぶさって出てくるサイドバー */}
             <aside
                 className={`fixed top-0 left-0 h-screen z-40 rounded-r-2xl
                     overflow-hidden bg-white border-r border-black
@@ -19,6 +24,7 @@ const Layout = () => {
                 <SideBarLayout onToggle={() => setOpen((prev) => !prev)} />
             </aside>
 
+            {/* サイドバーを開いたら、背景を暗くする */}
             {open && (
                 <div
                     className="fixed inset-0 bg-black/40 z-30"

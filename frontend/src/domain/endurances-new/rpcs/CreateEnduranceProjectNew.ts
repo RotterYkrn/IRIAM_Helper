@@ -27,10 +27,15 @@ export type CreateEnduranceActionArgsEncoded = Readonly<
     Database["public"]["CompositeTypes"]["create_endurance_action_args"]
 >;
 export type CreateEnduranceActionArgs = Readonly<{
+    /** {@link EnduranceActionPositionSchema } */
     position: typeof EnduranceActionsNewSchema.Type.position;
+
     label: typeof EnduranceActionsNewSchema.Type.label;
+
+    /** {@link EnduranceActionAmountSchema } */
     amount: typeof EnduranceActionsNewSchema.Type.amount;
 }>;
+/** 耐久企画作成に必要なアクション情報 */
 export const CreateEnduranceActionArgsSchema: Schema.Schema<
     CreateEnduranceActionArgs,
     CreateEnduranceActionArgsEncoded
@@ -48,8 +53,13 @@ export type CreateEnduranceProjectNewArgsEncoded = RecursiveReadonly<
 >;
 export type CreateEnduranceProjectNewArgs = Readonly<{
     title: typeof ProjectSchema.Type.title;
+
     target_count: typeof EnduranceUnitsSchema.Type.target_count;
+
+    /** {@link CreateEnduranceActionArgsSchema} */
     rescue_actions: typeof CreateEnduranceActionArgsChunkSchema.Type;
+
+    /** {@link CreateEnduranceActionArgsSchema} */
     sabotage_actions: typeof CreateEnduranceActionArgsChunkSchema.Type;
 }>;
 export const CreateEnduranceProjectNewArgsSchema: Schema.Schema<

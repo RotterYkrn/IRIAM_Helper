@@ -7,6 +7,11 @@ import {
 } from "@/domain/endurances-new/rpcs/CreateEnduranceProjectNew";
 import { supabase } from "@/lib/supabase";
 
+/**
+ * 耐久企画（単体）を新規作成します。
+ * @param args rpcに渡す引数
+ * @returns 新規作成した企画のID
+ */
 export const createEnduranceProjectNew = (
     args: CreateEnduranceProjectNewArgs,
 ) =>
@@ -15,6 +20,8 @@ export const createEnduranceProjectNew = (
             try: () =>
                 supabase.rpc(
                     "create_endurance_project_new",
+                    // 要求される型に readonly がついておらず渡すことができないため、
+                    // encodeSync を通したうえで any を使っています。
                     Schema.encodeSync(CreateEnduranceProjectNewArgsSchema)(
                         args,
                     ) as any,

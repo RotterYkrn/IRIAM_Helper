@@ -16,6 +16,9 @@ import type { ProjectSchema } from "@/domain/projects/tables/Project";
 import MinusButton from "@/utils/components/MinusButton";
 import PlusButton from "@/utils/components/PlusButton";
 
+/**
+ * コンポーネント描画に必要な状態を共有する Context
+ */
 type EnduranceContextType = {
     projectStatus: typeof ProjectSchema.Type.status;
     isEdit: boolean;
@@ -23,6 +26,15 @@ type EnduranceContextType = {
 
 const EnduranceContext = createContext<EnduranceContextType | null>(null);
 
+/**
+ * {@link EnduranceContext} の値を取得するためのカスタムフック
+ *
+ * @note {@link EnduranceView} 内で使用する必要があります。
+ *
+ * @throws EnduranceView 外から呼び出された場合にスローされます。
+ *
+ * @returns {} {@link EnduranceContextType}
+ */
 const useEndurance = () => {
     const ctx = useContext(EnduranceContext);
     if (!ctx) {
@@ -37,6 +49,11 @@ type Props = EnduranceContextType & {
     children: React.ReactNode;
 };
 
+/**
+ * 耐久企画のコンポーネント群
+ *
+ * @param contextValue 内部で使用するコンテキスト ({@link EnduranceContextType})
+ */
 const EnduranceView = ({ children, ...contextValue }: Props) => {
     return <EnduranceContext value={contextValue}>{children}</EnduranceContext>;
 };

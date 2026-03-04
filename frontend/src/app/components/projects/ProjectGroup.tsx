@@ -5,11 +5,19 @@ import { Link } from "react-router-dom";
 import type { ProjectForSideBer } from "@/domain/projects/tables/Project";
 
 type ProjectGroupProps = {
+    /** セクション名 */
     title: string;
+    /** サイドバーに表示する企画の情報 */
     projects: Chunk.Chunk<ProjectForSideBer>;
     toggleSidebar: () => void;
 };
 
+/**
+ * サイドバーに企画情報を表示するためのコンポーネント
+ *
+ * @description
+ * 企画の開催状況ごとの一覧を表示するのに使います。
+ */
 const ProjectGroup = ({
     title,
     projects,

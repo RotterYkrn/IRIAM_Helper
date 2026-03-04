@@ -2,6 +2,17 @@ import ProjectTopGroup from "./ProjectTopGroup";
 
 import { useFetchProjectForSideBar } from "@/hooks/projects/useFetchProjectForSideBar";
 
+/**
+ * トップページ用レイアウト
+ *
+ * @description
+ * Routeにそのまま使用できます。また、以下のコンテンツが含まれます。
+ * - 企画新規作成ボタン
+ * - 企画一覧
+ *   - 開催中の企画
+ *   - 開催予定の企画
+ *   - 過去の企画
+ */
 const ProjectTopLayout = () => {
     const { data, isLoading } = useFetchProjectForSideBar();
 

@@ -1,13 +1,19 @@
 import * as Dialog from "@radix-ui/react-dialog";
-import { useNavigate } from "react-router-dom"; // Nextなら useRouter
+import { useNavigate } from "react-router-dom";
 
-const SelectProjectTypeDialog = ({
-    open,
-    onOpenChange,
-}: {
+/** Dialog.Root に渡すプロパティ */
+type Props = {
     open: boolean;
     onOpenChange: (open: boolean) => void;
-}) => {
+};
+
+/**
+ * 企画の種類を選択するダイアログ
+ *
+ * @description
+ * 企画新規作成時に、作成する企画の種類を選択するために使用します。
+ */
+const SelectProjectTypeDialog = ({ open, onOpenChange }: Props) => {
     const navigate = useNavigate();
 
     const handleSelect = (type: string) => {

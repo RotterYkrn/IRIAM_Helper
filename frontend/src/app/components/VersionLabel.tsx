@@ -1,3 +1,6 @@
+/**
+ * package.jsonのバージョンを表示するコンポーネントです。
+ */
 const VersionLabel = () => {
     const version = `v${import.meta.env.PACKAGE_VERSION}`;
 

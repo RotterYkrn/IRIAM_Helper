@@ -3,6 +3,11 @@ import { Chunk, Effect, pipe, Schema } from "effect";
 import { ProjectForSideBerSchema } from "@/domain/projects/tables/Project";
 import { supabase } from "@/lib/supabase";
 
+/**
+ * 進行ステータスごとに分けられた企画群を取得します。
+ * トップページやサイドバーの一覧表示に使用します。
+ * @returns scheduled: 開催予定の企画, active: 開催中の企画, finished: 終了した企画
+ */
 export const fetchProjectsByStatus = () =>
     pipe(
         Effect.tryPromise({

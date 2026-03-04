@@ -6,8 +6,14 @@ import { ProjectTitleSchema } from "@/domain/projects/tables/Project";
 const baseTitleAtom = atom<typeof ProjectTitleSchema.Type>(
     "" as typeof ProjectTitleSchema.Type,
 );
+/**
+ * 企画タイトル入力時のバリデーションエラーメッセージを格納するAtom
+ */
 export const editTitleErrorAtom = atom<string | null>(null);
 
+/**
+ * 企画タイトル入力Atom
+ */
 export const editTitleAtom = atom(
     (get) => get(baseTitleAtom),
     (_, set, newTitle: typeof ProjectTitleSchema.Encoded) => {

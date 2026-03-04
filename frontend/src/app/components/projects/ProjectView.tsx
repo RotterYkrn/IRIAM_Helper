@@ -8,6 +8,9 @@ import {
 import type { ProjectSchema } from "@/domain/projects/tables/Project";
 import ProjectButton from "@/utils/components/ProjectButton";
 
+/**
+ * コンポーネント描画に必要な状態を共有する Context
+ */
 type ProjectContextType = {
     projectStatus: typeof ProjectSchema.Type.status;
     isEdit: boolean;
@@ -15,6 +18,15 @@ type ProjectContextType = {
 
 const ProjectContext = createContext<ProjectContextType | null>(null);
 
+/**
+ * {@link ProjectContext} の値を取得するためのカスタムフック
+ *
+ * @note {@link ProjectView} 内で使用する必要があります。
+ *
+ * @throws ProjectView 外から呼び出された場合にスローされます。
+ *
+ * @returns {} {@link ProjectContextType}
+ */
 const useProject = () => {
     const ctx = useContext(ProjectContext);
     if (!ctx) {
@@ -27,6 +39,43 @@ type Props = ProjectContextType & {
     children: React.ReactNode;
 };
 
+/**
+ * 企画共通のコンポーネント群
+ *
+ * @param contextValue 内部で使用するコンテキスト ({@link ProjectContextType})
+ *
+ * @example
+ * ```tsx
+ * <ProjectView
+ *     projectStatus={project.status}
+ *     isEdit={isEdit}
+ * >
+ *     // 編集、削除など、企画操作に関するコンポーネントを配置する
+ *     <ProjectView.Action pageName="">
+ *         <ProjectView.EditButton onEdit={onEdit} />
+ *         <ProjectView.CancelButton onCancel={onCancel} />
+ *         <ProjectView.SaveButton
+ *             disabled={isSaveDisabled}
+ *             onSave={onSave}
+ *         />
+ *
+ *         <ProjectView.DuplicateButton onDuplicate={onDuplicate} />
+ *         <ProjectView.DeleteButton onDelete={onDelete} />
+ *
+ *         <ProjectView.ActivateButton onActivate={onActivate} />
+ *         <ProjectView.FinishButton onFinish={onFinish} />
+ *     </ProjectView.Action>
+ *
+ *     // 企画共通の情報を表示するコンポーネントを配置する
+ *     <ProjectView.Header>
+ *         <ProjectView.Title title={project.title} />
+ *     </ProjectView.Header>
+ *
+ *     // 各企画固有のコンテンツを配置する
+ *     <ProjectView.Body>{children}</ProjectView.Body>
+ * </ProjectView>
+ * ```
+ */
 const ProjectView = ({ children, ...contextValue }: Props) => {
     return (
         <ProjectContext value={contextValue}>
@@ -46,9 +95,11 @@ type ChildrenProps = {
 
 type ActionProps = {
     children: React.ReactNode;
+    /** 表示しているページを説明する用 */
     pageName: string;
 };
 
+/** 企画操作に関するコンポーネント群を配置する用 */
 const Action = ({ children, pageName }: ActionProps) => {
     return (
         <div className="flex w-full items-start justify-between gap-2">
@@ -60,6 +111,7 @@ const Action = ({ children, pageName }: ActionProps) => {
     );
 };
 
+/** 企画共通の情報を表示するコンポーネント群を配置する用 */
 const Header = ({ children }: ChildrenProps) => {
     return (
         <div className="flex flex-col w-full items-center justify-between gap-2">
@@ -72,6 +124,9 @@ type TitleProps = {
     title: string;
 };
 
+/**
+ * 企画タイトルの表示と、編集中に表示される入力欄を含みます。
+ */
 const Title = ({ title }: TitleProps) => {
     const { isEdit } = useProject();
     const [state, setState] = useAtom(editTitleAtom);
@@ -117,6 +172,7 @@ const Title = ({ title }: TitleProps) => {
     return <h1 className="text-3xl font-bold">{title}</h1>;
 };
 
+/** 各企画固有のコンテンツを配置する用 */
 const Body = ({ children }: ChildrenProps) => {
     return (
         <div className="mt-5 flex flex-col items-center gap-6">{children}</div>
@@ -144,10 +200,12 @@ const EditButton = ({ onEdit }: EditButtonProps) => {
     );
 };
 
-interface SaveButtonProps {
+type SaveButtonProps = {
+    /** バリデーションなどによって、保存ボタンを無効化するかどうかを指定できます */
     disabled: boolean;
+    /** 企画の種類によって保存処理が違うので、外部から渡します。 */
     onSave: () => void;
-}
+};
 
 const SaveButton = ({ disabled, onSave }: SaveButtonProps) => {
     const { isEdit } = useProject();
@@ -189,6 +247,7 @@ const CancelButton = ({ onCancel }: CancelButtonProps) => {
 };
 
 type DuplicateButtonProps = {
+    /** 企画の種類によって複製処理が違うので、外部から渡します。 */
     onDuplicate: () => void;
 };
 

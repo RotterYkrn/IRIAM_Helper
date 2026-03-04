@@ -3,9 +3,16 @@ import ProjectGroup from "./ProjectGroup";
 import { useFetchProjectForSideBar } from "@/hooks/projects/useFetchProjectForSideBar";
 
 type Props = {
+    /** 各企画が選択されたときに、サイドバーを閉じるために使います。 */
     toggleSidebar: () => void;
 };
 
+/**
+ * サイドバーに表示する企画一覧のレイアウト
+ *
+ * @description
+ * 開催予定、開催中、過去の企画を分類して表示します。
+ */
 const ProjectSideBarLayout = ({ toggleSidebar }: Props) => {
     const { data, isLoading } = useFetchProjectForSideBar();
 

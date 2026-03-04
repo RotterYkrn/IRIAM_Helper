@@ -28,12 +28,16 @@ import { useDuplicateEnduranceProjectNew } from "@/hooks/endurances-new/useDupli
 import { useFetchEnduranceProjectNew } from "@/hooks/endurances-new/useFetchEnduranceProject";
 import { useLogEnduranceActionHistoryNew } from "@/hooks/endurances-new/useLogEnduranceActionHistory";
 import { useUpdateEnduranceProjectNew } from "@/hooks/endurances-new/useUpdateEnduranceProject";
+import { EnduranceKey } from "@/hooks/query-keys/endurances";
 import { errorToast, successToast } from "@/utils/toast";
 
 type Props = {
     projectId: string;
 };
 
+/**
+ * 耐久企画ページのレイアウト
+ */
 const EnduranceProjectLayout = ({ projectId }: Props) => {
     const queryClient = useQueryClient();
     const navigate = useNavigate();
@@ -76,7 +80,7 @@ const EnduranceProjectLayout = ({ projectId }: Props) => {
                 Chunk.map((id) =>
                     queryClient.getQueryData<
                         typeof EnduranceRescueActionSchema.Type
-                    >(["action", id]),
+                    >(EnduranceKey.action(id)),
                 ),
                 Chunk.filter(
                     (
@@ -90,7 +94,7 @@ const EnduranceProjectLayout = ({ projectId }: Props) => {
                 Chunk.map((id) =>
                     queryClient.getQueryData<
                         typeof EnduranceSabotageActionSchema.Type
-                    >(["action", id]),
+                    >(EnduranceKey.action(id)),
                 ),
                 Chunk.filter(
                     (
@@ -153,6 +157,7 @@ const EnduranceProjectLayout = ({ projectId }: Props) => {
         });
     };
 
+    // 片方の要素がない場合は、各アクションの幅を広く使わせる
     const isWideRescue = actionStats.sabotage_actions.length === 0;
     const isWideSabotage = actionStats.rescue_actions.length === 0;
 

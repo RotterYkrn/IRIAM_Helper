@@ -21,6 +21,9 @@ export type EditEnduranceStateNew = Readonly<{
     sabotage_actions: typeof EnduranceActionStatsViewNewSchema.Type.sabotage_actions;
 }>;
 
+/**
+ * 耐久企画の編集内容から更新関数の引数を管理する Atom
+ */
 export const editEnduranceAtomNew = atom<
     Omit<UpdateEnduranceProjectNewArgs, "id" | "unit_id">
 >((get) => ({
@@ -42,6 +45,9 @@ export const editEnduranceAtomNew = atom<
     ),
 }));
 
+/**
+ * 耐久企画の編集内容を初期化する Atom
+ */
 export const initEditEnduranceAtomNew = atom(
     null,
     (_, set, initial: EditEnduranceStateNew) => {

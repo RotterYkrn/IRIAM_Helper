@@ -7,6 +7,11 @@ import {
 } from "@/domain/projects/rpcs/ActivateProject";
 import { supabase } from "@/lib/supabase";
 
+/**
+ * 企画を開催状態にします。
+ * @param args rpcに渡す引数
+ * @returns 開催状態にした企画のID
+ */
 export const activateProject = (args: ActivateProjectArgsEncoded) =>
     pipe(
         args,

@@ -10,18 +10,46 @@ import {
 } from "@/domain/endurances-new/tables/EnduranceActionsNew";
 import type { EnduranceActionStatNewSchema } from "@/domain/endurances-new/types/EnduranceActionStatNew";
 
+/**
+ * 編集中の救済・妨害の各要素を管理するための型。
+ * バリデーション済みのものが入ります。
+ */
 type EditAction = Readonly<{
     id: typeof EnduranceActionsNewSchema.Type.id;
     position: typeof EnduranceActionsNewSchema.Type.position;
     label: typeof EnduranceActionsNewSchema.Type.label;
     amount: typeof EnduranceActionsNewSchema.Type.amount;
+    /**
+     * 新規追加されたものは、更新時の引数で`id: null`を指定する必要があるため、\
+     * 新規追加かどうかを管理する必要があります。
+     */
     isNew: boolean;
+    /**
+     * 各編集内容でバリデーションエラーが発生したときに、\
+     * 対象のエラーメッセージが設定されます。
+     */
     errors: {
         label: string | null;
         amount: string | null;
     };
 }>;
 
+/**
+ * 救済・妨害の編集に必要な共通の Atom 群を生成します。
+ *
+ * @description
+ * 各コンポーネントで個別に利用できる Atom 群を生成します。\
+ * 救済・妨害で共通のものを使用できます。
+ * - editActions: 編集中の救済・妨害の一覧を管理する Atom
+ * - initActions: 救済・妨害の一覧を初期化する Atom
+ * - createAction: 救済・妨害を追加する Atom
+ * - deleteAction: 指定した救済・妨害を削除する Atom
+ * - editLabel: 指定した救済・妨害のラベルを編集する Atom
+ * - editAmount: 指定した救済・妨害の回数を編集する Atom
+ * - isValid: 救済・妨害の編集内容が有効かどうかを管理する Atom
+ *
+ * @returns 救済・妨害の編集に必要な共通の Atom 群
+ */
 const createEditActionAtoms = () => {
     const editActions = atom<Chunk.Chunk<EditAction>>(Chunk.empty());
 
@@ -216,5 +244,11 @@ const createEditActionAtoms = () => {
     };
 };
 
+/**
+ * 耐久企画の救援行動を編集するAtom
+ */
 export const editRescueActionsAtomsNew = createEditActionAtoms();
+/**
+ * 耐久企画の妨害行動を編集するAtom
+ */
 export const editSabotageActionsAtomsNew = createEditActionAtoms();
