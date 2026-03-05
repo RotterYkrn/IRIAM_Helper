@@ -1,10 +1,7 @@
-import { useAtom, useAtomValue } from "jotai";
+import { useAtom } from "jotai";
 import { createContext, useContext } from "react";
 
-import {
-    editTitleAtom,
-    editTitleErrorAtom,
-} from "@/atoms/projects/EditTitleAtom";
+import { editTitleAtom } from "@/atoms/projects/EditTitleAtom";
 import type { ProjectSchema } from "@/domain/projects/tables/Project";
 import ProjectButton from "@/utils/components/ProjectButton";
 
@@ -130,7 +127,6 @@ type TitleProps = {
 const Title = ({ title }: TitleProps) => {
     const { isEdit } = useProject();
     const [state, setState] = useAtom(editTitleAtom);
-    const error = useAtomValue(editTitleErrorAtom);
 
     if (isEdit) {
         return (
@@ -152,15 +148,15 @@ const Title = ({ title }: TitleProps) => {
                             className="text-3xl font-bold text-center
                                 outline-none border-b-2 border-gray-300
                                 focus:border-gray-500 transition-colors"
-                            defaultValue={state}
+                            defaultValue={state.inputTitle}
                             onChange={(e) => setState(e.target.value)}
                         />
-                        {error && (
+                        {state.error && (
                             <p
                                 className="absolute top-full mt-1 text-red-500
                                     text-sm whitespace-nowrap"
                             >
-                                {error}
+                                {state.error}
                             </p>
                         )}
                     </div>

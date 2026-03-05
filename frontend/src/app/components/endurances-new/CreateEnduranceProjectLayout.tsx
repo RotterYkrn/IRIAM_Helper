@@ -1,6 +1,6 @@
 import { Chunk, Schema } from "effect";
 import { useAtomValue, useSetAtom } from "jotai";
-import { useEffect, useEffectEvent } from "react";
+import { useEffectEvent, useLayoutEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 import CreateProjectLayout from "../projects/CreateProjectLayout";
@@ -54,7 +54,7 @@ const CreateEnduranceProjectLayout = () => {
         }),
     );
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         initEvent();
     }, []);
 

@@ -1,14 +1,11 @@
-import { useAtom, useAtomValue, useSetAtom, type WritableAtom } from "jotai";
+import { useAtom, useSetAtom, type WritableAtom } from "jotai";
 import React, { createContext, useContext } from "react";
 
 import {
     editRescueActionsAtomsNew,
     editSabotageActionsAtomsNew,
 } from "@/atoms/endurances-new/EditActionAtom";
-import {
-    editTargetCountAtomNew,
-    editTargetCountErrorAtomNew,
-} from "@/atoms/endurances-new/EditTargetCountAtom";
+import { editTargetCountAtom } from "@/atoms/endurances-new/EditTargetCountAtom";
 import type { EnduranceActionCountsSchema } from "@/domain/endurances-new/tables/EnduranceActionCounts";
 import type { EnduranceActionHistoriesNewSchema } from "@/domain/endurances-new/tables/EnduranceActionHistoriesNew";
 import type { EnduranceActionsNewSchema } from "@/domain/endurances-new/tables/EnduranceActionsNew";
@@ -75,8 +72,7 @@ const CountProgress = ({ left, center, right }: CountProgressProps) => {
 };
 
 const EditTargetCount = () => {
-    const [state, setState] = useAtom(editTargetCountAtomNew);
-    const error = useAtomValue(editTargetCountErrorAtomNew);
+    const [state, setState] = useAtom(editTargetCountAtom);
 
     return (
         <>
@@ -98,15 +94,15 @@ const EditTargetCount = () => {
                         className="text-4xl font-mono w-30 text-center
                             outline-none border-b-2 border-gray-300
                             focus:border-gray-500 transition-colors"
-                        defaultValue={state}
-                        onChange={(e) => setState(Number(e.target.value))}
+                        value={state.inputTargetCount}
+                        onChange={(e) => setState(e.target.value)}
                     />
-                    {error && (
+                    {state.error && (
                         <p
                             className="absolute top-full mt-1 text-red-500
                                 text-sm whitespace-nowrap"
                         >
-                            {error}
+                            {state.error}
                         </p>
                     )}
                 </div>

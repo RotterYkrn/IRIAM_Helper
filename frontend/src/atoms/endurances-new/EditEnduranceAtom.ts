@@ -1,18 +1,27 @@
-import { Chunk, pipe } from "effect";
+import { Chunk, Option, pipe } from "effect";
 import { atom } from "jotai";
 
-import { editTitleAtom } from "../projects/EditTitleAtom";
+import { editTitleAtom, validEditTitleAtom } from "../projects/EditTitleAtom";
 
 import {
     editRescueActionsAtomsNew,
     editSabotageActionsAtomsNew,
 } from "./EditActionAtom";
-import { editTargetCountAtomNew } from "./EditTargetCountAtom";
+import {
+    editTargetCountAtom,
+    validEditTargetCountAtom,
+} from "./EditTargetCountAtom";
 
 import type { UpdateEnduranceProjectNewArgs } from "@/domain/endurances-new/rpcs/UpdateEnduranceProjectNew";
-import type { EnduranceUnitsSchema } from "@/domain/endurances-new/tables/EnduranceUnits";
+import type {
+    EnduranceTargetCountSchema,
+    EnduranceUnitsSchema,
+} from "@/domain/endurances-new/tables/EnduranceUnits";
 import type { EnduranceActionStatsViewNewSchema } from "@/domain/endurances-new/views/EnduranceActionStatsViewNew";
-import type { ProjectSchema } from "@/domain/projects/tables/Project";
+import type {
+    ProjectSchema,
+    ProjectTitleSchema,
+} from "@/domain/projects/tables/Project";
 
 export type EditEnduranceStateNew = Readonly<{
     title: typeof ProjectSchema.Type.title;
@@ -27,8 +36,14 @@ export type EditEnduranceStateNew = Readonly<{
 export const editEnduranceAtomNew = atom<
     Omit<UpdateEnduranceProjectNewArgs, "id" | "unit_id">
 >((get) => ({
-    title: get(editTitleAtom),
-    target_count: get(editTargetCountAtomNew),
+    title: Option.getOrElse(
+        get(validEditTitleAtom),
+        () => "エラー" as typeof ProjectTitleSchema.Type,
+    ),
+    target_count: Option.getOrElse(
+        get(validEditTargetCountAtom),
+        () => 1 as typeof EnduranceTargetCountSchema.Type,
+    ),
     rescue_actions: pipe(
         get(editRescueActionsAtomsNew.editActions),
         Chunk.map((action) => ({
@@ -52,7 +67,7 @@ export const initEditEnduranceAtomNew = atom(
     null,
     (_, set, initial: EditEnduranceStateNew) => {
         set(editTitleAtom, initial.title);
-        set(editTargetCountAtomNew, initial.target_count);
+        set(editTargetCountAtom, initial.target_count.toString());
         set(editRescueActionsAtomsNew.initActions, initial.rescue_actions);
         set(editSabotageActionsAtomsNew.initActions, initial.sabotage_actions);
     },
