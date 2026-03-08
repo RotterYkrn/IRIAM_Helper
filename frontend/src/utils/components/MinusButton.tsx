@@ -1,12 +1,14 @@
+/**
+ * 回数カウントを減らすためのボタン
+ * @param props 標準のHTMLボタンの全プロパティを継承します
+ */
 const MinusButton = ({
     children,
-    disabled,
     ...props
 }: React.ComponentPropsWithoutRef<"button">) => {
     return (
         <button
             {...props}
-            disabled={disabled}
             className={`w-7 h-7 flex items-center justify-center rounded-full
                 text-xl font-bold transition text-white bg-red-500
                 hover:bg-red-600 active:scale-95 cursor-pointer

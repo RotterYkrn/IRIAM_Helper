@@ -1,14 +1,12 @@
-import { useAtom, useAtomValue, useSetAtom, type WritableAtom } from "jotai";
+import { pipe, Chunk } from "effect";
+import { useAtom, useSetAtom } from "jotai";
 import React, { createContext, useContext } from "react";
 
 import {
     editRescueActionsAtomsNew,
     editSabotageActionsAtomsNew,
 } from "@/atoms/endurances-new/EditActionAtom";
-import {
-    editTargetCountAtomNew,
-    editTargetCountErrorAtomNew,
-} from "@/atoms/endurances-new/EditTargetCountAtom";
+import { editTargetCountAtom } from "@/atoms/endurances-new/EditTargetCountAtom";
 import type { EnduranceActionCountsSchema } from "@/domain/endurances-new/tables/EnduranceActionCounts";
 import type { EnduranceActionHistoriesNewSchema } from "@/domain/endurances-new/tables/EnduranceActionHistoriesNew";
 import type { EnduranceActionsNewSchema } from "@/domain/endurances-new/tables/EnduranceActionsNew";
@@ -16,13 +14,28 @@ import type { ProjectSchema } from "@/domain/projects/tables/Project";
 import MinusButton from "@/utils/components/MinusButton";
 import PlusButton from "@/utils/components/PlusButton";
 
+/**
+ * コンポーネント描画に必要な状態を共有する Context
+ */
 type EnduranceContextType = {
     projectStatus: typeof ProjectSchema.Type.status;
     isEdit: boolean;
+    actionButtonCounts: Chunk.Chunk<
+        typeof EnduranceActionHistoriesNewSchema.Encoded.action_count
+    >;
 };
 
 const EnduranceContext = createContext<EnduranceContextType | null>(null);
 
+/**
+ * {@link EnduranceContext} の値を取得するためのカスタムフック
+ *
+ * @note {@link EnduranceView} 内で使用する必要があります。
+ *
+ * @throws EnduranceView 外から呼び出された場合にスローされます。
+ *
+ * @returns {} {@link EnduranceContextType}
+ */
 const useEndurance = () => {
     const ctx = useContext(EnduranceContext);
     if (!ctx) {
@@ -37,6 +50,11 @@ type Props = EnduranceContextType & {
     children: React.ReactNode;
 };
 
+/**
+ * 耐久企画のコンポーネント群
+ *
+ * @param contextValue 内部で使用するコンテキスト ({@link EnduranceContextType})
+ */
 const EnduranceView = ({ children, ...contextValue }: Props) => {
     return <EnduranceContext value={contextValue}>{children}</EnduranceContext>;
 };
@@ -58,13 +76,12 @@ const CountProgress = ({ left, center, right }: CountProgressProps) => {
 };
 
 const EditTargetCount = () => {
-    const [state, setState] = useAtom(editTargetCountAtomNew);
-    const error = useAtomValue(editTargetCountErrorAtomNew);
+    const [state, setState] = useAtom(editTargetCountAtom);
 
     return (
         <>
             <label
-                htmlFor="project-title"
+                htmlFor="target-count"
                 className="relative flex flex-col items-center"
             >
                 {/* 左上に配置されるキャプション */}
@@ -77,19 +94,20 @@ const EditTargetCount = () => {
 
                 <div className="flex items-center">
                     <input
+                        id="target-count"
                         type="text"
                         className="text-4xl font-mono w-30 text-center
                             outline-none border-b-2 border-gray-300
                             focus:border-gray-500 transition-colors"
-                        defaultValue={state}
-                        onChange={(e) => setState(Number(e.target.value))}
+                        value={state.inputTargetCount}
+                        onChange={(e) => setState(e.target.value)}
                     />
-                    {error && (
+                    {state.error && (
                         <p
                             className="absolute top-full mt-1 text-red-500
                                 text-sm whitespace-nowrap"
                         >
-                            {error}
+                            {state.error}
                         </p>
                     )}
                 </div>
@@ -112,29 +130,30 @@ const ActionCount = ({ actionCount }: ActionCountProps) => {
     );
 };
 
-type CountButtonConfig = {
-    label: string;
-    count: typeof EnduranceActionHistoriesNewSchema.Encoded.action_count;
-    disabled?: boolean;
-};
-
 type PlusButtonsProps = {
-    buttonConfigs: CountButtonConfig[];
     onIncrement: (
         actionCount: typeof EnduranceActionHistoriesNewSchema.Encoded.action_count,
     ) => void;
 };
 
-const PlusButtons = ({ buttonConfigs, onIncrement }: PlusButtonsProps) => {
-    const { projectStatus } = useEndurance();
+const PlusButtons = ({ onIncrement }: PlusButtonsProps) => {
+    const { projectStatus, actionButtonCounts } = useEndurance();
 
     if (projectStatus !== "active") {
         return null;
     }
 
+    const buttonConfigs = pipe(
+        actionButtonCounts,
+        Chunk.map((count) => ({
+            label: count === 1 ? "+" : `+${count}`,
+            count,
+        })),
+    );
+
     return (
         <>
-            {buttonConfigs.map((config) => (
+            {Chunk.map(buttonConfigs, (config) => (
                 <PlusButton
                     key={config.label}
                     onClick={() => onIncrement(config.count)}
@@ -147,26 +166,34 @@ const PlusButtons = ({ buttonConfigs, onIncrement }: PlusButtonsProps) => {
 };
 
 type MinusButtonsProps = {
-    buttonConfigs: CountButtonConfig[];
+    disabled: boolean;
     onIncrement: (
         actionCount: typeof EnduranceActionHistoriesNewSchema.Encoded.action_count,
     ) => void;
 };
 
-const MinusButtons = ({ buttonConfigs, onIncrement }: MinusButtonsProps) => {
-    const { projectStatus } = useEndurance();
+const MinusButtons = ({ disabled, onIncrement }: MinusButtonsProps) => {
+    const { projectStatus, actionButtonCounts } = useEndurance();
 
     if (projectStatus !== "active") {
         return null;
     }
 
+    const buttonConfigs = pipe(
+        actionButtonCounts,
+        Chunk.map((count) => ({
+            label: count === 1 ? "-" : `-${count}`,
+            count: -count,
+        })),
+    );
+
     return (
         <>
-            {buttonConfigs.map((config) => (
+            {Chunk.map(buttonConfigs, (config) => (
                 <MinusButton
                     key={config.label}
+                    disabled={disabled}
                     onClick={() => onIncrement(config.count)}
-                    disabled={config.disabled ?? false}
                 >
                     {config.label}
                 </MinusButton>
@@ -396,30 +423,25 @@ const Label = ({ label, className }: LabelProps) => {
 };
 
 type EditLabelProps = {
-    editLabelAtom: WritableAtom<
-        {
-            value: typeof EnduranceActionsNewSchema.Type.label;
-            error: string | null;
-        },
-        [newLabel: typeof EnduranceActionsNewSchema.Encoded.label],
-        void
-    >;
+    labelState: {
+        input: string;
+        error: string | null;
+    };
+    setLabel: (label: string) => void;
 };
 
-const EditLabel = ({ editLabelAtom }: EditLabelProps) => {
-    const [state, setState] = useAtom(editLabelAtom);
-
+const EditLabel = ({ labelState, setLabel }: EditLabelProps) => {
     return (
         <>
             <input
                 className="w-20 text-center outline-none border-b-2
                     border-gray-300 focus:border-gray-500 transition-colors"
-                defaultValue={state.value}
+                value={labelState.input}
                 placeholder="ラベルを入力"
-                onChange={(e) => setState(e.target.value)}
+                onChange={(e) => setLabel(e.target.value)}
             />
-            {state.error && (
-                <p className="text-red-600 text-sm">{state.error}</p>
+            {labelState.error && (
+                <p className="text-red-600 text-sm">{labelState.error}</p>
             )}
         </>
     );
@@ -439,30 +461,25 @@ const Amount = ({ actionType, amount }: AmountProps) => {
 };
 
 type EditAmountProps = {
-    editAmountAtom: WritableAtom<
-        {
-            value: typeof EnduranceActionsNewSchema.Type.amount;
-            error: string | null;
-        },
-        [newLabel: typeof EnduranceActionsNewSchema.Encoded.amount],
-        void
-    >;
+    amountState: {
+        input: string;
+        error: string | null;
+    };
+    setAmount: (amount: string) => void;
 };
 
-const EditAmount = ({ editAmountAtom }: EditAmountProps) => {
-    const [state, setState] = useAtom(editAmountAtom);
-
+const EditAmount = ({ amountState, setAmount }: EditAmountProps) => {
     return (
         <>
             <input
                 className="w-20 text-center outline-none border-b-2
                     border-gray-300 focus:border-gray-500 transition-colors"
-                defaultValue={state.value}
+                value={amountState.input}
                 placeholder="数値を入力"
-                onChange={(e) => setState(Number(e.target.value))}
+                onChange={(e) => setAmount(e.target.value)}
             />
-            {state.error && (
-                <p className="text-red-600 text-sm">{state.error}</p>
+            {amountState.error && (
+                <p className="text-red-600 text-sm">{amountState.error}</p>
             )}
         </>
     );
@@ -483,14 +500,10 @@ const ActionProgress = ({ children }: ProgressProps) => {
 };
 
 type DeleteActionButtonProps = {
-    deleteActionAtom: WritableAtom<null, [], void> & {
-        init: null;
-    };
+    onDelete: () => void;
 };
 
-const DeleteActionButton = ({ deleteActionAtom }: DeleteActionButtonProps) => {
-    const onDelete = useSetAtom(deleteActionAtom);
-
+const DeleteActionButton = ({ onDelete }: DeleteActionButtonProps) => {
     return (
         <button
             className="bg-gray-300 hover:bg-gray-200 px-2 py-1 rounded-md border

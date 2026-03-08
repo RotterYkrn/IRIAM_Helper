@@ -5,10 +5,18 @@ import { Link } from "react-router-dom";
 import type { ProjectForSideBer } from "@/domain/projects/tables/Project";
 
 type ProjectGroupProps = {
+    /** セクション名 */
     title: string;
+    /** トップページに表示する企画の情報 */
     projects: Chunk.Chunk<ProjectForSideBer>;
 };
 
+/**
+ * トップページに企画情報を表示するためのコンポーネント
+ *
+ * @description
+ * 企画の開催状況ごとの一覧を表示するのに使います。
+ */
 const ProjectTopGroup = ({ title, projects }: ProjectGroupProps) => {
     const [isOpen, setIsOpen] = useState(true);
 
@@ -18,7 +26,8 @@ const ProjectTopGroup = ({ title, projects }: ProjectGroupProps) => {
             <button
                 onClick={() => setIsOpen(!isOpen)}
                 className="w-full flex items-center justify-between p-3
-                    bg-pink-50 hover:bg-pink-100 transition-colors"
+                    bg-pink-50 hover:bg-pink-100 font-bold rounded-md
+                    transition-colors"
             >
                 {title}
             </button>

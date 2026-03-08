@@ -12,6 +12,11 @@ type Props = {
     actionId: typeof EnduranceActionsNewSchema.Type.id;
 };
 
+/**
+ * 耐久企画の救済・妨害アクションの各要素を描画します
+ *
+ * @note {@link EnduranceView} 内で使用する必要があります。
+ */
 const EnduranceActionRow = ({ projectId, unitId, actionId }: Props) => {
     const queryClient = useQueryClient();
     const logEnduranceActionHistory = useLogEnduranceActionHistoryNew();
@@ -54,13 +59,7 @@ const EnduranceActionRow = ({ projectId, unitId, actionId }: Props) => {
             </EnduranceView.SettingsLayout>
             <EnduranceView.ActionProgress>
                 <EnduranceView.MinusButtons
-                    buttonConfigs={[
-                        {
-                            label: "-",
-                            count: -1,
-                            disabled: action.count <= 0,
-                        },
-                    ]}
+                    disabled={action.count <= 0}
                     onIncrement={onIncrement(
                         action.type,
                         action.id,
@@ -69,12 +68,6 @@ const EnduranceActionRow = ({ projectId, unitId, actionId }: Props) => {
                 />
                 <EnduranceView.ActionCount actionCount={action.count} />
                 <EnduranceView.PlusButtons
-                    buttonConfigs={[
-                        {
-                            label: "+",
-                            count: 1,
-                        },
-                    ]}
                     onIncrement={onIncrement(
                         action.type,
                         action.id,

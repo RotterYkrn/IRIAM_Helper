@@ -1,3 +1,7 @@
+/**
+ * 回数カウントを増やすためのボタン
+ * @param props 標準のHTMLボタンの全プロパティを継承します
+ */
 const PlusButton = ({
     children,
     ...props

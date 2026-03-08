@@ -29,9 +29,18 @@ export type UpdateEnduranceActionArgsEncoded = Readonly<
     Database["public"]["CompositeTypes"]["update_endurance_action_args"]
 >;
 export type UpdateEnduranceActionArgs = Readonly<{
+    /**
+     * {@link EnduranceActionIdSchema}\
+     * 新規追加の場合は null
+     */
     id: typeof EnduranceActionsNewSchema.Type.id | null;
+
+    /** {@link EnduranceActionPositionSchema} */
     position: typeof EnduranceActionsNewSchema.Type.position;
+
     label: typeof EnduranceActionsNewSchema.Type.label;
+
+    /** {@link EnduranceActionAmountSchema} */
     amount: typeof EnduranceActionsNewSchema.Type.amount;
 }>;
 export const UpdateEnduranceActionArgsSchema: Schema.Schema<

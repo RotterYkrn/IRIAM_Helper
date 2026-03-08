@@ -6,14 +6,19 @@ import ProjectView from "./ProjectView";
 import { ProjectStatusSchema } from "@/domain/projects/tables/Project";
 
 type CreateProjectLayoutProps = {
+    /** 各企画固有のコンテンツ */
     children: React.ReactNode;
-    disabled: boolean;
+    /** バリデーションエラー時に、保存ボタンを無効化するためのフラグ */
+    isSaveDisabled: boolean;
     onSave: () => void;
 };
 
+/**
+ * 企画新規作成画面の共通レイアウト
+ */
 const CreateProjectLayout = ({
     children,
-    disabled,
+    isSaveDisabled,
     onSave,
 }: CreateProjectLayoutProps) => {
     const navigate = useNavigate();
@@ -30,7 +35,7 @@ const CreateProjectLayout = ({
             <ProjectView.Action pageName={"企画新規作成"}>
                 <ProjectView.CancelButton onCancel={onCancel} />
                 <ProjectView.SaveButton
-                    disabled={disabled}
+                    disabled={isSaveDisabled}
                     onSave={onSave}
                 />
             </ProjectView.Action>

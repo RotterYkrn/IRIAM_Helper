@@ -1,7 +1,11 @@
 type MainHeaderProps = {
+    /** サイドバーの開閉を制御するハンドラ */
     onToggle: () => void;
 };
 
+/**
+ * ページのヘッダー部分のレイアウトを定義します。
+ */
 const MainHeader = ({ onToggle }: MainHeaderProps) => {
     return (
         <header

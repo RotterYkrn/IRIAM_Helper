@@ -2,17 +2,12 @@ import { useState } from "react";
 
 import SelectProjectTypeDialog from "./SelectProjectTypeDialog";
 
-type Props = {
-    toggleSidebar: () => void;
-};
-
-const CreateProjectButton = ({ toggleSidebar }: Props) => {
+/**
+ * 企画新規作成遷移用ボタン\
+ * 押下されると、企画タイプを選択するダイアログ {@link SelectProjectTypeDialog} を開く
+ */
+const CreateProjectButton = () => {
     const [open, setOpen] = useState(false);
-
-    const onOpenChange = (isOpen: boolean) => {
-        setOpen(isOpen);
-        toggleSidebar();
-    };
 
     return (
         <>
@@ -26,7 +21,7 @@ const CreateProjectButton = ({ toggleSidebar }: Props) => {
 
             <SelectProjectTypeDialog
                 open={open}
-                onOpenChange={onOpenChange}
+                onOpenChange={setOpen}
             />
         </>
     );

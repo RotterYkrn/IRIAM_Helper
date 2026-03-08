@@ -7,6 +7,11 @@ import {
 } from "@/domain/projects/tables/Project";
 import { supabase } from "@/lib/supabase";
 
+/**
+ * 耐久企画（単体）の、救済・妨害の各要素の状態を取得する
+ * @param projectId 企画ID
+ * @returns 救済・妨害の各要素の状態
+ */
 export const fetchEnduranceActionStatsNew = (projectId: ProjectIdEncoded) =>
     pipe(
         projectId,

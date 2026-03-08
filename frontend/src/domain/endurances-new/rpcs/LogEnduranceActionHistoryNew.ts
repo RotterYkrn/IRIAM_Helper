@@ -22,6 +22,14 @@ export type LogEnduranceActionHistoryNewArgsEncoded = Readonly<
     Database["public"]["Functions"]["log_endurance_action_history_new"]["Args"]
 >;
 
+/**
+ * アクション履歴に設定するアクションID\
+ * アクションタイプによって null が許容される
+ *
+ * 制約実装:\
+ * {@link LogEnduranceActionHistoryNewArgsSchemaNormal}\
+ * {@link LogEnduranceActionHistoryNewArgsSchemaRescueSabotage}
+ */
 const LogEnduranceActionHistoryNewArgsActionIdSchema =
     Schema.optionalToRequired(
         EnduranceActionIdSchema,
@@ -39,6 +47,7 @@ const LogEnduranceActionHistoryNewArgsActionIdSchema =
         },
     );
 
+/** {@link LogEnduranceActionHistoryNewArgsSchemaBase} */
 type LogEnduranceActionHistoryNewArgsBase = Readonly<{
     project_id: typeof ProjectSchema.Type.id;
     unit_id: typeof EnduranceUnitsSchema.Type.id;
@@ -47,6 +56,10 @@ type LogEnduranceActionHistoryNewArgsBase = Readonly<{
     action_count: typeof EnduranceActionHistoriesNewSchema.Type.action_count;
 }>;
 
+/**
+ * log_endurance_action_history_new RPC の引数\
+ * オブジェクト型定義のみ
+ */
 const LogEnduranceActionHistoryNewArgsSchemaBase: Schema.Schema<
     LogEnduranceActionHistoryNewArgsBase,
     LogEnduranceActionHistoryNewArgsEncoded
@@ -64,6 +77,10 @@ const LogEnduranceActionHistoryNewArgsSchemaBase: Schema.Schema<
     ),
 });
 
+/**
+ * log_endurance_action_history_new RPC の引数\
+ * `action_type = "normal"` 時の制約定義
+ */
 const LogEnduranceActionHistoryNewArgsSchemaNormal =
     LogEnduranceActionHistoryNewArgsSchemaBase.pipe(
         Schema.filter(
@@ -81,6 +98,10 @@ const LogEnduranceActionHistoryNewArgsSchemaNormal =
         ),
     );
 
+/**
+ * log_endurance_action_history_new RPC の引数\
+ * `action_type = "rescue" | "sabotage"` 時の制約定義
+ */
 const LogEnduranceActionHistoryNewArgsSchemaRescueSabotage =
     LogEnduranceActionHistoryNewArgsSchemaBase.pipe(
         Schema.filter(
@@ -104,10 +125,19 @@ const LogEnduranceActionHistoryNewArgsSchemaRescueSabotage =
         ),
     );
 
+/** {@link LogEnduranceActionHistoryNewArgsSchema} */
 export type LogEnduranceActionHistoryNewArgs =
     | typeof LogEnduranceActionHistoryNewArgsSchemaNormal.Type
     | typeof LogEnduranceActionHistoryNewArgsSchemaRescueSabotage.Type;
 
+/**
+ * log_endurance_action_history_new RPC の引数\
+ * `action_type` の値による制約追加
+ *
+ * 制約定義:\
+ * {@link LogEnduranceActionHistoryNewArgsSchemaNormal}\
+ * {@link LogEnduranceActionHistoryNewArgsSchemaRescueSabotage}
+ */
 export const LogEnduranceActionHistoryNewArgsSchema: Schema.Schema<
     LogEnduranceActionHistoryNewArgs,
     LogEnduranceActionHistoryNewArgsEncoded

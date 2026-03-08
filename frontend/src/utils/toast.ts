@@ -1,5 +1,10 @@
 import { toast, Bounce } from "react-toastify";
 
+/**
+ * 成功トーストを表示します
+ * @param message トーストに含めるメッセージ
+ * @returns トーストのID
+ */
 export const successToast = (message: string) => {
     return toast.success(message, {
         position: "top-center",
@@ -12,6 +17,11 @@ export const successToast = (message: string) => {
     });
 };
 
+/**
+ * エラートーストを表示します
+ * @param message トーストに含めるメッセージ
+ * @returns トーストのID
+ */
 export const errorToast = (message: string) => {
     return toast.error(message, {
         position: "top-center",

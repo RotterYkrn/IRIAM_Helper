@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 
 import ProjectLayout from "../projects/ProjectLayout";
 
+import EditEnduranceActionRow from "./EditEnduranceActionRow";
 import EnduranceActionRow from "./EnduranceActionRow";
 import EnduranceView from "./EnduranceView";
 
@@ -14,11 +15,12 @@ import {
     editSabotageActionsAtomsNew,
 } from "@/atoms/endurances-new/EditActionAtom";
 import {
-    editEnduranceAtomNew,
-    initEditEnduranceAtomNew,
+    initEditEnduranceAtom,
+    isValidEditEnduranceAtom,
+    validEditEnduranceAtom,
 } from "@/atoms/endurances-new/EditEnduranceAtom";
-import { isEnduranceValidAtomNew } from "@/atoms/endurances-new/isEditEnduranceValidAtom";
 import type { EnduranceActionHistoriesNewSchema } from "@/domain/endurances-new/tables/EnduranceActionHistoriesNew";
+import { EnduranceActionTypeSchema } from "@/domain/endurances-new/tables/EnduranceActionsNew";
 import type {
     EnduranceRescueActionSchema,
     EnduranceSabotageActionSchema,
@@ -28,12 +30,16 @@ import { useDuplicateEnduranceProjectNew } from "@/hooks/endurances-new/useDupli
 import { useFetchEnduranceProjectNew } from "@/hooks/endurances-new/useFetchEnduranceProject";
 import { useLogEnduranceActionHistoryNew } from "@/hooks/endurances-new/useLogEnduranceActionHistory";
 import { useUpdateEnduranceProjectNew } from "@/hooks/endurances-new/useUpdateEnduranceProject";
+import { EnduranceKey } from "@/hooks/query-keys/endurances";
 import { errorToast, successToast } from "@/utils/toast";
 
 type Props = {
     projectId: string;
 };
 
+/**
+ * 耐久企画ページのレイアウト
+ */
 const EnduranceProjectLayout = ({ projectId }: Props) => {
     const queryClient = useQueryClient();
     const navigate = useNavigate();
@@ -45,9 +51,9 @@ const EnduranceProjectLayout = ({ projectId }: Props) => {
     const duplicateEnduranceProject = useDuplicateEnduranceProjectNew();
     const logEnduranceActionHistory = useLogEnduranceActionHistoryNew();
 
-    const editState = useAtomValue(editEnduranceAtomNew);
-    const initEditEndurance = useSetAtom(initEditEnduranceAtomNew);
-    const disabled = !useAtomValue(isEnduranceValidAtomNew);
+    const validEditState = useAtomValue(validEditEnduranceAtom);
+    const initEditEndurance = useSetAtom(initEditEnduranceAtom);
+    const disabled = !useAtomValue(isValidEditEnduranceAtom);
 
     const editRescueState = useAtomValue(editRescueActionsAtomsNew.editActions);
     const editSabotageState = useAtomValue(
@@ -76,7 +82,7 @@ const EnduranceProjectLayout = ({ projectId }: Props) => {
                 Chunk.map((id) =>
                     queryClient.getQueryData<
                         typeof EnduranceRescueActionSchema.Type
-                    >(["action", id]),
+                    >(EnduranceKey.action(id)),
                 ),
                 Chunk.filter(
                     (
@@ -90,7 +96,7 @@ const EnduranceProjectLayout = ({ projectId }: Props) => {
                 Chunk.map((id) =>
                     queryClient.getQueryData<
                         typeof EnduranceSabotageActionSchema.Type
-                    >(["action", id]),
+                    >(EnduranceKey.action(id)),
                 ),
                 Chunk.filter(
                     (
@@ -104,11 +110,16 @@ const EnduranceProjectLayout = ({ projectId }: Props) => {
     };
 
     const onSave = () => {
+        if (!validEditState) {
+            errorToast(`無効なフィールドがあります`);
+            return;
+        }
+
         updateEnduranceProject.mutate(
             {
                 id: project.id,
                 unit_id: project.unit_id,
-                ...editState,
+                ...validEditState,
             },
             {
                 onSuccess: () => {
@@ -142,6 +153,8 @@ const EnduranceProjectLayout = ({ projectId }: Props) => {
         );
     };
 
+    const actionButtonCounts = Chunk.fromIterable([1]);
+
     const onIncrementNormal = (
         actionCount: typeof EnduranceActionHistoriesNewSchema.Encoded.action_count,
     ) => {
@@ -153,6 +166,7 @@ const EnduranceProjectLayout = ({ projectId }: Props) => {
         });
     };
 
+    // 片方の要素がない場合は、各アクションの幅を広く使わせる
     const isWideRescue = actionStats.sabotage_actions.length === 0;
     const isWideSabotage = actionStats.rescue_actions.length === 0;
 
@@ -172,6 +186,7 @@ const EnduranceProjectLayout = ({ projectId }: Props) => {
             <EnduranceView
                 projectStatus={project.status}
                 isEdit={isEdit}
+                actionButtonCounts={actionButtonCounts}
             >
                 {isEdit ? (
                     <EnduranceView.EditTargetCount />
@@ -196,25 +211,13 @@ const EnduranceProjectLayout = ({ projectId }: Props) => {
                 )}
                 <EnduranceView.NormalAction>
                     <EnduranceView.MinusButtons
-                        buttonConfigs={[
-                            {
-                                label: "-",
-                                count: -1,
-                                disabled: project.normal_count <= 0,
-                            },
-                        ]}
+                        disabled={project.normal_count <= 0}
                         onIncrement={onIncrementNormal}
                     />
                     <EnduranceView.ActionCount
                         actionCount={project.normal_count}
                     />
                     <EnduranceView.PlusButtons
-                        buttonConfigs={[
-                            {
-                                label: "+",
-                                count: 1,
-                            },
-                        ]}
                         onIncrement={onIncrementNormal}
                     />
                 </EnduranceView.NormalAction>
@@ -226,25 +229,13 @@ const EnduranceProjectLayout = ({ projectId }: Props) => {
                     >
                         {isEdit
                             ? Chunk.map(editRescueState, (action) => (
-                                  <EnduranceView.Action key={action.id}>
-                                      <EnduranceView.EditSettingsLayout>
-                                          <EnduranceView.EditLabel
-                                              editLabelAtom={editRescueActionsAtomsNew.editLabel(
-                                                  action.id,
-                                              )}
-                                          />
-                                          <EnduranceView.EditAmount
-                                              editAmountAtom={editRescueActionsAtomsNew.editAmount(
-                                                  action.id,
-                                              )}
-                                          />
-                                      </EnduranceView.EditSettingsLayout>
-                                      <EnduranceView.DeleteActionButton
-                                          deleteActionAtom={editRescueActionsAtomsNew.deleteAction(
-                                              action.id,
-                                          )}
-                                      />
-                                  </EnduranceView.Action>
+                                  <EditEnduranceActionRow
+                                      key={action.id}
+                                      actionId={action.id}
+                                      actionType={Schema.decodeSync(
+                                          EnduranceActionTypeSchema,
+                                      )("rescue")}
+                                  />
                               ))
                             : Chunk.map(
                                   actionStats.rescue_actions,
@@ -265,25 +256,13 @@ const EnduranceProjectLayout = ({ projectId }: Props) => {
                     >
                         {isEdit
                             ? Chunk.map(editSabotageState, (action) => (
-                                  <EnduranceView.Action key={action.id}>
-                                      <EnduranceView.EditSettingsLayout>
-                                          <EnduranceView.EditLabel
-                                              editLabelAtom={editSabotageActionsAtomsNew.editLabel(
-                                                  action.id,
-                                              )}
-                                          />
-                                          <EnduranceView.EditAmount
-                                              editAmountAtom={editSabotageActionsAtomsNew.editAmount(
-                                                  action.id,
-                                              )}
-                                          />
-                                      </EnduranceView.EditSettingsLayout>
-                                      <EnduranceView.DeleteActionButton
-                                          deleteActionAtom={editSabotageActionsAtomsNew.deleteAction(
-                                              action.id,
-                                          )}
-                                      />
-                                  </EnduranceView.Action>
+                                  <EditEnduranceActionRow
+                                      key={action.id}
+                                      actionId={action.id}
+                                      actionType={Schema.decodeSync(
+                                          EnduranceActionTypeSchema,
+                                      )("sabotage")}
+                                  />
                               ))
                             : Chunk.map(
                                   actionStats.sabotage_actions,

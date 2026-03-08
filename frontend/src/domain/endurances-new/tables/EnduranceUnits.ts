@@ -6,6 +6,7 @@ import {
 } from "@/domain/projects/tables/Project";
 import type { Database } from "@/lib/database.types";
 
+/** {@link EnduranceUnitsSchema} */
 export type EnduranceUnitsEncoded = Readonly<
     Database["public"]["Tables"]["endurance_units"]["Row"]
 >;
@@ -32,6 +33,7 @@ export const EnduranceCurrentCountSchema = Schema.Number.pipe(
     Schema.brand("EnduranceCurrentCount"),
 );
 
+/** {@link EnduranceUnitsSchema} */
 export type EnduranceUnits = Readonly<{
     id: typeof EnduranceUnitIdSchema.Type;
     project_id: typeof ProjectSchema.Type.id;
@@ -42,6 +44,10 @@ export type EnduranceUnits = Readonly<{
     updated_at: Date;
 }>;
 
+/**
+ * endurance_units テーブル
+ * 耐久するものごとの設定
+ */
 export const EnduranceUnitsSchema: Schema.Schema<
     EnduranceUnits,
     EnduranceUnitsEncoded

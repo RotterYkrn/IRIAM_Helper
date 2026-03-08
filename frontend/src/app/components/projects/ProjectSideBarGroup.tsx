@@ -4,17 +4,25 @@ import { Link } from "react-router-dom";
 
 import type { ProjectForSideBer } from "@/domain/projects/tables/Project";
 
-type ProjectGroupProps = {
+type ProjectSideBarGroupProps = {
+    /** セクション名 */
     title: string;
+    /** サイドバーに表示する企画の情報 */
     projects: Chunk.Chunk<ProjectForSideBer>;
     toggleSidebar: () => void;
 };
 
-const ProjectGroup = ({
+/**
+ * サイドバーに企画情報を表示するためのコンポーネント
+ *
+ * @description
+ * 企画の開催状況ごとの一覧を表示するのに使います。
+ */
+const ProjectSideBarGroup = ({
     title,
     projects,
     toggleSidebar,
-}: ProjectGroupProps) => {
+}: ProjectSideBarGroupProps) => {
     const [open, setOpen] = useState(true);
 
     return (
@@ -51,4 +59,4 @@ const ProjectGroup = ({
     );
 };
 
-export default ProjectGroup;
+export default ProjectSideBarGroup;
