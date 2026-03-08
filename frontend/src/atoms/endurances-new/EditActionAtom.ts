@@ -10,6 +10,7 @@ import {
     type EnduranceActionsNewSchema,
 } from "@/domain/endurances-new/tables/EnduranceActionsNew";
 import type { EnduranceActionStatNewSchema } from "@/domain/endurances-new/types/EnduranceActionStatNew";
+import { normalizeNumber } from "@/utils/validations";
 
 type EditState<T> = {
     input: string;
@@ -183,15 +184,22 @@ const createEditActionAtoms = () => {
                         Chunk.map(prev, (action) =>
                             action.id === id
                                 ? pipe(
-                                      Number(input),
-                                      Schema.decodeEither(
-                                          EnduranceActionAmountSchema,
-                                      ),
-                                      (result) => ({
+                                      input,
+                                      normalizeNumber,
+                                      (normalized) => ({
+                                          normalized,
+                                          result: pipe(
+                                              normalized,
+                                              Number,
+                                              Schema.decodeEither(
+                                                  EnduranceActionAmountSchema,
+                                              ),
+                                          ),
+                                      }),
+                                      ({ normalized, result }) => ({
                                           ...action,
                                           amount: {
-                                              ...action.amount,
-                                              input,
+                                              input: normalized,
                                               valid: Option.getRight(result),
                                               error: Either.isLeft(result)
                                                   ? result.left.message

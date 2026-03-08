@@ -474,7 +474,7 @@ const EditAmount = ({ amountState, setAmount }: EditAmountProps) => {
             <input
                 className="w-20 text-center outline-none border-b-2
                     border-gray-300 focus:border-gray-500 transition-colors"
-                defaultValue={amountState.input}
+                value={amountState.input}
                 placeholder="数値を入力"
                 onChange={(e) => setAmount(e.target.value)}
             />

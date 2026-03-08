@@ -5,6 +5,7 @@ import {
     EnduranceTargetCountSchema,
     type EnduranceUnitsSchema,
 } from "@/domain/endurances-new/tables/EnduranceUnits";
+import { normalizeNumber } from "@/utils/validations";
 
 type EditTargetCountState = {
     inputTargetCount: string;
@@ -27,15 +28,22 @@ export const editTargetCountAtom = atom(
     (get) => get(baseEditTargetCountAtom),
     (_, set, inputTargetCount: string) => {
         pipe(
-            Number(inputTargetCount),
-            Schema.decodeEither(EnduranceTargetCountSchema),
-            (result) =>
-                set(baseEditTargetCountAtom, (prev) => ({
-                    ...prev,
-                    inputTargetCount,
+            inputTargetCount,
+            normalizeNumber,
+            (normalized) => ({
+                normalized,
+                result: pipe(
+                    normalized,
+                    Number,
+                    Schema.decodeEither(EnduranceTargetCountSchema),
+                ),
+            }),
+            ({ normalized, result }) =>
+                set(baseEditTargetCountAtom, {
+                    inputTargetCount: normalized,
                     validTargetCount: Option.getRight(result),
                     error: Either.isLeft(result) ? result.left.message : null,
-                })),
+                }),
         );
     },
 );
