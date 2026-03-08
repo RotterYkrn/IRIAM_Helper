@@ -59,13 +59,7 @@ const EnduranceActionRow = ({ projectId, unitId, actionId }: Props) => {
             </EnduranceView.SettingsLayout>
             <EnduranceView.ActionProgress>
                 <EnduranceView.MinusButtons
-                    buttonConfigs={[
-                        {
-                            label: "-",
-                            count: -1,
-                            disabled: action.count <= 0,
-                        },
-                    ]}
+                    disabled={action.count <= 0}
                     onIncrement={onIncrement(
                         action.type,
                         action.id,
@@ -74,12 +68,6 @@ const EnduranceActionRow = ({ projectId, unitId, actionId }: Props) => {
                 />
                 <EnduranceView.ActionCount actionCount={action.count} />
                 <EnduranceView.PlusButtons
-                    buttonConfigs={[
-                        {
-                            label: "+",
-                            count: 1,
-                        },
-                    ]}
                     onIncrement={onIncrement(
                         action.type,
                         action.id,

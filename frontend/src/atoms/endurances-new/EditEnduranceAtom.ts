@@ -1,20 +1,22 @@
-import { Chunk, pipe } from "effect";
+import { Option, pipe } from "effect";
 import { atom } from "jotai";
 
-import { editTitleAtom } from "../projects/EditTitleAtom";
+import { editTitleAtom, validEditTitleAtom } from "../projects/EditTitleAtom";
 
 import {
     editRescueActionsAtomsNew,
     editSabotageActionsAtomsNew,
 } from "./EditActionAtom";
-import { editTargetCountAtomNew } from "./EditTargetCountAtom";
+import {
+    editTargetCountAtom,
+    validEditTargetCountAtom,
+} from "./EditTargetCountAtom";
 
-import type { UpdateEnduranceProjectNewArgs } from "@/domain/endurances-new/rpcs/UpdateEnduranceProjectNew";
 import type { EnduranceUnitsSchema } from "@/domain/endurances-new/tables/EnduranceUnits";
 import type { EnduranceActionStatsViewNewSchema } from "@/domain/endurances-new/views/EnduranceActionStatsViewNew";
 import type { ProjectSchema } from "@/domain/projects/tables/Project";
 
-export type EditEnduranceStateNew = Readonly<{
+type EditEnduranceStateNew = Readonly<{
     title: typeof ProjectSchema.Type.title;
     target_count: typeof EnduranceUnitsSchema.Type.target_count;
     rescue_actions: typeof EnduranceActionStatsViewNewSchema.Type.rescue_actions;
@@ -22,37 +24,42 @@ export type EditEnduranceStateNew = Readonly<{
 }>;
 
 /**
- * 耐久企画の編集内容から更新関数の引数を管理する Atom
+ * 耐久企画の編集内容を結合する Atom
  */
-export const editEnduranceAtomNew = atom<
-    Omit<UpdateEnduranceProjectNewArgs, "id" | "unit_id">
->((get) => ({
-    title: get(editTitleAtom),
-    target_count: get(editTargetCountAtomNew),
-    rescue_actions: pipe(
-        get(editRescueActionsAtomsNew.editActions),
-        Chunk.map((action) => ({
-            ...action,
-            id: action.isNew ? null : action.id,
-        })),
-    ),
-    sabotage_actions: pipe(
-        get(editSabotageActionsAtomsNew.editActions),
-        Chunk.map((action) => ({
-            ...action,
-            id: action.isNew ? null : action.id,
-        })),
-    ),
-}));
+const baseEditEnduranceAtom = atom((get) =>
+    Option.all({
+        title: get(validEditTitleAtom),
+        target_count: get(validEditTargetCountAtom),
+        rescue_actions: get(editRescueActionsAtomsNew.validActions),
+        sabotage_actions: get(editSabotageActionsAtomsNew.validActions),
+    }),
+);
+
+/**
+ * 耐久企画の編集内容を、保存用に取り出す Atom
+ *
+ * @description
+ * バリデーションエラーがある場合は `null` を返す
+ */
+export const validEditEnduranceAtom = atom((get) =>
+    pipe(get(baseEditEnduranceAtom), Option.getOrNull),
+);
+
+/**
+ * 耐久企画の編集内容がすべて有効なものかどうかのブール値を取得する Atom
+ */
+export const isValidEditEnduranceAtom = atom((get) =>
+    pipe(get(baseEditEnduranceAtom), Option.isSome),
+);
 
 /**
  * 耐久企画の編集内容を初期化する Atom
  */
-export const initEditEnduranceAtomNew = atom(
+export const initEditEnduranceAtom = atom(
     null,
     (_, set, initial: EditEnduranceStateNew) => {
         set(editTitleAtom, initial.title);
-        set(editTargetCountAtomNew, initial.target_count);
+        set(editTargetCountAtom, initial.target_count.toString());
         set(editRescueActionsAtomsNew.initActions, initial.rescue_actions);
         set(editSabotageActionsAtomsNew.initActions, initial.sabotage_actions);
     },

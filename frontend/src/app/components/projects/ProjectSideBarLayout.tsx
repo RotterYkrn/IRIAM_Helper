@@ -1,4 +1,4 @@
-import ProjectGroup from "./ProjectGroup";
+import ProjectSideBarGroup from "./ProjectSideBarGroup";
 
 import { useFetchProjectForSideBar } from "@/hooks/projects/useFetchProjectForSideBar";
 
@@ -28,17 +28,17 @@ const ProjectSideBarLayout = ({ toggleSidebar }: Props) => {
 
     return (
         <>
-            <ProjectGroup
+            <ProjectSideBarGroup
                 title="開催中の企画"
                 projects={active}
                 toggleSidebar={toggleSidebar}
             />
-            <ProjectGroup
+            <ProjectSideBarGroup
                 title="開催予定の企画"
                 projects={scheduled}
                 toggleSidebar={toggleSidebar}
             />
-            <ProjectGroup
+            <ProjectSideBarGroup
                 title="過去の企画"
                 projects={finished}
                 toggleSidebar={toggleSidebar}
