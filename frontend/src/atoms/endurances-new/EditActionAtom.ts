@@ -206,17 +206,6 @@ const createEditActionAtoms = () => {
             ),
     );
 
-    const isValid = atom((get) =>
-        pipe(
-            get(editActions),
-            Chunk.every(
-                (action) =>
-                    Option.isSome(action.label.valid) &&
-                    Option.isSome(action.amount.valid),
-            ),
-        ),
-    );
-
     const validActions = atom((get) =>
         pipe(
             get(editActions),

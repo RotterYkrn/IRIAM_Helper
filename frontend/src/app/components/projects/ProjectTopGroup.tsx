@@ -26,7 +26,8 @@ const ProjectTopGroup = ({ title, projects }: ProjectGroupProps) => {
             <button
                 onClick={() => setIsOpen(!isOpen)}
                 className="w-full flex items-center justify-between p-3
-                    bg-pink-50 hover:bg-pink-100 transition-colors"
+                    bg-pink-50 hover:bg-pink-100 font-bold rounded-md
+                    transition-colors"
             >
                 {title}
             </button>
