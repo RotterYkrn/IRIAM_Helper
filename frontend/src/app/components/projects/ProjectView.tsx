@@ -145,6 +145,7 @@ const Title = ({ title }: TitleProps) => {
 
                     <div className="flex flex-col items-center">
                         <input
+                            id="project-title"
                             className="text-3xl font-bold text-center
                                 outline-none border-b-2 border-gray-300
                                 focus:border-gray-500 transition-colors"

@@ -1,5 +1,6 @@
 import { Option, Chunk, Either, pipe, Schema } from "effect";
 import { atom } from "jotai";
+import { atomFamily } from "jotai-family";
 
 import {
     EnduranceActionAmountSchema,
@@ -10,6 +11,12 @@ import {
 } from "@/domain/endurances-new/tables/EnduranceActionsNew";
 import type { EnduranceActionStatNewSchema } from "@/domain/endurances-new/types/EnduranceActionStatNew";
 
+type EditState<T> = {
+    input: string;
+    valid: Option.Option<T>;
+    error: string | null;
+};
+
 /**
  * 編集中の救済・妨害の各要素を管理するための型。
  * バリデーション済みのものが入ります。
@@ -17,21 +24,13 @@ import type { EnduranceActionStatNewSchema } from "@/domain/endurances-new/types
 type EditAction = Readonly<{
     id: typeof EnduranceActionsNewSchema.Type.id;
     position: typeof EnduranceActionsNewSchema.Type.position;
-    label: typeof EnduranceActionsNewSchema.Type.label;
-    amount: typeof EnduranceActionsNewSchema.Type.amount;
+    label: EditState<typeof EnduranceActionsNewSchema.Type.label>;
+    amount: EditState<typeof EnduranceActionsNewSchema.Type.amount>;
     /**
      * 新規追加されたものは、更新時の引数で`id: null`を指定する必要があるため、\
      * 新規追加かどうかを管理する必要があります。
      */
     isNew: boolean;
-    /**
-     * 各編集内容でバリデーションエラーが発生したときに、\
-     * 対象のエラーメッセージが設定されます。
-     */
-    errors: {
-        label: string | null;
-        amount: string | null;
-    };
 }>;
 
 /**
@@ -46,7 +45,7 @@ type EditAction = Readonly<{
  * - deleteAction: 指定した救済・妨害を削除する Atom
  * - editLabel: 指定した救済・妨害のラベルを編集する Atom
  * - editAmount: 指定した救済・妨害の回数を編集する Atom
- * - isValid: 救済・妨害の編集内容が有効かどうかを管理する Atom
+ * - validActions: バリデーション済みの救済・妨害の一覧を取得する Atom
  *
  * @returns 救済・妨害の編集に必要な共通の Atom 群
  */
@@ -65,12 +64,19 @@ const createEditActionAtoms = () => {
             set(
                 editActions,
                 Chunk.map(initialActions, (action) => ({
-                    ...action,
-                    isNew: false,
-                    errors: {
-                        label: null,
-                        amount: null,
+                    id: action.id,
+                    position: action.position,
+                    label: {
+                        input: action.label,
+                        valid: Option.some(action.label),
+                        error: null,
                     },
+                    amount: {
+                        input: action.amount.toString(),
+                        valid: Option.some(action.amount),
+                        error: null,
+                    },
+                    isNew: false,
                 })),
             );
         },
@@ -82,154 +88,148 @@ const createEditActionAtoms = () => {
                 id: Schema.decodeSync(EnduranceActionIdSchema)(
                     crypto.randomUUID(),
                 ),
-                isNew: true,
                 position: Schema.decodeSync(EnduranceActionPositionSchema)(
                     prev.length,
                 ),
-                label: "" as typeof EnduranceActionsNewSchema.Type.label,
-                amount: Schema.decodeSync(EnduranceActionAmountSchema)(1),
-                errors: {
-                    label: "",
-                    amount: null,
+                label: {
+                    input: "",
+                    valid: Option.none(),
+                    error: null,
                 },
+                amount: {
+                    input: "",
+                    valid: Option.none(),
+                    error: null,
+                },
+                isNew: true,
             }),
         );
     });
 
-    const deleteAction = (id: typeof EnduranceActionsNewSchema.Type.id) =>
-        atom(null, (_, set) => {
-            set(editActions, (prev) =>
-                pipe(
-                    prev,
-                    Chunk.filter((action) => action.id !== id),
-                    Chunk.map((action, i) => ({
-                        ...action,
-                        position: Schema.decodeSync(
-                            EnduranceActionPositionSchema,
-                        )(i),
-                    })),
-                ),
-            );
-        });
-
-    const editLabel = (id: typeof EnduranceActionsNewSchema.Type.id) =>
-        atom(
-            (get) =>
-                pipe(
-                    get(editActions),
-                    Chunk.findFirst((action) => action.id === id),
-                    Option.match({
-                        onSome: (action) => ({
-                            value: action.label,
-                            error: action.errors.label,
-                        }),
-                        onNone: () => ({
-                            value: "" as typeof EnduranceActionsNewSchema.Type.label,
-                            error: null,
-                        }),
-                    }),
-                ),
-            (
-                _,
-                set,
-                newLabel: typeof EnduranceActionsNewSchema.Encoded.label,
-            ) => {
+    const deleteAction = atomFamily(
+        (id: typeof EnduranceActionsNewSchema.Type.id) =>
+            atom(null, (_, set) => {
                 set(editActions, (prev) =>
-                    Chunk.map(prev, (action) =>
-                        action.id === id
-                            ? pipe(
-                                  newLabel,
-                                  Schema.decodeEither(
-                                      EnduranceActionLabelSchema,
-                                  ),
-                                  Either.match({
-                                      onRight: (label) => ({
-                                          ...action,
-                                          label: label,
-                                          errors: {
-                                              ...action.errors,
-                                              label: null,
-                                          },
-                                      }),
-                                      onLeft: (error) => ({
-                                          ...action,
-                                          errors: {
-                                              ...action.errors,
-                                              label: error.message,
-                                          },
-                                      }),
-                                  }),
-                              )
-                            : action,
+                    pipe(
+                        prev,
+                        Chunk.filter((action) => action.id !== id),
+                        Chunk.map((action, i) => ({
+                            ...action,
+                            position: Schema.decodeSync(
+                                EnduranceActionPositionSchema,
+                            )(i),
+                        })),
                     ),
                 );
-            },
-        );
+            }),
+    );
 
-    const editAmount = (id: typeof EnduranceActionsNewSchema.Type.id) =>
-        atom(
-            (get) =>
-                pipe(
-                    get(editActions),
-                    Chunk.findFirst((action) => action.id === id),
-                    Option.match({
-                        onSome: (action) => ({
-                            value: action.amount,
-                            error: action.errors.amount,
-                        }),
-                        onNone: () => ({
-                            value: Schema.decodeSync(
-                                EnduranceActionAmountSchema,
-                            )(1),
-                            error: null,
-                        }),
-                    }),
-                ),
-            (
-                _,
-                set,
-                newAmount: typeof EnduranceActionsNewSchema.Encoded.amount,
-            ) => {
-                set(editActions, (prev) =>
-                    Chunk.map(prev, (action) =>
-                        action.id === id
-                            ? pipe(
-                                  newAmount,
-                                  Schema.decodeEither(
-                                      EnduranceActionAmountSchema,
-                                  ),
-                                  Either.match({
-                                      onRight: (amount) => ({
-                                          ...action,
-                                          amount: amount,
-                                          errors: {
-                                              ...action.errors,
-                                              amount: null,
-                                          },
-                                      }),
-                                      onLeft: (error) => ({
-                                          ...action,
-                                          errors: {
-                                              ...action.errors,
-                                              amount: error.message,
-                                          },
-                                      }),
-                                  }),
-                              )
-                            : action,
+    const editLabel = atomFamily(
+        (id: typeof EnduranceActionsNewSchema.Type.id) =>
+            atom(
+                (get) =>
+                    pipe(
+                        get(editActions),
+                        Chunk.findFirst((action) => action.id === id),
+                        Option.map((action) => ({
+                            input: action.label.input,
+                            error: action.label.error,
+                        })),
+                        Option.getOrNull,
                     ),
-                );
-            },
-        );
+                (_, set, input: string) => {
+                    set(editActions, (prev) =>
+                        Chunk.map(prev, (action) =>
+                            action.id === id
+                                ? pipe(
+                                      input,
+                                      Schema.decodeEither(
+                                          EnduranceActionLabelSchema,
+                                      ),
+                                      (result) => ({
+                                          ...action,
+                                          label: {
+                                              ...action.label,
+                                              input,
+                                              valid: Option.getRight(result),
+                                              error: Either.isLeft(result)
+                                                  ? result.left.message
+                                                  : null,
+                                          },
+                                      }),
+                                  )
+                                : action,
+                        ),
+                    );
+                },
+            ),
+    );
+
+    const editAmount = atomFamily(
+        (id: typeof EnduranceActionsNewSchema.Type.id) =>
+            atom(
+                (get) =>
+                    pipe(
+                        get(editActions),
+                        Chunk.findFirst((action) => action.id === id),
+                        Option.map((action) => ({
+                            input: action.amount.input,
+                            error: action.amount.error,
+                        })),
+                        Option.getOrNull,
+                    ),
+                (_, set, input: string) => {
+                    set(editActions, (prev) =>
+                        Chunk.map(prev, (action) =>
+                            action.id === id
+                                ? pipe(
+                                      Number(input),
+                                      Schema.decodeEither(
+                                          EnduranceActionAmountSchema,
+                                      ),
+                                      (result) => ({
+                                          ...action,
+                                          amount: {
+                                              ...action.amount,
+                                              input,
+                                              valid: Option.getRight(result),
+                                              error: Either.isLeft(result)
+                                                  ? result.left.message
+                                                  : null,
+                                          },
+                                      }),
+                                  )
+                                : action,
+                        ),
+                    );
+                },
+            ),
+    );
 
     const isValid = atom((get) =>
         pipe(
             get(editActions),
             Chunk.every(
                 (action) =>
-                    action.errors.label === null &&
-                    action.errors.amount === null,
+                    Option.isSome(action.label.valid) &&
+                    Option.isSome(action.amount.valid),
             ),
+        ),
+    );
+
+    const validActions = atom((get) =>
+        pipe(
+            get(editActions),
+            Chunk.map((action) =>
+                Option.all({
+                    id: Option.some(action.isNew ? null : action.id),
+                    position: Option.some(action.position),
+                    label: action.label.valid,
+                    amount: action.amount.valid,
+                }),
+            ),
+            Option.all,
+            Option.map(Chunk.fromIterable),
         ),
     );
 
@@ -240,7 +240,7 @@ const createEditActionAtoms = () => {
         deleteAction,
         editLabel,
         editAmount,
-        isValid,
+        validActions,
     };
 };
 
