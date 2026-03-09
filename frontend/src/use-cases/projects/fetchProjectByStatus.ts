@@ -1,6 +1,6 @@
 import { Chunk, Effect, pipe, Schema } from "effect";
 
-import { ProjectForSideBerSchema } from "@/domain/projects/tables/Project";
+import { ProjectDtoSchema } from "@/domain/projects/dto/ProjectDto";
 import { supabase } from "@/lib/supabase";
 
 /**
@@ -21,9 +21,7 @@ export const fetchProjectsByStatus = () =>
         Effect.flatMap(({ data, error }) =>
             error ? Effect.fail(error) : Effect.succeed(data),
         ),
-        Effect.flatMap(
-            Schema.decodeEither(Schema.Chunk(ProjectForSideBerSchema)),
-        ),
+        Effect.flatMap(Schema.decodeEither(Schema.Chunk(ProjectDtoSchema))),
         Effect.map((projects) => {
             return {
                 scheduled:

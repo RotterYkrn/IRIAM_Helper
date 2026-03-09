@@ -76,7 +76,7 @@ const EnduranceProjectLayout = ({ projectId }: Props) => {
     const onEdit = () => {
         initEditEndurance({
             title: project.title,
-            target_count: project.target_count,
+            target_count: project.unit.target_count,
             rescue_actions: pipe(
                 actionStats.rescue_actions,
                 Chunk.map((id) =>
@@ -118,7 +118,7 @@ const EnduranceProjectLayout = ({ projectId }: Props) => {
         updateEnduranceProject.mutate(
             {
                 id: project.id,
-                unit_id: project.unit_id,
+                unit_id: project.unit.id,
                 ...validEditState,
             },
             {
@@ -160,7 +160,7 @@ const EnduranceProjectLayout = ({ projectId }: Props) => {
     ) => {
         logEnduranceActionHistory.mutate({
             p_project_id: project.id,
-            p_unit_id: project.unit_id,
+            p_unit_id: project.unit.id,
             p_action_history_type: "normal",
             p_action_count: actionCount,
         });
@@ -194,7 +194,7 @@ const EnduranceProjectLayout = ({ projectId }: Props) => {
                     <EnduranceView.CountProgress
                         left={
                             <div className="text-right text-4xl font-mono">
-                                {project.current_count}
+                                {project.unit.current_count}
                             </div>
                         }
                         center={
@@ -204,18 +204,18 @@ const EnduranceProjectLayout = ({ projectId }: Props) => {
                         }
                         right={
                             <div className="text-left text-4xl font-mono">
-                                {project.target_count}
+                                {project.unit.target_count}
                             </div>
                         }
                     />
                 )}
                 <EnduranceView.NormalAction>
                     <EnduranceView.MinusButtons
-                        disabled={project.normal_count <= 0}
+                        disabled={project.action_count.normal_count <= 0}
                         onIncrement={onIncrementNormal}
                     />
                     <EnduranceView.ActionCount
-                        actionCount={project.normal_count}
+                        actionCount={project.action_count.normal_count}
                     />
                     <EnduranceView.PlusButtons
                         onIncrement={onIncrementNormal}
@@ -224,7 +224,7 @@ const EnduranceProjectLayout = ({ projectId }: Props) => {
                 <EnduranceView.ActionsField>
                     <EnduranceView.RescueActionsField
                         actionLength={actionStats.rescue_actions.length}
-                        rescueCount={project.rescue_count}
+                        rescueCount={project.action_count.rescue_count}
                         isWide={isWideRescue}
                     >
                         {isEdit
@@ -243,7 +243,7 @@ const EnduranceProjectLayout = ({ projectId }: Props) => {
                                       <EnduranceActionRow
                                           key={actionId}
                                           projectId={project.id}
-                                          unitId={project.unit_id}
+                                          unitId={project.unit.id}
                                           actionId={actionId}
                                       />
                                   ),
@@ -251,7 +251,7 @@ const EnduranceProjectLayout = ({ projectId }: Props) => {
                     </EnduranceView.RescueActionsField>
                     <EnduranceView.SabotageActionsField
                         actionLength={actionStats.sabotage_actions.length}
-                        sabotageCount={project.sabotage_count}
+                        sabotageCount={project.action_count.sabotage_count}
                         isWide={isWideSabotage}
                     >
                         {isEdit
@@ -270,7 +270,7 @@ const EnduranceProjectLayout = ({ projectId }: Props) => {
                                       <EnduranceActionRow
                                           key={actionId}
                                           projectId={project.id}
-                                          unitId={project.unit_id}
+                                          unitId={project.unit.id}
                                           actionId={actionId}
                                       />
                                   ),

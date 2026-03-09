@@ -1,6 +1,6 @@
 import { Effect, pipe, Schema } from "effect";
 
-import { EnduranceProjectViewNewSchema } from "@/domain/endurances-new/views/EnduranceProjectViewNew";
+import { EnduranceProjectDtoSchema } from "@/domain/endurances-new/dto/EnduranceProjectDto";
 import {
     ProjectIdSchema,
     type ProjectIdEncoded,
@@ -19,16 +19,32 @@ export const fetchEnduranceProjectNew = (projectId: ProjectIdEncoded) =>
         Effect.tryMapPromise({
             try: (id) =>
                 supabase
-                    .from("endurance_project_view_new")
-                    .select("*")
+                    .from("projects")
+                    .select(
+                        `
+                            id,
+                            type,
+                            title,
+                            status,
+                            unit:endurance_units (
+                                id,
+                                target_count,
+                                current_count
+                            ),
+                            action_count:endurance_action_counts (
+                                normal_count,
+                                rescue_count,
+                                sabotage_count
+                            )
+                        `,
+                    )
                     .eq("id", id)
+                    .eq("type", "endurance") // ViewのWHERE句の内容
                     .single(),
             catch: (error) => error,
         }),
         Effect.flatMap(({ data, error }) =>
             error ? Effect.fail(error) : Effect.succeed(data),
         ),
-        Effect.flatMap(
-            Schema.decodeUnknownEither(EnduranceProjectViewNewSchema),
-        ),
+        Effect.flatMap(Schema.decodeEither(EnduranceProjectDtoSchema)),
     );

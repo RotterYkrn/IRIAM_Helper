@@ -1,9 +1,10 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Effect, pipe, Schema, Either } from "effect";
+import { Effect, Schema } from "effect";
 
 import { EnduranceKey } from "../query-keys/endurances";
 import { ProjectKey } from "../query-keys/projects";
 
+import type { EnduranceProjectDto } from "@/domain/endurances-new/dto/EnduranceProjectDto";
 import type { LogEnduranceActionHistoryNewArgsEncoded } from "@/domain/endurances-new/rpcs/LogEnduranceActionHistoryNew";
 import {
     EnduranceNormalCountSchema,
@@ -20,7 +21,6 @@ import type {
     EnduranceRescueActionSchema,
     EnduranceSabotageActionSchema,
 } from "@/domain/endurances-new/views/EnduranceActionStatsViewNew";
-import type { EnduranceProjectViewNew } from "@/domain/endurances-new/views/EnduranceProjectViewNew";
 import { logEnduranceActionHistoryNew } from "@/use-cases/endurances-new/logEnduranceActionHistory";
 
 /**
@@ -73,14 +73,14 @@ export const useLogEnduranceActionHistoryNew = () => {
             // 楽観的更新
             switch (args.p_action_history_type) {
                 case "normal":
-                    queryClient.setQueryData<EnduranceProjectViewNew>(
+                    queryClient.setQueryData<EnduranceProjectDto>(
                         ProjectKey.detail(args.p_project_id),
                         updateProjectNormal(args.p_action_count),
                     );
                     break;
 
                 case "rescue":
-                    queryClient.setQueryData<EnduranceProjectViewNew>(
+                    queryClient.setQueryData<EnduranceProjectDto>(
                         ProjectKey.detail(args.p_project_id),
                         updateProjectRescue(args.amount, args.p_action_count),
                     );
@@ -99,7 +99,7 @@ export const useLogEnduranceActionHistoryNew = () => {
                     break;
 
                 case "sabotage":
-                    queryClient.setQueryData<EnduranceProjectViewNew>(
+                    queryClient.setQueryData<EnduranceProjectDto>(
                         ProjectKey.detail(args.p_project_id),
                         updateProjectSabotage(args.amount, args.p_action_count),
                     );
@@ -126,16 +126,17 @@ export const useLogEnduranceActionHistoryNew = () => {
         // },
         onError: (_, args) => {
             // 楽観的更新のロールバック
+            console.log(args);
             switch (args.p_action_history_type) {
                 case "normal":
-                    queryClient.setQueryData<EnduranceProjectViewNew>(
+                    queryClient.setQueryData<EnduranceProjectDto>(
                         ProjectKey.detail(args.p_project_id),
                         updateProjectNormal(-args.p_action_count),
                     );
                     break;
 
                 case "rescue":
-                    queryClient.setQueryData<EnduranceProjectViewNew>(
+                    queryClient.setQueryData<EnduranceProjectDto>(
                         ProjectKey.detail(args.p_project_id),
                         updateProjectRescue(args.amount, -args.p_action_count),
                     );
@@ -154,7 +155,7 @@ export const useLogEnduranceActionHistoryNew = () => {
                     break;
 
                 case "sabotage":
-                    queryClient.setQueryData<EnduranceProjectViewNew>(
+                    queryClient.setQueryData<EnduranceProjectDto>(
                         ProjectKey.detail(args.p_project_id),
                         updateProjectSabotage(
                             args.amount,
@@ -183,17 +184,21 @@ const updateProjectNormal =
     (
         actionCount: typeof EnduranceActionHistoriesNewSchema.Encoded.action_count,
     ) =>
-    (
-        old: EnduranceProjectViewNew | undefined,
-    ): EnduranceProjectViewNew | undefined =>
+    (old: EnduranceProjectDto | undefined): EnduranceProjectDto | undefined =>
         old && {
             ...old,
-            current_count: Schema.decodeSync(EnduranceCurrentCountSchema)(
-                old.current_count + actionCount,
-            ),
-            normal_count: Schema.decodeSync(EnduranceNormalCountSchema)(
-                old.normal_count + actionCount,
-            ),
+            unit: {
+                ...old.unit,
+                current_count: Schema.decodeSync(EnduranceCurrentCountSchema)(
+                    old.unit.current_count + actionCount,
+                ),
+            },
+            action_count: {
+                ...old.action_count,
+                normal_count: Schema.decodeSync(EnduranceNormalCountSchema)(
+                    old.action_count.normal_count + actionCount,
+                ),
+            },
         };
 
 const updateProjectRescue =
@@ -201,17 +206,21 @@ const updateProjectRescue =
         actionAmount: typeof EnduranceActionsNewSchema.Encoded.amount,
         actionCount: typeof EnduranceActionHistoriesNewSchema.Encoded.action_count,
     ) =>
-    (
-        old: EnduranceProjectViewNew | undefined,
-    ): EnduranceProjectViewNew | undefined =>
+    (old: EnduranceProjectDto | undefined): EnduranceProjectDto | undefined =>
         old && {
             ...old,
-            current_count: Schema.decodeSync(EnduranceCurrentCountSchema)(
-                old.current_count + actionAmount * actionCount,
-            ),
-            rescue_count: Schema.decodeSync(EnduranceRescueCountSchema)(
-                old.rescue_count + actionAmount * actionCount,
-            ),
+            unit: {
+                ...old.unit,
+                current_count: Schema.decodeSync(EnduranceCurrentCountSchema)(
+                    old.unit.current_count + actionAmount * actionCount,
+                ),
+            },
+            action_count: {
+                ...old.action_count,
+                rescue_count: Schema.decodeSync(EnduranceRescueCountSchema)(
+                    old.action_count.rescue_count + actionAmount * actionCount,
+                ),
+            },
         };
 
 const updateProjectSabotage =
@@ -219,27 +228,20 @@ const updateProjectSabotage =
         actionAmount: typeof EnduranceActionsNewSchema.Encoded.amount,
         actionCount: typeof EnduranceActionHistoriesNewSchema.Encoded.action_count,
     ) =>
-    (
-        old: EnduranceProjectViewNew | undefined,
-    ): EnduranceProjectViewNew | undefined =>
+    (old: EnduranceProjectDto | undefined): EnduranceProjectDto | undefined =>
         old && {
             ...old,
-            current_count: pipe(
-                Schema.decodeEither(EnduranceCurrentCountSchema)(
-                    old.current_count - actionAmount * actionCount,
+            unit: {
+                ...old.unit,
+                current_count: Schema.decodeSync(EnduranceCurrentCountSchema)(
+                    old.unit.current_count - actionAmount * actionCount,
                 ),
-                Either.getOrElse((error) => {
-                    console.error(error.toJSON());
-                    return Schema.decodeSync(EnduranceCurrentCountSchema)(0);
-                }),
-            ),
-            sabotage_count: pipe(
-                Schema.decodeEither(EnduranceSabotageCountSchema)(
-                    old.sabotage_count + actionAmount * actionCount,
+            },
+            action_count: {
+                ...old.action_count,
+                sabotage_count: Schema.decodeSync(EnduranceSabotageCountSchema)(
+                    old.action_count.sabotage_count +
+                        actionAmount * actionCount,
                 ),
-                Either.getOrElse((error) => {
-                    console.error(error.toJSON());
-                    return Schema.decodeSync(EnduranceSabotageCountSchema)(0);
-                }),
-            ),
+            },
         };
