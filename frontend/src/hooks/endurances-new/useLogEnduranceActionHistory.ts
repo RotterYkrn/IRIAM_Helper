@@ -4,7 +4,10 @@ import { Effect, Schema } from "effect";
 import { EnduranceKey } from "../query-keys/endurances";
 import { ProjectKey } from "../query-keys/projects";
 
-import type { EnduranceProjectDto } from "@/domain/endurances-new/dto/EnduranceProjectDto";
+import type {
+    EnduranceActionDtoSchema,
+    EnduranceProjectDto,
+} from "@/domain/endurances-new/dto/EnduranceProjectDto";
 import type { LogEnduranceActionHistoryNewArgsEncoded } from "@/domain/endurances-new/rpcs/LogEnduranceActionHistoryNew";
 import {
     EnduranceNormalCountSchema,
@@ -17,10 +20,6 @@ import {
     EnduranceActionsNewSchema,
 } from "@/domain/endurances-new/tables/EnduranceActionsNew";
 import { EnduranceCurrentCountSchema } from "@/domain/endurances-new/tables/EnduranceUnits";
-import type {
-    EnduranceRescueActionSchema,
-    EnduranceSabotageActionSchema,
-} from "@/domain/endurances-new/views/EnduranceActionStatsViewNew";
 import { logEnduranceActionHistoryNew } from "@/use-cases/endurances-new/logEnduranceActionHistory";
 
 /**
@@ -85,16 +84,10 @@ export const useLogEnduranceActionHistoryNew = () => {
                         updateProjectRescue(args.amount, args.p_action_count),
                     );
                     queryClient.setQueryData<
-                        typeof EnduranceRescueActionSchema.Type
+                        typeof EnduranceActionDtoSchema.Type
                     >(
                         EnduranceKey.action(args.p_action_id),
-                        (old) =>
-                            old && {
-                                ...old,
-                                count: Schema.decodeSync(
-                                    EnduranceActionCountSchema,
-                                )(old.count + args.p_action_count),
-                            },
+                        updateActionCount(args.p_action_count),
                     );
                     break;
 
@@ -104,16 +97,10 @@ export const useLogEnduranceActionHistoryNew = () => {
                         updateProjectSabotage(args.amount, args.p_action_count),
                     );
                     queryClient.setQueryData<
-                        typeof EnduranceSabotageActionSchema.Type
+                        typeof EnduranceActionDtoSchema.Type
                     >(
                         EnduranceKey.action(args.p_action_id),
-                        (old) =>
-                            old && {
-                                ...old,
-                                count: Schema.decodeSync(
-                                    EnduranceActionCountSchema,
-                                )(old.count + args.p_action_count),
-                            },
+                        updateActionCount(args.p_action_count),
                     );
                     break;
             }
@@ -126,7 +113,6 @@ export const useLogEnduranceActionHistoryNew = () => {
         // },
         onError: (_, args) => {
             // 楽観的更新のロールバック
-            console.log(args);
             switch (args.p_action_history_type) {
                 case "normal":
                     queryClient.setQueryData<EnduranceProjectDto>(
@@ -141,16 +127,10 @@ export const useLogEnduranceActionHistoryNew = () => {
                         updateProjectRescue(args.amount, -args.p_action_count),
                     );
                     queryClient.setQueryData<
-                        typeof EnduranceRescueActionSchema.Type
+                        typeof EnduranceActionDtoSchema.Type
                     >(
                         EnduranceKey.action(args.p_action_id),
-                        (old) =>
-                            old && {
-                                ...old,
-                                count: Schema.decodeSync(
-                                    EnduranceActionCountSchema,
-                                )(old.count + args.p_action_count),
-                            },
+                        updateActionCount(-args.p_action_count),
                     );
                     break;
 
@@ -163,16 +143,10 @@ export const useLogEnduranceActionHistoryNew = () => {
                         ),
                     );
                     queryClient.setQueryData<
-                        typeof EnduranceSabotageActionSchema.Type
+                        typeof EnduranceActionDtoSchema.Type
                     >(
                         EnduranceKey.action(args.p_action_id),
-                        (old) =>
-                            old && {
-                                ...old,
-                                count: Schema.decodeSync(
-                                    EnduranceActionCountSchema,
-                                )(old.count - args.p_action_count),
-                            },
+                        updateActionCount(-args.p_action_count),
                     );
                     break;
             }
@@ -244,4 +218,18 @@ const updateProjectSabotage =
                         actionAmount * actionCount,
                 ),
             },
+        };
+
+const updateActionCount =
+    (
+        actionCount: typeof EnduranceActionHistoriesNewSchema.Encoded.action_count,
+    ) =>
+    (
+        old: typeof EnduranceActionDtoSchema.Type | undefined,
+    ): typeof EnduranceActionDtoSchema.Type | undefined =>
+        old && {
+            ...old,
+            count: Schema.decodeSync(EnduranceActionCountSchema)(
+                old.count + actionCount,
+            ),
         };

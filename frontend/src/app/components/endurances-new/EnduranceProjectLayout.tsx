@@ -1,3 +1,5 @@
+import console from "console";
+
 import { useQueryClient } from "@tanstack/react-query";
 import { Chunk, pipe, Schema } from "effect";
 import { useAtomValue, useSetAtom } from "jotai";
@@ -45,8 +47,7 @@ const EnduranceProjectLayout = ({ projectId }: Props) => {
     const navigate = useNavigate();
     const [isEdit, setIsEdit] = useState(false);
 
-    const [projectQuery, actionStatsQuery] =
-        useFetchEnduranceProjectNew(projectId);
+    const projectQuery = useFetchEnduranceProjectNew(projectId);
     const updateEnduranceProject = useUpdateEnduranceProjectNew();
     const duplicateEnduranceProject = useDuplicateEnduranceProjectNew();
     const logEnduranceActionHistory = useLogEnduranceActionHistoryNew();
@@ -60,25 +61,24 @@ const EnduranceProjectLayout = ({ projectId }: Props) => {
         editSabotageActionsAtomsNew.editActions,
     );
 
-    if (projectQuery.isLoading || actionStatsQuery.isLoading) {
+    if (projectQuery.isLoading) {
         return <div className="flex justify-center">読み込み中...</div>;
     }
 
-    if (!projectQuery.data || !actionStatsQuery.data) {
+    if (!projectQuery.data) {
         return (
             <div className="flex justify-center">企画の取得に失敗しました</div>
         );
     }
 
     const project = projectQuery.data;
-    const actionStats = actionStatsQuery.data;
 
     const onEdit = () => {
         initEditEndurance({
             title: project.title,
             target_count: project.unit.target_count,
             rescue_actions: pipe(
-                actionStats.rescue_actions,
+                project.rescue_actions,
                 Chunk.map((id) =>
                     queryClient.getQueryData<
                         typeof EnduranceRescueActionSchema.Type
@@ -92,7 +92,7 @@ const EnduranceProjectLayout = ({ projectId }: Props) => {
                 ),
             ),
             sabotage_actions: pipe(
-                actionStats.sabotage_actions,
+                project.sabotage_actions,
                 Chunk.map((id) =>
                     queryClient.getQueryData<
                         typeof EnduranceSabotageActionSchema.Type
@@ -167,8 +167,8 @@ const EnduranceProjectLayout = ({ projectId }: Props) => {
     };
 
     // 片方の要素がない場合は、各アクションの幅を広く使わせる
-    const isWideRescue = actionStats.sabotage_actions.length === 0;
-    const isWideSabotage = actionStats.rescue_actions.length === 0;
+    const isWideRescue = project.sabotage_actions.length === 0;
+    const isWideSabotage = project.rescue_actions.length === 0;
 
     return (
         <ProjectLayout
@@ -223,7 +223,7 @@ const EnduranceProjectLayout = ({ projectId }: Props) => {
                 </EnduranceView.NormalAction>
                 <EnduranceView.ActionsField>
                     <EnduranceView.RescueActionsField
-                        actionLength={actionStats.rescue_actions.length}
+                        actionLength={project.rescue_actions.length}
                         rescueCount={project.action_count.rescue_count}
                         isWide={isWideRescue}
                     >
@@ -237,20 +237,17 @@ const EnduranceProjectLayout = ({ projectId }: Props) => {
                                       )("rescue")}
                                   />
                               ))
-                            : Chunk.map(
-                                  actionStats.rescue_actions,
-                                  (actionId) => (
-                                      <EnduranceActionRow
-                                          key={actionId}
-                                          projectId={project.id}
-                                          unitId={project.unit.id}
-                                          actionId={actionId}
-                                      />
-                                  ),
-                              )}
+                            : Chunk.map(project.rescue_actions, (actionId) => (
+                                  <EnduranceActionRow
+                                      key={actionId}
+                                      projectId={project.id}
+                                      unitId={project.unit.id}
+                                      actionId={actionId}
+                                  />
+                              ))}
                     </EnduranceView.RescueActionsField>
                     <EnduranceView.SabotageActionsField
-                        actionLength={actionStats.sabotage_actions.length}
+                        actionLength={project.sabotage_actions.length}
                         sabotageCount={project.action_count.sabotage_count}
                         isWide={isWideSabotage}
                     >
@@ -265,7 +262,7 @@ const EnduranceProjectLayout = ({ projectId }: Props) => {
                                   />
                               ))
                             : Chunk.map(
-                                  actionStats.sabotage_actions,
+                                  project.sabotage_actions,
                                   (actionId) => (
                                       <EnduranceActionRow
                                           key={actionId}
