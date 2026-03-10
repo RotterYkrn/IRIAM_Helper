@@ -12,15 +12,15 @@ import {
     validEditTargetCountAtom,
 } from "./EditTargetCountAtom";
 
+import type { EnduranceProjectDtoSchema } from "@/domain/endurances-new/dto/EnduranceProjectDto";
 import type { EnduranceUnitsSchema } from "@/domain/endurances-new/tables/EnduranceUnits";
-import type { EnduranceActionStatsViewNewSchema } from "@/domain/endurances-new/views/EnduranceActionStatsViewNew";
 import type { ProjectSchema } from "@/domain/projects/tables/Project";
 
 type EditEnduranceStateNew = Readonly<{
     title: typeof ProjectSchema.Type.title;
     target_count: typeof EnduranceUnitsSchema.Type.target_count;
-    rescue_actions: typeof EnduranceActionStatsViewNewSchema.Type.rescue_actions;
-    sabotage_actions: typeof EnduranceActionStatsViewNewSchema.Type.sabotage_actions;
+    rescue_actions: typeof EnduranceProjectDtoSchema.Type.rescue_actions;
+    sabotage_actions: typeof EnduranceProjectDtoSchema.Type.sabotage_actions;
 }>;
 
 /**

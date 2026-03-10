@@ -1,6 +1,6 @@
 import ProjectTopGroup from "./ProjectTopGroup";
 
-import { useFetchProjectForSideBar } from "@/hooks/projects/useFetchProjectForSideBar";
+import { useFetchProjectForList } from "@/hooks/projects/useFetchProjectForList";
 
 /**
  * トップページ用レイアウト
@@ -14,7 +14,7 @@ import { useFetchProjectForSideBar } from "@/hooks/projects/useFetchProjectForSi
  *   - 過去の企画
  */
 const ProjectTopLayout = () => {
-    const { data, isLoading } = useFetchProjectForSideBar();
+    const { data, isLoading } = useFetchProjectForList();
 
     if (isLoading) {
         return <div>読み込み中...</div>;
