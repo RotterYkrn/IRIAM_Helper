@@ -17,7 +17,7 @@ const Layout = () => {
             {/* 開いたら、左からメインにかぶさって出てくるサイドバー */}
             <aside
                 className={`fixed top-0 left-0 h-screen z-40 rounded-r-2xl
-                    overflow-hidden bg-white border-r border-black
+                    overflow-hidden bg-white border-r border-gray-400 shadow
                     transition-[width] duration-300 ease-in-out
                     ${open ? "w-70" : "w-0"} `}
             >

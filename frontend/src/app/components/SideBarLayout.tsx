@@ -1,3 +1,4 @@
+import { ExternalLink } from "lucide-react";
 import { Suspense } from "react";
 
 import CreateProjectButton from "./projects/CreateProjectButton";
@@ -26,12 +27,28 @@ const SideBarLayout = ({ onToggle }: SideBarProps) => {
                     ×
                 </button>
             </div>
+            <div className="flex min-h-screen w-70 flex-col p-4">
+                {/* 上部コンテンツ：space-y-4 で間隔を保ち、flex-1 で残りのスペースを専有 */}
+                <div className="flex-1 space-y-4 overflow-y-auto">
+                    <CreateProjectButton />
+                    <Suspense fallback={<div>読込中...</div>}>
+                        <ProjectSideBarLayout toggleSidebar={onToggle} />
+                    </Suspense>
+                </div>
 
-            <div className="h-full w-70 flex-1 space-y-4 p-2">
-                <CreateProjectButton />
-                <Suspense fallback={<div>読込中...</div>}>
-                    <ProjectSideBarLayout toggleSidebar={onToggle} />
-                </Suspense>
+                {/* 下部固定コンテンツ：mt-auto で一番下へ押しやる */}
+                <div className="sticky bottom-8 space-y-4">
+                    <a
+                        href="https://namazu-tools.net/border-guardian/"
+                        target="_blank"
+                        rel="noopener noreferrer"
+                        className="flex items-center text-blue-600
+                            hover:underline"
+                    >
+                        <span>ボーダー集計（なまづつーるず）</span>
+                        <ExternalLink size={16} />
+                    </a>
+                </div>
             </div>
         </div>
     );
