@@ -1,4 +1,5 @@
 import * as Dialog from "@radix-ui/react-dialog";
+import { ExternalLink } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
 /** Dialog.Root に渡すプロパティ */
@@ -43,7 +44,8 @@ const SelectProjectTypeDialog = ({ open, onOpenChange }: Props) => {
 
                     <div className="flex flex-col gap-3">
                         <button
-                            className="rounded border p-3 hover:bg-gray-100"
+                            className="rounded border p-3 hover:bg-gray-300
+                                transition-colors"
                             onClick={() => handleSelect("endurance")}
                         >
                             カウント型耐久（単体）
@@ -68,18 +70,23 @@ const SelectProjectTypeDialog = ({ open, onOpenChange }: Props) => {
                         <button
                             className="rounded border p-3 bg-gray-500"
                             disabled={true}
-                            onClick={() => handleSelect("gacha")}
-                        >
-                            ガチャ企画（準備中）
-                        </button>
-
-                        <button
-                            className="rounded border p-3 bg-gray-500"
-                            disabled={true}
                             onClick={() => handleSelect("panel-open")}
                         >
                             パネル開け（準備中）
                         </button>
+
+                        <a
+                            href="https://namazu-tools.net/super-gacha/"
+                            target="_blank"
+                            rel="noopener noreferrer"
+                            className="flex items-center justify-center gap-2
+                                rounded border border-black p-3
+                                hover:bg-gray-300 hover:text-blue-600
+                                hover:underline transition-colors"
+                        >
+                            <span>スーパーガチャツール（なまづつーるず）</span>
+                            <ExternalLink size={16} />
+                        </a>
                     </div>
 
                     <Dialog.Close
