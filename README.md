@@ -61,7 +61,7 @@ IRIAMにおける配信活動では、リスナー参加型の企画（ギフト
 
 ### CI/CD Pipeline
 - GitHub Actions
-  - CI: Push 時に Linter / Type Check を自動実行し、品質の低下を防止。
+  - CI: Push 時に Linter / Type Check を自動実行し、コードの品質低下を防止。
   - CD: main / develop ブランチの変更を自動検知し、 Cloudflare Pages, Supabase へ自動デプロイ。
     - main を本番環境、develop をステージング環境へそれぞれデプロイするよう設定。
 
