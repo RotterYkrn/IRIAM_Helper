@@ -2,6 +2,7 @@ import { Option, Chunk, Either, pipe, Schema } from "effect";
 import { atom } from "jotai";
 import { atomFamily } from "jotai-family";
 
+import type { EnduranceActionDtoSchema } from "@/domain/endurances-new/dto/EnduranceProjectDto";
 import {
     EnduranceActionAmountSchema,
     EnduranceActionIdSchema,
@@ -9,7 +10,6 @@ import {
     EnduranceActionPositionSchema,
     type EnduranceActionsNewSchema,
 } from "@/domain/endurances-new/tables/EnduranceActionsNew";
-import type { EnduranceActionStatNewSchema } from "@/domain/endurances-new/types/EnduranceActionStatNew";
 import { normalizeNumber } from "@/utils/validations";
 
 type EditState<T> = {
@@ -58,9 +58,7 @@ const createEditActionAtoms = () => {
         (
             _,
             set,
-            initialActions: Chunk.Chunk<
-                typeof EnduranceActionStatNewSchema.Type
-            >,
+            initialActions: Chunk.Chunk<typeof EnduranceActionDtoSchema.Type>,
         ) => {
             set(
                 editActions,

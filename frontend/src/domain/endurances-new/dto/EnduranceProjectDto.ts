@@ -26,26 +26,22 @@ export const EnduranceActionDtoSchema = Schema.Struct({
     count: EnduranceActionCountSchema,
 });
 
-export const EnduranceRescueActionChunkDtoSchema =
-    EnduranceActionDtoSchema.pipe(
-        Schema.filter(
-            (
-                a,
-            ): a is typeof EnduranceActionDtoSchema.Type & { type: "rescue" } =>
-                a.type === "rescue",
-        ),
-    );
+export const EnduranceRescueActionDtoSchema = EnduranceActionDtoSchema.pipe(
+    Schema.filter(
+        (a): a is typeof EnduranceActionDtoSchema.Type & { type: "rescue" } =>
+            a.type === "rescue",
+    ),
+);
 
-export const EnduranceSabotageActionChunkDtoSchema =
-    EnduranceActionDtoSchema.pipe(
-        Schema.filter(
-            (
-                a,
-            ): a is typeof EnduranceActionDtoSchema.Type & {
-                type: "sabotage";
-            } => a.type === "sabotage",
-        ),
-    );
+export const EnduranceSabotageActionDtoSchema = EnduranceActionDtoSchema.pipe(
+    Schema.filter(
+        (
+            a,
+        ): a is typeof EnduranceActionDtoSchema.Type & {
+            type: "sabotage";
+        } => a.type === "sabotage",
+    ),
+);
 
 /**
  * endurance_project_view_new ビュー
@@ -65,10 +61,8 @@ export const EnduranceProjectDtoSchema = pipe(
                 Schema.pick("normal_count", "rescue_count", "sabotage_count"),
                 transformSchemaArrayToOne,
             ),
-            rescue_actions: Schema.Chunk(EnduranceRescueActionChunkDtoSchema),
-            sabotage_actions: Schema.Chunk(
-                EnduranceSabotageActionChunkDtoSchema,
-            ),
+            rescue_actions: Schema.Chunk(EnduranceRescueActionDtoSchema),
+            sabotage_actions: Schema.Chunk(EnduranceSabotageActionDtoSchema),
         }),
     ),
 );

@@ -21,12 +21,12 @@ import {
     isValidEditEnduranceAtom,
     validEditEnduranceAtom,
 } from "@/atoms/endurances-new/EditEnduranceAtom";
+import type {
+    EnduranceRescueActionDtoSchema,
+    EnduranceSabotageActionDtoSchema,
+} from "@/domain/endurances-new/dto/EnduranceProjectDto";
 import type { EnduranceActionHistoriesNewSchema } from "@/domain/endurances-new/tables/EnduranceActionHistoriesNew";
 import { EnduranceActionTypeSchema } from "@/domain/endurances-new/tables/EnduranceActionsNew";
-import type {
-    EnduranceRescueActionSchema,
-    EnduranceSabotageActionSchema,
-} from "@/domain/endurances-new/views/EnduranceActionStatsViewNew";
 import { ProjectTypeSchema } from "@/domain/projects/tables/Project";
 import { useDuplicateEnduranceProjectNew } from "@/hooks/endurances-new/useDuplicateEnduranceProject";
 import { useFetchEnduranceProjectNew } from "@/hooks/endurances-new/useFetchEnduranceProject";
@@ -81,13 +81,13 @@ const EnduranceProjectLayout = ({ projectId }: Props) => {
                 project.rescue_actions,
                 Chunk.map((id) =>
                     queryClient.getQueryData<
-                        typeof EnduranceRescueActionSchema.Type
+                        typeof EnduranceRescueActionDtoSchema.Type
                     >(EnduranceKey.action(id)),
                 ),
                 Chunk.filter(
                     (
                         action,
-                    ): action is typeof EnduranceRescueActionSchema.Type =>
+                    ): action is typeof EnduranceRescueActionDtoSchema.Type =>
                         action !== undefined,
                 ),
             ),
@@ -95,13 +95,13 @@ const EnduranceProjectLayout = ({ projectId }: Props) => {
                 project.sabotage_actions,
                 Chunk.map((id) =>
                     queryClient.getQueryData<
-                        typeof EnduranceSabotageActionSchema.Type
+                        typeof EnduranceSabotageActionDtoSchema.Type
                     >(EnduranceKey.action(id)),
                 ),
                 Chunk.filter(
                     (
                         action,
-                    ): action is typeof EnduranceSabotageActionSchema.Type =>
+                    ): action is typeof EnduranceSabotageActionDtoSchema.Type =>
                         action !== undefined,
                 ),
             ),
