@@ -35,23 +35,35 @@ IRIAMにおける配信活動では、リスナー参加型の企画（ギフト
 
 ## 技術スタック
 
-言語・フレームワーク: React, TypeScript
+### Frontend Core
+- Framework: React v19 / Vite v7
+- Language: TypeScript v5
+- Styling: Tailwind CSS v4
+- Routing: React Router v7
 
-ルーティング: React Router
+### Architecture & Paradigm (★こだわりポイント)
+- Architecture: Clean Architecture 意識のディレクトリ構成
+- Functional Programming: Effect
+  - 副作用管理やバリデーションを型安全に集約。
+- State Management: Jotai (+ jotai-family)
+  - アトムベースの状態管理により、企画ごとの複雑な計算ロジックを疎結合に実装。
 
-状態管理: Jotai（アトムベースの柔軟な状態管理）
+### Data & Infrastructure
+- Backend: Supabase (Auth / Database)
+- Data Fetching: TanStack Query v5
+  - サーバー状態のキャッシュ最適化と非同期処理の宣言的な記述。
 
-データ取得・キャッシュ: TanStack Query (React Query)
+### Workflow & Quality Control
+- Code Quality (Linter / Formatter)
+  - ESLint / Prettier
+  - eslint-plugin-import, unused-imports によりインポートを自動整形し、常にクリーンなコードベースを維持。
+  - prettier-plugin-tailwindcss を採用し、チーム開発を想定したクラス名の自動ソートを導入。
 
-ビルドツール: Vite
-
-アーキテクチャ: Clean Architecture を意識したディレクトリ構成
-
-設計思想: 関数型プログラミング（FP）を意識した設計（関数型を実現するためのライブラリとして Effect を活用）
-
-データベース: Supabase（PostgreSQL）
-
-デプロイ環境: Cloudflare Pages, Supabase
+### CI/CD Pipeline
+- GitHub Actions
+  - CI: Push 時に Linter / Type Check を自動実行し、品質の低下を防止。
+  - CD: main / develop ブランチの変更を自動検知し、 Cloudflare Pages, Supabase へ自動デプロイ。
+    - main を本番環境、develop をステージング環境へそれぞれデプロイするよう設定。
 
 4. こだわったポイント（エンジニア向け）
 今まさに取り組んでいる「ビルド最適化」や「状態管理」を具体的に書くと評価が高まります。
