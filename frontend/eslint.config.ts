@@ -10,13 +10,15 @@ import globals from "globals";
 import tseslint from "typescript-eslint";
 
 export default defineConfig([
+    {
+        ignores: ["**/node_modules/**", "**/dist/**"],
+    },
     js.configs.recommended,
     tseslint.configs.recommended,
     reactHooks.configs.flat.recommended,
     reactRefresh.configs.recommended,
     {
         files: ["**/*.{ts,tsx}"],
-        ignores: ["**/node_modules/**", "**/dist/**"],
         plugins: {
             js,
             import: importPlugin,
