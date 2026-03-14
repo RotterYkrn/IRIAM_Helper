@@ -24,4 +24,3 @@ if (appRoot) {
 } else {
     throw new Error("Failed to find the app root element.");
 }
-//
