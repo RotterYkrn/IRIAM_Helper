@@ -1,3 +1,5 @@
+import console from "console";
+
 import { useQueryClient } from "@tanstack/react-query";
 import { Chunk, pipe, Schema } from "effect";
 import { useAtomValue, useSetAtom } from "jotai";
@@ -19,12 +21,12 @@ import {
     isValidEditEnduranceAtom,
     validEditEnduranceAtom,
 } from "@/atoms/endurances-new/EditEnduranceAtom";
+import type {
+    EnduranceRescueActionDtoSchema,
+    EnduranceSabotageActionDtoSchema,
+} from "@/domain/endurances-new/dto/EnduranceProjectDto";
 import type { EnduranceActionHistoriesNewSchema } from "@/domain/endurances-new/tables/EnduranceActionHistoriesNew";
 import { EnduranceActionTypeSchema } from "@/domain/endurances-new/tables/EnduranceActionsNew";
-import type {
-    EnduranceRescueActionSchema,
-    EnduranceSabotageActionSchema,
-} from "@/domain/endurances-new/views/EnduranceActionStatsViewNew";
 import { ProjectTypeSchema } from "@/domain/projects/tables/Project";
 import { useDuplicateEnduranceProjectNew } from "@/hooks/endurances-new/useDuplicateEnduranceProject";
 import { useFetchEnduranceProjectNew } from "@/hooks/endurances-new/useFetchEnduranceProject";
@@ -45,8 +47,7 @@ const EnduranceProjectLayout = ({ projectId }: Props) => {
     const navigate = useNavigate();
     const [isEdit, setIsEdit] = useState(false);
 
-    const [projectQuery, actionStatsQuery] =
-        useFetchEnduranceProjectNew(projectId);
+    const projectQuery = useFetchEnduranceProjectNew(projectId);
     const updateEnduranceProject = useUpdateEnduranceProjectNew();
     const duplicateEnduranceProject = useDuplicateEnduranceProjectNew();
     const logEnduranceActionHistory = useLogEnduranceActionHistoryNew();
@@ -60,48 +61,47 @@ const EnduranceProjectLayout = ({ projectId }: Props) => {
         editSabotageActionsAtomsNew.editActions,
     );
 
-    if (projectQuery.isLoading || actionStatsQuery.isLoading) {
+    if (projectQuery.isLoading) {
         return <div className="flex justify-center">読み込み中...</div>;
     }
 
-    if (!projectQuery.data || !actionStatsQuery.data) {
+    if (!projectQuery.data) {
         return (
             <div className="flex justify-center">企画の取得に失敗しました</div>
         );
     }
 
     const project = projectQuery.data;
-    const actionStats = actionStatsQuery.data;
 
     const onEdit = () => {
         initEditEndurance({
             title: project.title,
-            target_count: project.target_count,
+            target_count: project.unit.target_count,
             rescue_actions: pipe(
-                actionStats.rescue_actions,
+                project.rescue_actions,
                 Chunk.map((id) =>
                     queryClient.getQueryData<
-                        typeof EnduranceRescueActionSchema.Type
+                        typeof EnduranceRescueActionDtoSchema.Type
                     >(EnduranceKey.action(id)),
                 ),
                 Chunk.filter(
                     (
                         action,
-                    ): action is typeof EnduranceRescueActionSchema.Type =>
+                    ): action is typeof EnduranceRescueActionDtoSchema.Type =>
                         action !== undefined,
                 ),
             ),
             sabotage_actions: pipe(
-                actionStats.sabotage_actions,
+                project.sabotage_actions,
                 Chunk.map((id) =>
                     queryClient.getQueryData<
-                        typeof EnduranceSabotageActionSchema.Type
+                        typeof EnduranceSabotageActionDtoSchema.Type
                     >(EnduranceKey.action(id)),
                 ),
                 Chunk.filter(
                     (
                         action,
-                    ): action is typeof EnduranceSabotageActionSchema.Type =>
+                    ): action is typeof EnduranceSabotageActionDtoSchema.Type =>
                         action !== undefined,
                 ),
             ),
@@ -118,7 +118,7 @@ const EnduranceProjectLayout = ({ projectId }: Props) => {
         updateEnduranceProject.mutate(
             {
                 id: project.id,
-                unit_id: project.unit_id,
+                unit_id: project.unit.id,
                 ...validEditState,
             },
             {
@@ -160,15 +160,15 @@ const EnduranceProjectLayout = ({ projectId }: Props) => {
     ) => {
         logEnduranceActionHistory.mutate({
             p_project_id: project.id,
-            p_unit_id: project.unit_id,
+            p_unit_id: project.unit.id,
             p_action_history_type: "normal",
             p_action_count: actionCount,
         });
     };
 
     // 片方の要素がない場合は、各アクションの幅を広く使わせる
-    const isWideRescue = actionStats.sabotage_actions.length === 0;
-    const isWideSabotage = actionStats.rescue_actions.length === 0;
+    const isWideRescue = project.sabotage_actions.length === 0;
+    const isWideSabotage = project.rescue_actions.length === 0;
 
     return (
         <ProjectLayout
@@ -194,7 +194,7 @@ const EnduranceProjectLayout = ({ projectId }: Props) => {
                     <EnduranceView.CountProgress
                         left={
                             <div className="text-right text-4xl font-mono">
-                                {project.current_count}
+                                {project.unit.current_count}
                             </div>
                         }
                         center={
@@ -204,18 +204,18 @@ const EnduranceProjectLayout = ({ projectId }: Props) => {
                         }
                         right={
                             <div className="text-left text-4xl font-mono">
-                                {project.target_count}
+                                {project.unit.target_count}
                             </div>
                         }
                     />
                 )}
                 <EnduranceView.NormalAction>
                     <EnduranceView.MinusButtons
-                        disabled={project.normal_count <= 0}
+                        disabled={project.action_count.normal_count <= 0}
                         onIncrement={onIncrementNormal}
                     />
                     <EnduranceView.ActionCount
-                        actionCount={project.normal_count}
+                        actionCount={project.action_count.normal_count}
                     />
                     <EnduranceView.PlusButtons
                         onIncrement={onIncrementNormal}
@@ -223,8 +223,8 @@ const EnduranceProjectLayout = ({ projectId }: Props) => {
                 </EnduranceView.NormalAction>
                 <EnduranceView.ActionsField>
                     <EnduranceView.RescueActionsField
-                        actionLength={actionStats.rescue_actions.length}
-                        rescueCount={project.rescue_count}
+                        actionLength={project.rescue_actions.length}
+                        rescueCount={project.action_count.rescue_count}
                         isWide={isWideRescue}
                     >
                         {isEdit
@@ -237,21 +237,18 @@ const EnduranceProjectLayout = ({ projectId }: Props) => {
                                       )("rescue")}
                                   />
                               ))
-                            : Chunk.map(
-                                  actionStats.rescue_actions,
-                                  (actionId) => (
-                                      <EnduranceActionRow
-                                          key={actionId}
-                                          projectId={project.id}
-                                          unitId={project.unit_id}
-                                          actionId={actionId}
-                                      />
-                                  ),
-                              )}
+                            : Chunk.map(project.rescue_actions, (actionId) => (
+                                  <EnduranceActionRow
+                                      key={actionId}
+                                      projectId={project.id}
+                                      unitId={project.unit.id}
+                                      actionId={actionId}
+                                  />
+                              ))}
                     </EnduranceView.RescueActionsField>
                     <EnduranceView.SabotageActionsField
-                        actionLength={actionStats.sabotage_actions.length}
-                        sabotageCount={project.sabotage_count}
+                        actionLength={project.sabotage_actions.length}
+                        sabotageCount={project.action_count.sabotage_count}
                         isWide={isWideSabotage}
                     >
                         {isEdit
@@ -265,12 +262,12 @@ const EnduranceProjectLayout = ({ projectId }: Props) => {
                                   />
                               ))
                             : Chunk.map(
-                                  actionStats.sabotage_actions,
+                                  project.sabotage_actions,
                                   (actionId) => (
                                       <EnduranceActionRow
                                           key={actionId}
                                           projectId={project.id}
-                                          unitId={project.unit_id}
+                                          unitId={project.unit.id}
                                           actionId={actionId}
                                       />
                                   ),

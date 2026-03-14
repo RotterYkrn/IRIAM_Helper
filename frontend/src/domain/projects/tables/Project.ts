@@ -76,10 +76,10 @@ export const ProjectSchema: Schema.Schema<Project, ProjectEncoded> =
 /**
  * 一覧表示用の企画情報
  */
-export const ProjectForSideBerSchema = ProjectSchema.pipe(
-    Schema.pick("id", "title", "type", "status"),
-);
-/** {@link ProjectForSideBerSchema} */
-export type ProjectForSideBer = typeof ProjectForSideBerSchema.Type;
-/** {@link ProjectForSideBerSchema} */
-export type ProjectForSideBerEncoded = typeof ProjectForSideBerSchema.Encoded;
+// export const ProjectDtoSchema = ProjectSchema.pipe(
+//     Schema.pick("id", "title", "type", "status"),
+// );
+// /** {@link ProjectForSideBerSchema} */
+// export type ProjectForSideBer = typeof ProjectForSideBerSchema.Type;
+// /** {@link ProjectForSideBerSchema} */
+// export type ProjectForSideBerEncoded = typeof ProjectForSideBerSchema.Encoded;

@@ -1,4 +1,4 @@
-import { ParseResult, Schema } from "effect";
+import { ParseResult, pipe, Schema } from "effect";
 
 /**
  * オブジェクトの各プロパティを再帰的にreadonlyにします。\
@@ -48,3 +48,30 @@ export const mapFrom =
     <Key extends string>(fromKey: Key) =>
     <A, I, R>(self: Schema.Schema<A, I, R>) =>
         Schema.propertySignature(self).pipe(Schema.fromKey(fromKey));
+
+export const transformSchemaArrayToOne = <A, I, R>(
+    self: Schema.Schema<A, I, R>,
+) =>
+    pipe(
+        Schema.transformOrFail(
+            Schema.Array(Schema.encodedSchema(self)),
+            Schema.encodedSchema(self),
+            {
+                strict: true,
+                decode: (array, _, ast) => {
+                    if (array.length !== 1) {
+                        return ParseResult.fail(
+                            new ParseResult.Type(
+                                ast,
+                                array,
+                                "この要素は常に 1 つのみである必要があります。",
+                            ),
+                        );
+                    }
+                    return ParseResult.succeed(array[0]!);
+                },
+                encode: (element) => ParseResult.succeed([element]),
+            },
+        ),
+        Schema.compose(self),
+    );

@@ -1,0 +1,33 @@
+name: Auto CI Checks (tsc, lint)
+
+on:
+  push:
+    paths:
+      - "frontend/src/**"
+
+jobs:
+  ci-checks:
+    runs-on: ubuntu-latest
+
+    steps:
+      - name: コードをチェックアウト
+        uses: actions/checkout@v6
+
+      - name: 依存関係のインストール
+        uses: actions/setup-node@v6
+        with:
+          node-version: "24"
+          cache: "npm"
+          cache-dependency-path: ./frontend/package-lock.json
+
+      - run: npm install
+        working-directory: ./frontend
+
+      # フロントエンド部分のCIチェック
+      - name: Run Frontend TypeScript Type Check
+        run: npm run typecheck
+        working-directory: ./frontend
+
+      - name: Run Frontend TypeScript Lint
+        run: npm run lint
+        working-directory: ./frontend

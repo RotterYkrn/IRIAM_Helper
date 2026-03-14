@@ -1,9 +1,9 @@
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import { Effect } from "effect";
+import { Chunk, Effect } from "effect";
 
 import { ProjectKey } from "../query-keys/projects";
 
-import { fetchProjectsByStatus } from "@/use-cases/projects/fetchProjectByStatus";
+import { fetchProjects } from "@/use-cases/projects/fetchProjects";
 
 /**
  * 企画一覧を取得するためのカスタムフック。
@@ -13,20 +13,25 @@ import { fetchProjectsByStatus } from "@/use-cases/projects/fetchProjectByStatus
  * - キャッシュの有効期限(staleTime): デフォルト（0）
  *
  * @returns TanStack Query の Query オブジェクト\
- * {@link fetchProjectsByStatus} を実行する
+ * {@link fetchProjects} を実行する
  *
  */
-export const useFetchProjectForSideBar = () => {
+export const useFetchProjectForList = () => {
     return useQuery({
         queryKey: ProjectKey.list,
         queryFn: async () => {
             try {
-                return await Effect.runPromise(fetchProjectsByStatus());
+                return await Effect.runPromise(fetchProjects());
             } catch (error) {
                 console.error(error);
                 throw error;
             }
         },
+        select: (projects) => ({
+            scheduled: Chunk.filter(projects, (p) => p.status === "scheduled"),
+            active: Chunk.filter(projects, (p) => p.status === "active"),
+            finished: Chunk.filter(projects, (p) => p.status === "finished"),
+        }),
         placeholderData: keepPreviousData,
     });
 };

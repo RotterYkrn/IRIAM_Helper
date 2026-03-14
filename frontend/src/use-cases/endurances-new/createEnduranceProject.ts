@@ -24,6 +24,7 @@ export const createEnduranceProjectNew = (
                     // encodeSync を通したうえで any を使っています。
                     Schema.encodeSync(CreateEnduranceProjectNewArgsSchema)(
                         args,
+                        // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     ) as any,
                 ),
             catch: (error) => error,

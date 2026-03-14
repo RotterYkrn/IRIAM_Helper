@@ -2,13 +2,13 @@ import { Chunk } from "effect";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
-import type { ProjectForSideBer } from "@/domain/projects/tables/Project";
+import type { ProjectDtoSchema } from "@/domain/projects/dto/ProjectDto";
 
 type ProjectSideBarGroupProps = {
     /** セクション名 */
     title: string;
     /** サイドバーに表示する企画の情報 */
-    projects: Chunk.Chunk<ProjectForSideBer>;
+    projects: Chunk.Chunk<typeof ProjectDtoSchema.Type>;
     toggleSidebar: () => void;
 };
 

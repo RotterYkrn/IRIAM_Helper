@@ -2,9 +2,11 @@ import { useQueryClient } from "@tanstack/react-query";
 
 import EnduranceView from "./EnduranceView";
 
+import type { EnduranceActionDtoSchema } from "@/domain/endurances-new/dto/EnduranceProjectDto";
 import type { EnduranceActionHistoriesNewSchema } from "@/domain/endurances-new/tables/EnduranceActionHistoriesNew";
 import type { EnduranceActionsNewSchema } from "@/domain/endurances-new/tables/EnduranceActionsNew";
 import { useLogEnduranceActionHistoryNew } from "@/hooks/endurances-new/useLogEnduranceActionHistory";
+import { EnduranceKey } from "@/hooks/query-keys/endurances";
 
 type Props = {
     projectId: typeof EnduranceActionsNewSchema.Type.project_id;
@@ -22,8 +24,8 @@ const EnduranceActionRow = ({ projectId, unitId, actionId }: Props) => {
     const logEnduranceActionHistory = useLogEnduranceActionHistoryNew();
 
     const action = queryClient.getQueryData<
-        typeof EnduranceActionsNewSchema.Type
-    >(["action", actionId]);
+        typeof EnduranceActionDtoSchema.Type
+    >(EnduranceKey.action(actionId));
 
     if (!action) {
         return null;
