@@ -2,6 +2,8 @@ import { Option, Chunk, Either, pipe, Schema } from "effect";
 import { atom } from "jotai";
 import { atomFamily } from "jotai-family";
 
+import type { EditState } from "../types";
+
 import type { EnduranceActionDtoSchema } from "@/domain/endurances-new/dto/EnduranceProjectDto";
 import {
     EnduranceActionAmountSchema,
@@ -11,12 +13,6 @@ import {
     type EnduranceActionsNewSchema,
 } from "@/domain/endurances-new/tables/EnduranceActionsNew";
 import { normalizeNumber } from "@/utils/validations";
-
-type EditState<T> = {
-    input: string;
-    valid: Option.Option<T>;
-    error: string | null;
-};
 
 /**
  * 編集中の救済・妨害の各要素を管理するための型。

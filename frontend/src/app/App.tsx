@@ -3,6 +3,7 @@ import { Routes, Route } from "react-router-dom";
 
 import Layout from "./components/Layout";
 import CreateEndurancePage from "./pages/CreateEndurancePage";
+import CreateMultiEndurancePage from "./pages/CreateMultiEndurancePage";
 import EnduranceProjectPage from "./pages/EnduranceProjectPage";
 import TopPage from "./pages/TopPage";
 
@@ -18,6 +19,11 @@ const App = () => {
                 <Route
                     path="/projects/create/endurance"
                     element={<CreateEndurancePage />}
+                />
+
+                <Route
+                    path="/projects/create/multi-endurance"
+                    element={<CreateMultiEndurancePage />}
                 />
 
                 <Route

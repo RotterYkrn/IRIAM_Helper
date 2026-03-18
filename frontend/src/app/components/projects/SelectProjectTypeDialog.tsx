@@ -6,6 +6,7 @@ import { useNavigate } from "react-router-dom";
 type Props = {
     open: boolean;
     onOpenChange: (open: boolean) => void;
+    setSidebarOpen: (open: boolean) => void;
 };
 
 /**
@@ -14,11 +15,16 @@ type Props = {
  * @description
  * 企画新規作成時に、作成する企画の種類を選択するために使用します。
  */
-const SelectProjectTypeDialog = ({ open, onOpenChange }: Props) => {
+const SelectProjectTypeDialog = ({
+    open,
+    onOpenChange,
+    setSidebarOpen,
+}: Props) => {
     const navigate = useNavigate();
 
     const handleSelect = (type: string) => {
         onOpenChange(false);
+        setSidebarOpen(false);
         navigate(`/projects/create/${type}`);
     };
 
@@ -52,8 +58,8 @@ const SelectProjectTypeDialog = ({ open, onOpenChange }: Props) => {
                         </button>
 
                         <button
-                            className="rounded border p-3 bg-gray-500"
-                            disabled={true}
+                            className="rounded border p-3 hover:bg-gray-300
+                                transition-colors"
                             onClick={() => handleSelect("multi-endurance")}
                         >
                             カウント型耐久（複数）（準備中）

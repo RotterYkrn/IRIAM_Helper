@@ -6,13 +6,13 @@ import ProjectSideBarLayout from "./projects/ProjectSideBarLayout";
 
 type SideBarProps = {
     /** サイドバーを開閉を制御するハンドラ */
-    onToggle: () => void;
+    setSidebarOpen: (open: boolean) => void;
 };
 
 /**
  * サイドバーのレイアウトを定義します。
  */
-const SideBarLayout = ({ onToggle }: SideBarProps) => {
+const SideBarLayout = ({ setSidebarOpen }: SideBarProps) => {
     return (
         <div>
             <div
@@ -20,7 +20,7 @@ const SideBarLayout = ({ onToggle }: SideBarProps) => {
                     px-2"
             >
                 <button
-                    onClick={onToggle}
+                    onClick={() => setSidebarOpen(false)}
                     className="flex h-8 w-8 items-center justify-center
                         rounded-md transition hover:bg-pink-100"
                 >
@@ -30,9 +30,11 @@ const SideBarLayout = ({ onToggle }: SideBarProps) => {
             <div className="flex min-h-screen w-70 flex-col p-4">
                 {/* 上部コンテンツ：space-y-4 で間隔を保ち、flex-1 で残りのスペースを専有 */}
                 <div className="flex-1 space-y-4 overflow-y-auto">
-                    <CreateProjectButton />
+                    <CreateProjectButton setSidebarOpen={setSidebarOpen} />
                     <Suspense fallback={<div>読込中...</div>}>
-                        <ProjectSideBarLayout toggleSidebar={onToggle} />
+                        <ProjectSideBarLayout
+                            toggleSidebar={() => setSidebarOpen(false)}
+                        />
                     </Suspense>
                 </div>
 

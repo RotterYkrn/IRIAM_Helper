@@ -191,44 +191,13 @@ export type Database = {
           },
         ]
       }
-      endurance_settings: {
-        Row: {
-          created_at: string
-          id: string
-          project_id: string
-          target_count: number
-          updated_at: string
-        }
-        Insert: {
-          created_at?: string
-          id?: string
-          project_id: string
-          target_count: number
-          updated_at?: string
-        }
-        Update: {
-          created_at?: string
-          id?: string
-          project_id?: string
-          target_count?: number
-          updated_at?: string
-        }
-        Relationships: [
-          {
-            foreignKeyName: "fk_endurance_settings_project"
-            columns: ["project_id"]
-            isOneToOne: true
-            referencedRelation: "projects"
-            referencedColumns: ["id"]
-          },
-        ]
-      }
       endurance_units: {
         Row: {
           created_at: string
           current_count: number
           id: string
           label: string
+          position: number
           project_id: string
           target_count: number
           updated_at: string
@@ -238,6 +207,7 @@ export type Database = {
           current_count?: number
           id?: string
           label: string
+          position?: number
           project_id: string
           target_count: number
           updated_at?: string
@@ -247,6 +217,7 @@ export type Database = {
           current_count?: number
           id?: string
           label?: string
+          position?: number
           project_id?: string
           target_count?: number
           updated_at?: string
@@ -303,6 +274,13 @@ export type Database = {
         }
         Returns: string
       }
+      create_multi_endurance_project: {
+        Args: {
+          p_title: string
+          p_units: Database["public"]["CompositeTypes"]["create_unit_args"][]
+        }
+        Returns: string
+      }
       delete_project: { Args: { p_project_id: string }; Returns: undefined }
       duplicate_endurance_project: {
         Args: { p_project_id: string }
@@ -339,6 +317,10 @@ export type Database = {
         position: number | null
         label: string | null
         amount: number | null
+      }
+      create_unit_args: {
+        label: string | null
+        target_count: number | null
       }
       update_endurance_action_args: {
         id: string | null

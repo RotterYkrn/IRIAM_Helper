@@ -25,7 +25,11 @@ const baseEditTargetCountAtom = atom<EditTargetCountState>({
  * 耐久企画の目標回数の入力を管理するAtom
  */
 export const editTargetCountAtom = atom(
-    (get) => get(baseEditTargetCountAtom),
+    (get) =>
+        pipe(get(baseEditTargetCountAtom), (state) => ({
+            input: state.inputTargetCount,
+            error: state.error,
+        })),
     (_, set, inputTargetCount: string) => {
         pipe(
             inputTargetCount,

@@ -1,5 +1,5 @@
 import { Chunk, Schema } from "effect";
-import { useAtomValue, useSetAtom } from "jotai";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { useEffectEvent, useLayoutEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -17,6 +17,7 @@ import {
     isValidEditEnduranceAtom,
     validEditEnduranceAtom,
 } from "@/atoms/endurances-new/EditEnduranceAtom";
+import { editTargetCountAtom } from "@/atoms/endurances-new/EditTargetCountAtom";
 import {
     EnduranceRescueCountSchema,
     EnduranceSabotageCountSchema,
@@ -40,6 +41,8 @@ const CreateEnduranceProjectLayout = () => {
     const initEditEndurance = useSetAtom(initEditEnduranceAtom);
     const disabled = !useAtomValue(isValidEditEnduranceAtom);
 
+    const [editTargetCountState, setEditTargetCount] =
+        useAtom(editTargetCountAtom);
     const editRescueState = useAtomValue(editRescueActionsAtomsNew.editActions);
     const editSabotageState = useAtomValue(
         editSabotageActionsAtomsNew.editActions,
@@ -90,7 +93,10 @@ const CreateEnduranceProjectLayout = () => {
                 isEdit={true}
                 actionButtonCounts={Chunk.empty()}
             >
-                <EnduranceView.EditTargetCount />
+                <EnduranceView.EditTargetCount
+                    targetCountState={editTargetCountState}
+                    setTargetCount={setEditTargetCount}
+                />
                 <EnduranceView.ActionsField>
                     <EnduranceView.RescueActionsField
                         actionLength={0}

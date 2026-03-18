@@ -2,7 +2,7 @@ import console from "console";
 
 import { useQueryClient } from "@tanstack/react-query";
 import { Chunk, pipe, Schema } from "effect";
-import { useAtomValue, useSetAtom } from "jotai";
+import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -21,6 +21,7 @@ import {
     isValidEditEnduranceAtom,
     validEditEnduranceAtom,
 } from "@/atoms/endurances-new/EditEnduranceAtom";
+import { editTargetCountAtom } from "@/atoms/endurances-new/EditTargetCountAtom";
 import type {
     EnduranceRescueActionDtoSchema,
     EnduranceSabotageActionDtoSchema,
@@ -56,6 +57,8 @@ const EnduranceProjectLayout = ({ projectId }: Props) => {
     const initEditEndurance = useSetAtom(initEditEnduranceAtom);
     const disabled = !useAtomValue(isValidEditEnduranceAtom);
 
+    const [editTargetCountState, setEditTargetCount] =
+        useAtom(editTargetCountAtom);
     const editRescueState = useAtomValue(editRescueActionsAtomsNew.editActions);
     const editSabotageState = useAtomValue(
         editSabotageActionsAtomsNew.editActions,
@@ -189,7 +192,10 @@ const EnduranceProjectLayout = ({ projectId }: Props) => {
                 actionButtonCounts={actionButtonCounts}
             >
                 {isEdit ? (
-                    <EnduranceView.EditTargetCount />
+                    <EnduranceView.EditTargetCount
+                        targetCountState={editTargetCountState}
+                        setTargetCount={setEditTargetCount}
+                    />
                 ) : (
                     <EnduranceView.CountProgress
                         left={

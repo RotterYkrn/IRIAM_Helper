@@ -21,7 +21,7 @@ const Layout = () => {
                     transition-[width] duration-300 ease-in-out
                     ${open ? "w-70" : "w-0"} `}
             >
-                <SideBarLayout onToggle={() => setOpen((prev) => !prev)} />
+                <SideBarLayout setSidebarOpen={setOpen} />
             </aside>
 
             {/* サイドバーを開いたら、背景を暗くする */}

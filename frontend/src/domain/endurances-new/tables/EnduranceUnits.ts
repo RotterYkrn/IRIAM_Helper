@@ -15,6 +15,10 @@ export const EnduranceUnitIdSchema = Schema.UUID.pipe(
     Schema.brand("EnduranceUnitId"),
 );
 
+export const EnduranceUnitPositionSchema = Schema.NonNegativeInt.pipe(
+    Schema.brand("EnduranceUnitPosition"),
+);
+
 export const EnduranceUnitLabelSchema = Schema.String.pipe(
     Schema.minLength(1, {
         message: () => "1文字以上入力してください",
@@ -37,6 +41,7 @@ export const EnduranceCurrentCountSchema = Schema.Number.pipe(
 export type EnduranceUnits = Readonly<{
     id: typeof EnduranceUnitIdSchema.Type;
     project_id: typeof ProjectSchema.Type.id;
+    position: typeof EnduranceUnitPositionSchema.Type;
     label: typeof EnduranceUnitLabelSchema.Type;
     target_count: typeof EnduranceTargetCountSchema.Type;
     current_count: typeof EnduranceCurrentCountSchema.Type;
@@ -54,6 +59,7 @@ export const EnduranceUnitsSchema: Schema.Schema<
 > = Schema.Struct({
     id: EnduranceUnitIdSchema,
     project_id: ProjectIdSchema,
+    position: EnduranceUnitPositionSchema,
     label: EnduranceUnitLabelSchema,
     target_count: EnduranceTargetCountSchema,
     current_count: EnduranceCurrentCountSchema,

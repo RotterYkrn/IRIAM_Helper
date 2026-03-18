@@ -2,11 +2,15 @@ import { useState } from "react";
 
 import SelectProjectTypeDialog from "./SelectProjectTypeDialog";
 
+type Prop = {
+    setSidebarOpen?: (open: boolean) => void;
+};
+
 /**
  * 企画新規作成遷移用ボタン\
  * 押下されると、企画タイプを選択するダイアログ {@link SelectProjectTypeDialog} を開く
  */
-const CreateProjectButton = () => {
+const CreateProjectButton = ({ setSidebarOpen }: Prop) => {
     const [open, setOpen] = useState(false);
 
     return (
@@ -22,6 +26,7 @@ const CreateProjectButton = () => {
             <SelectProjectTypeDialog
                 open={open}
                 onOpenChange={setOpen}
+                setSidebarOpen={setSidebarOpen ?? (() => {})}
             />
         </>
     );
