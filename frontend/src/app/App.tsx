@@ -5,6 +5,7 @@ import Layout from "./components/Layout";
 import CreateEndurancePage from "./pages/CreateEndurancePage";
 import CreateMultiEndurancePage from "./pages/CreateMultiEndurancePage";
 import EnduranceProjectPage from "./pages/EnduranceProjectPage";
+import MultiEnduranceProjectPage from "./pages/MultiEnduranceProjectPage";
 import TopPage from "./pages/TopPage";
 
 const App = () => {
@@ -29,6 +30,11 @@ const App = () => {
                 <Route
                     path="/projects/endurance/:projectId"
                     element={<EnduranceProjectPage />}
+                />
+
+                <Route
+                    path="/projects/multi-endurance/:projectId"
+                    element={<MultiEnduranceProjectPage />}
                 />
 
                 <Route

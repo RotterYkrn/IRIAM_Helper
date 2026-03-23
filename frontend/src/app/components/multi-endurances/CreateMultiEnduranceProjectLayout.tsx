@@ -50,7 +50,7 @@ const CreateMultiEnduranceProjectLayout = () => {
         createMutation.mutate(validEditState, {
             onSuccess: (projectId) => {
                 successToast(`「${validEditState.title}」を作成しました`);
-                navigate(`/projects/endurance/${projectId}`);
+                navigate(`/projects/multi-endurance/${projectId}`);
             },
             onError: (error) => {
                 console.error(error);
