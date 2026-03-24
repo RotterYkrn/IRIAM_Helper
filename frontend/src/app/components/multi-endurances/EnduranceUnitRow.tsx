@@ -1,15 +1,20 @@
 import { useQueryClient } from "@tanstack/react-query";
+import { Schema } from "effect";
 
 import EnduranceView from "../endurances-new/EnduranceView";
 
+import {
+    EnduranceActionHistoryActionCountSchema,
+    type EnduranceActionHistoriesNewSchema,
+} from "@/domain/endurances-new/tables/EnduranceActionHistoriesNew";
 import type { EnduranceActionsNewSchema } from "@/domain/endurances-new/tables/EnduranceActionsNew";
 import type { MultiEnduranceUnitSchema } from "@/domain/multi-endurances/dto/MultiEnduranceProjectDto";
+import { useLogMultiEnduranceActionHistory } from "@/hooks/multi-endurances/useLogMultiEnduranceActionHistory";
 import { EnduranceKey } from "@/hooks/query-keys/endurances";
 
 type Props = {
-    // projectId: typeof EnduranceActionsNewSchema.Type.project_id;
+    projectId: typeof EnduranceActionsNewSchema.Type.project_id;
     unitId: typeof EnduranceActionsNewSchema.Type.unit_id;
-    // actionId: typeof EnduranceActionsNewSchema.Type.id;
 };
 
 /**
@@ -17,9 +22,9 @@ type Props = {
  *
  * @note {@link EnduranceView} 内で使用する必要があります。
  */
-const EnduranceUnitRow = ({ unitId }: Props) => {
+const EnduranceUnitRow = ({ projectId, unitId }: Props) => {
     const queryClient = useQueryClient();
-    // const logEnduranceActionHistory = useLogEnduranceActionHistoryNew();
+    const logActionHistory = useLogMultiEnduranceActionHistory();
 
     const unit = queryClient.getQueryData<typeof MultiEnduranceUnitSchema.Type>(
         EnduranceKey.unit(unitId),
@@ -29,24 +34,17 @@ const EnduranceUnitRow = ({ unitId }: Props) => {
         return null;
     }
 
-    // const onIncrement =
-    //     (
-    //         actionType: typeof EnduranceActionsNewSchema.Type.type,
-    //         actionId: typeof EnduranceActionsNewSchema.Type.id,
-    //         actionAmount: typeof EnduranceActionsNewSchema.Encoded.amount,
-    //     ) =>
-    //     (
-    //         actionCount: typeof EnduranceActionHistoriesNewSchema.Encoded.action_count,
-    //     ) => {
-    //         logEnduranceActionHistory.mutate({
-    //             p_project_id: projectId,
-    //             p_unit_id: unitId,
-    //             p_action_history_type: actionType,
-    //             p_action_id: actionId,
-    //             p_action_count: actionCount,
-    //             amount: actionAmount,
-    //         });
-    //     };
+    const onIncrement = (
+        actionCount: typeof EnduranceActionHistoriesNewSchema.Encoded.action_count,
+    ) => {
+        logActionHistory.mutate({
+            project_id: projectId,
+            unit_id: unitId,
+            action_count: Schema.decodeSync(
+                EnduranceActionHistoryActionCountSchema,
+            )(actionCount),
+        });
+    };
 
     return (
         <EnduranceView.Action>
@@ -67,9 +65,9 @@ const EnduranceUnitRow = ({ unitId }: Props) => {
             <EnduranceView.ActionProgress>
                 <EnduranceView.MinusButtons
                     disabled={unit.current_count <= 0}
-                    onIncrement={() => {}}
+                    onIncrement={onIncrement}
                 />
-                <EnduranceView.PlusButtons onIncrement={() => {}} />
+                <EnduranceView.PlusButtons onIncrement={onIncrement} />
             </EnduranceView.ActionProgress>
         </EnduranceView.Action>
     );

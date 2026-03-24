@@ -297,6 +297,14 @@ export type Database = {
         }
         Returns: string
       }
+      log_multi_endurance_action_history: {
+        Args: {
+          p_action_count: number
+          p_project_id: string
+          p_unit_id: string
+        }
+        Returns: string
+      }
       update_endurance_project_new: {
         Args: {
           p_project_id: string

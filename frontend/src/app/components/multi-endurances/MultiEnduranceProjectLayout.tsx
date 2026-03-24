@@ -40,7 +40,6 @@ const MultiEnduranceProjectLayout = ({ projectId }: Props) => {
     const projectQuery = useFetchMultiEnduranceProject(projectId);
     const updateProject = useUpdateMultiEnduranceProject();
     // const duplicateEnduranceProject = useDuplicateEnduranceProjectNew();
-    // const logEnduranceActionHistory = useLogEnduranceActionHistoryNew();
 
     const editUnits = useAtomValue(editUnitsAtom);
     const validEditState = useAtomValue(validEditMultiEnduranceAtom);
@@ -124,21 +123,6 @@ const MultiEnduranceProjectLayout = ({ projectId }: Props) => {
 
     const actionButtonCounts = Chunk.fromIterable([1]);
 
-    // const onIncrementNormal = (
-    //     actionCount: typeof EnduranceActionHistoriesNewSchema.Encoded.action_count,
-    // ) => {
-    //     logEnduranceActionHistory.mutate({
-    //         p_project_id: project.id,
-    //         p_unit_id: project.unit.id,
-    //         p_action_history_type: "normal",
-    //         p_action_count: actionCount,
-    //     });
-    // };
-
-    // // 片方の要素がない場合は、各アクションの幅を広く使わせる
-    // const isWideRescue = project.sabotage_actions.length === 0;
-    // const isWideSabotage = project.rescue_actions.length === 0;
-
     return (
         <ProjectLayout
             project={project}
@@ -179,6 +163,7 @@ const MultiEnduranceProjectLayout = ({ projectId }: Props) => {
                         {Chunk.map(project.units, (id) => (
                             <EnduranceUnitRow
                                 key={id}
+                                projectId={project.id}
                                 unitId={id}
                             />
                         ))}
