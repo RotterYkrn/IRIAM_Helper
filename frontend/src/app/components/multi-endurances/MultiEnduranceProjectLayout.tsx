@@ -1,15 +1,29 @@
-import { Chunk } from "effect";
-import { useAtomValue } from "jotai";
+import { useQueryClient } from "@tanstack/react-query";
+import { Chunk, pipe } from "effect";
+import { useAtomValue, useSetAtom } from "jotai";
 import { useState } from "react";
 
 import EnduranceView from "../endurances-new/EnduranceView";
 import ProjectLayout from "../projects/ProjectLayout";
 
+import EditEnduranceUnitRow from "./EditEnduranceUnitRow";
 import EnduranceUnitRow from "./EnduranceUnitRow";
 
-import { isValidEditEnduranceAtom } from "@/atoms/endurances-new/EditEnduranceAtom";
+import {
+    initEditMultiEnduranceAtom,
+    isValidEditMultiEnduranceAtom,
+    validEditMultiEnduranceAtom,
+} from "@/atoms/multi-endurances/EditMultiEnduranceAtom";
+import {
+    createUnitAtom,
+    editUnitsAtom,
+} from "@/atoms/multi-endurances/EditUnitsAtom";
+import type { MultiEnduranceUnitSchema } from "@/domain/multi-endurances/dto/MultiEnduranceProjectDto";
 import { type ProjectId } from "@/domain/projects/tables/Project";
 import { useFetchMultiEnduranceProject } from "@/hooks/multi-endurances/useFetchMultiEnduranceProject";
+import { useUpdateMultiEnduranceProject } from "@/hooks/multi-endurances/useUpdateMultiEnduranceProject";
+import { EnduranceKey } from "@/hooks/query-keys/endurances";
+import { errorToast, successToast } from "@/utils/toast";
 
 type Props = {
     projectId: ProjectId;
@@ -19,25 +33,20 @@ type Props = {
  * 耐久企画ページのレイアウト
  */
 const MultiEnduranceProjectLayout = ({ projectId }: Props) => {
-    // const queryClient = useQueryClient();
+    const queryClient = useQueryClient();
     // const navigate = useNavigate();
     const [isEdit, setIsEdit] = useState(false);
 
     const projectQuery = useFetchMultiEnduranceProject(projectId);
-    // const updateEnduranceProject = useUpdateEnduranceProjectNew();
+    const updateProject = useUpdateMultiEnduranceProject();
     // const duplicateEnduranceProject = useDuplicateEnduranceProjectNew();
     // const logEnduranceActionHistory = useLogEnduranceActionHistoryNew();
 
-    // const validEditState = useAtomValue(validEditEnduranceAtom);
-    // const initEditEndurance = useSetAtom(initEditEnduranceAtom);
-    const disabled = !useAtomValue(isValidEditEnduranceAtom);
-
-    // const [editTargetCountState, setEditTargetCount] =
-    //     useAtom(editTargetCountAtom);
-    // const editRescueState = useAtomValue(editRescueActionsAtomsNew.editActions);
-    // const editSabotageState = useAtomValue(
-    //     editSabotageActionsAtomsNew.editActions,
-    // );
+    const editUnits = useAtomValue(editUnitsAtom);
+    const validEditState = useAtomValue(validEditMultiEnduranceAtom);
+    const initEditMultiEndurance = useSetAtom(initEditMultiEnduranceAtom);
+    const createUnit = useSetAtom(createUnitAtom);
+    const disabled = !useAtomValue(isValidEditMultiEnduranceAtom);
 
     if (projectQuery.isLoading) {
         return <div className="flex justify-center">読み込み中...</div>;
@@ -51,66 +60,48 @@ const MultiEnduranceProjectLayout = ({ projectId }: Props) => {
 
     const project = projectQuery.data;
 
-    // const onEdit = () => {
-    //     initEditEndurance({
-    //         title: project.title,
-    //         target_count: project.unit.target_count,
-    //         rescue_actions: pipe(
-    //             project.rescue_actions,
-    //             Chunk.map((id) =>
-    //                 queryClient.getQueryData<
-    //                     typeof EnduranceRescueActionDtoSchema.Type
-    //                 >(EnduranceKey.action(id)),
-    //             ),
-    //             Chunk.filter(
-    //                 (
-    //                     action,
-    //                 ): action is typeof EnduranceRescueActionDtoSchema.Type =>
-    //                     action !== undefined,
-    //             ),
-    //         ),
-    //         sabotage_actions: pipe(
-    //             project.sabotage_actions,
-    //             Chunk.map((id) =>
-    //                 queryClient.getQueryData<
-    //                     typeof EnduranceSabotageActionDtoSchema.Type
-    //                 >(EnduranceKey.action(id)),
-    //             ),
-    //             Chunk.filter(
-    //                 (
-    //                     action,
-    //                 ): action is typeof EnduranceSabotageActionDtoSchema.Type =>
-    //                     action !== undefined,
-    //             ),
-    //         ),
-    //     });
-    //     setIsEdit(true);
-    // };
+    const onEdit = () => {
+        initEditMultiEndurance({
+            title: project.title,
+            units: pipe(
+                project.units,
+                Chunk.map((id) =>
+                    queryClient.getQueryData<
+                        typeof MultiEnduranceUnitSchema.Type
+                    >(EnduranceKey.unit(id)),
+                ),
+                Chunk.filter(
+                    (unit): unit is typeof MultiEnduranceUnitSchema.Type =>
+                        unit !== undefined,
+                ),
+            ),
+        });
+        setIsEdit(true);
+    };
 
-    // const onSave = () => {
-    //     if (!validEditState) {
-    //         errorToast(`無効なフィールドがあります`);
-    //         return;
-    //     }
+    const onSave = () => {
+        if (!validEditState) {
+            errorToast(`無効なフィールドがあります`);
+            return;
+        }
 
-    //     updateEnduranceProject.mutate(
-    //         {
-    //             id: project.id,
-    //             unit_id: project.unit.id,
-    //             ...validEditState,
-    //         },
-    //         {
-    //             onSuccess: () => {
-    //                 successToast("更新しました");
-    //                 setIsEdit(false);
-    //             },
-    //             onError: (error) => {
-    //                 console.error(error);
-    //                 errorToast("更新に失敗しました");
-    //             },
-    //         },
-    //     );
-    // };
+        updateProject.mutate(
+            {
+                id: project.id,
+                ...validEditState,
+            },
+            {
+                onSuccess: () => {
+                    successToast("更新しました");
+                    setIsEdit(false);
+                },
+                onError: (error) => {
+                    console.error(error);
+                    errorToast("更新に失敗しました");
+                },
+            },
+        );
+    };
 
     // const onDuplicate = () => {
     //     if (!confirm("この企画をコピーしますか？")) {
@@ -154,8 +145,8 @@ const MultiEnduranceProjectLayout = ({ projectId }: Props) => {
             isEdit={isEdit}
             setIsEdit={setIsEdit}
             isSaveDisabled={disabled}
-            onEdit={() => {}}
-            onSave={() => {}}
+            onEdit={onEdit}
+            onSave={onSave}
             onDuplicate={() => {}}
         >
             <EnduranceView
@@ -163,14 +154,36 @@ const MultiEnduranceProjectLayout = ({ projectId }: Props) => {
                 isEdit={isEdit}
                 actionButtonCounts={actionButtonCounts}
             >
-                <div className="grid grid-cols-3 gap-4">
-                    {Chunk.map(project.units, (id) => (
-                        <EnduranceUnitRow
-                            key={id}
-                            unitId={id}
-                        />
-                    ))}
-                </div>
+                {isEdit ? (
+                    <div className="grid grid-cols-3 gap-4">
+                        {Chunk.map(editUnits, (unit) => (
+                            <EditEnduranceUnitRow
+                                key={unit.id}
+                                unitId={unit.id}
+                            />
+                        ))}
+                        <button
+                            onClick={createUnit}
+                            className="flex flex-col items-center justify-center
+                                h-35 w-40 gap-8 rounded-md border-2
+                                border-dashed border-gray-300 hover:bg-gray-200
+                                transition-colors"
+                        >
+                            <span className="text-xl font-bold text-gray-400">
+                                ⊕追加
+                            </span>
+                        </button>
+                    </div>
+                ) : (
+                    <div className="grid grid-cols-3 gap-4">
+                        {Chunk.map(project.units, (id) => (
+                            <EnduranceUnitRow
+                                key={id}
+                                unitId={id}
+                            />
+                        ))}
+                    </div>
+                )}
             </EnduranceView>
         </ProjectLayout>
     );

@@ -3,6 +3,7 @@ import { Schema } from "effect";
 import {
     EnduranceTargetCountSchema,
     EnduranceUnitLabelSchema,
+    EnduranceUnitPositionSchema,
     EnduranceUnitsSchema,
 } from "@/domain/endurances-new/tables/EnduranceUnits";
 import {
@@ -21,6 +22,7 @@ export type CreateUnitArgsEncoded = Readonly<
     Database["public"]["CompositeTypes"]["create_unit_args"]
 >;
 export type CreateUnitArgs = Readonly<{
+    position: typeof EnduranceUnitsSchema.Type.position;
     label: typeof EnduranceUnitsSchema.Type.label;
     target_count: typeof EnduranceUnitsSchema.Type.target_count;
 }>;
@@ -28,6 +30,7 @@ export const CreateUnitArgsSchema: Schema.Schema<
     CreateUnitArgs,
     CreateUnitArgsEncoded
 > = Schema.Struct({
+    position: withStrictNullCheck(EnduranceUnitPositionSchema),
     label: withStrictNullCheck(EnduranceUnitLabelSchema),
     target_count: withStrictNullCheck(EnduranceTargetCountSchema),
 });

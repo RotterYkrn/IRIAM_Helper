@@ -308,6 +308,14 @@ export type Database = {
         }
         Returns: string
       }
+      update_multi_endurance_project: {
+        Args: {
+          p_project_id: string
+          p_title: string
+          p_units: Database["public"]["CompositeTypes"]["update_unit_args"][]
+        }
+        Returns: string
+      }
     }
     Enums: {
       [_ in never]: never
@@ -319,6 +327,7 @@ export type Database = {
         amount: number | null
       }
       create_unit_args: {
+        position: number | null
         label: string | null
         target_count: number | null
       }
@@ -327,6 +336,12 @@ export type Database = {
         position: number | null
         label: string | null
         amount: number | null
+      }
+      update_unit_args: {
+        id: string | null
+        position: number | null
+        label: string | null
+        target_count: number | null
       }
     }
   }

@@ -1,6 +1,7 @@
-import { useAtom } from "jotai";
+import { useAtom, useSetAtom } from "jotai";
 
 import {
+    deleteUnitAtom,
     editUnitLabelAtom,
     editUnitTargetCountAtom,
 } from "@/atoms/multi-endurances/EditUnitsAtom";
@@ -15,6 +16,7 @@ const EditEnduranceUnitRow = ({ unitId }: Props) => {
     const [targetCountState, setTargetCount] = useAtom(
         editUnitTargetCountAtom(unitId),
     );
+    const deleteUnit = useSetAtom(deleteUnitAtom(unitId));
 
     if (!labelState || !targetCountState) {
         return null;
@@ -22,8 +24,8 @@ const EditEnduranceUnitRow = ({ unitId }: Props) => {
 
     return (
         <div
-            className="flex flex-col items-center justify-center h-35 w-40 gap-8
-                rounded-md border border-gray-300 shadow"
+            className="relative flex flex-col items-center justify-center h-35
+                w-40 gap-8 rounded-md border border-gray-300 shadow"
         >
             <label
                 htmlFor="label"
@@ -77,6 +79,15 @@ const EditEnduranceUnitRow = ({ unitId }: Props) => {
                     )}
                 </div>
             </label>
+
+            <button
+                className="absolute top-0 right-0 bg-white hover:bg-gray-200
+                    px-2 py-1 rounded-md border-gray-600 cursor-pointer
+                    transition-colors"
+                onClick={deleteUnit}
+            >
+                ✕
+            </button>
         </div>
     );
 };

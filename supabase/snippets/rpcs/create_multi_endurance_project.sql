@@ -2,6 +2,7 @@ DROP function IF EXISTS create_multi_endurance_project cascade;
 DROP TYPE IF EXISTS create_unit_args cascade;
 
 create type create_unit_args as (
+    position integer,
     label text,
     target_count numeric(10, 2)
 );
@@ -36,11 +37,13 @@ begin
     loop
         insert into endurance_units (
             project_id,
+            position,
             label,
             target_count
         )
         values (
             v_project_id,
+            v_unit.position,
             v_unit.label,
             v_unit.target_count
         );

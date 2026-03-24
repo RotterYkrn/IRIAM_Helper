@@ -186,6 +186,7 @@ export const validUnitsAtom = atom((get) =>
         Chunk.map((action) =>
             Option.all({
                 id: Option.some(action.isNew ? null : action.id),
+                position: Option.some(action.position),
                 label: action.label.valid,
                 target_count: action.target_count.valid,
             }),
