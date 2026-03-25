@@ -4,15 +4,14 @@ import { Suspense } from "react";
 import CreateProjectButton from "./projects/CreateProjectButton";
 import ProjectSideBarLayout from "./projects/ProjectSideBarLayout";
 
-type SideBarProps = {
-    /** サイドバーを開閉を制御するハンドラ */
-    setSidebarOpen: (open: boolean) => void;
-};
+import { useAppContext } from "@/contexts/apps/useAppContext";
 
 /**
  * サイドバーのレイアウトを定義します。
  */
-const SideBarLayout = ({ setSidebarOpen }: SideBarProps) => {
+const SideBarLayout = () => {
+    const { setIsOpenSideBar } = useAppContext();
+
     return (
         <div>
             <div
@@ -20,7 +19,7 @@ const SideBarLayout = ({ setSidebarOpen }: SideBarProps) => {
                     px-2"
             >
                 <button
-                    onClick={() => setSidebarOpen(false)}
+                    onClick={() => setIsOpenSideBar(false)}
                     className="flex h-8 w-8 items-center justify-center
                         rounded-md transition hover:bg-pink-100"
                 >
@@ -30,11 +29,9 @@ const SideBarLayout = ({ setSidebarOpen }: SideBarProps) => {
             <div className="flex min-h-screen w-70 flex-col p-4">
                 {/* 上部コンテンツ：space-y-4 で間隔を保ち、flex-1 で残りのスペースを専有 */}
                 <div className="flex-1 space-y-4 overflow-y-auto">
-                    <CreateProjectButton setSidebarOpen={setSidebarOpen} />
+                    <CreateProjectButton />
                     <Suspense fallback={<div>読込中...</div>}>
-                        <ProjectSideBarLayout
-                            toggleSidebar={() => setSidebarOpen(false)}
-                        />
+                        <ProjectSideBarLayout />
                     </Suspense>
                 </div>
 

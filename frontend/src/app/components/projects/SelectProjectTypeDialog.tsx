@@ -2,11 +2,12 @@ import * as Dialog from "@radix-ui/react-dialog";
 import { ExternalLink } from "lucide-react";
 import { useNavigate } from "react-router-dom";
 
+import { useAppContext } from "@/contexts/apps/useAppContext";
+
 /** Dialog.Root に渡すプロパティ */
 type Props = {
     open: boolean;
     onOpenChange: (open: boolean) => void;
-    setSidebarOpen: (open: boolean) => void;
 };
 
 /**
@@ -15,16 +16,13 @@ type Props = {
  * @description
  * 企画新規作成時に、作成する企画の種類を選択するために使用します。
  */
-const SelectProjectTypeDialog = ({
-    open,
-    onOpenChange,
-    setSidebarOpen,
-}: Props) => {
+const SelectProjectTypeDialog = ({ open, onOpenChange }: Props) => {
+    const { setIsOpenSideBar } = useAppContext();
     const navigate = useNavigate();
 
     const handleSelect = (type: string) => {
         onOpenChange(false);
-        setSidebarOpen(false);
+        setIsOpenSideBar(false);
         navigate(`/projects/create/${type}`);
     };
 

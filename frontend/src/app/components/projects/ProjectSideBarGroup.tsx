@@ -2,6 +2,7 @@ import { Chunk } from "effect";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
+import { useAppContext } from "@/contexts/apps/useAppContext";
 import type { ProjectDtoSchema } from "@/domain/projects/dto/ProjectDto";
 
 type ProjectSideBarGroupProps = {
@@ -9,7 +10,6 @@ type ProjectSideBarGroupProps = {
     title: string;
     /** サイドバーに表示する企画の情報 */
     projects: Chunk.Chunk<typeof ProjectDtoSchema.Type>;
-    toggleSidebar: () => void;
 };
 
 /**
@@ -18,11 +18,8 @@ type ProjectSideBarGroupProps = {
  * @description
  * 企画の開催状況ごとの一覧を表示するのに使います。
  */
-const ProjectSideBarGroup = ({
-    title,
-    projects,
-    toggleSidebar,
-}: ProjectSideBarGroupProps) => {
+const ProjectSideBarGroup = ({ title, projects }: ProjectSideBarGroupProps) => {
+    const { setIsOpenSideBar } = useAppContext();
     const [open, setOpen] = useState(true);
 
     return (
@@ -44,7 +41,7 @@ const ProjectSideBarGroup = ({
                     {Chunk.map(projects, (p) => (
                         <li key={p.id}>
                             <button
-                                onClick={toggleSidebar}
+                                onClick={() => setIsOpenSideBar(false)}
                                 className="text-left hover:underline"
                             >
                                 <Link to={`/projects/${p.type}/${p.id}`}>
