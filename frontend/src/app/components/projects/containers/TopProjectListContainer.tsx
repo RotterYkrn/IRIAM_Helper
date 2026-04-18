@@ -27,7 +27,10 @@ const TopProjectListContainer = () => {
     const { active, scheduled, finished } = data;
 
     return (
-        <div className="flex flex-col items-center justify-center space-y-4">
+        <div
+            className="flex flex-col w-full items-center justify-center
+                space-y-4"
+        >
             <TopProjectRowPresenter
                 title="開催中の企画"
                 projects={active}
