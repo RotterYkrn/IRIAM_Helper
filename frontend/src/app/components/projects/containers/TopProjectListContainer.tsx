@@ -1,4 +1,4 @@
-import ProjectTopGroup from "./ProjectTopGroup";
+import TopProjectRowPresenter from "../presenters/TopProjectRowPresenter";
 
 import { useFetchProjectForList } from "@/hooks/projects/useFetchProjectForList";
 
@@ -13,7 +13,7 @@ import { useFetchProjectForList } from "@/hooks/projects/useFetchProjectForList"
  *   - 開催予定の企画
  *   - 過去の企画
  */
-const ProjectTopLayout = () => {
+const TopProjectListContainer = () => {
     const { data, isLoading } = useFetchProjectForList();
 
     if (isLoading) {
@@ -28,15 +28,15 @@ const ProjectTopLayout = () => {
 
     return (
         <div className="flex flex-col items-center justify-center space-y-4">
-            <ProjectTopGroup
+            <TopProjectRowPresenter
                 title="開催中の企画"
                 projects={active}
             />
-            <ProjectTopGroup
+            <TopProjectRowPresenter
                 title="開催予定の企画"
                 projects={scheduled}
             />
-            <ProjectTopGroup
+            <TopProjectRowPresenter
                 title="過去の企画"
                 projects={finished}
             />
@@ -44,4 +44,4 @@ const ProjectTopLayout = () => {
     );
 };
 
-export default ProjectTopLayout;
+export default TopProjectListContainer;

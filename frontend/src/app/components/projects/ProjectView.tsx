@@ -1,45 +1,57 @@
 import { useAtom } from "jotai";
 import { createContext, useContext } from "react";
 
+import ProjectActionLayout from "./layouts/ProjectActionLayout";
+import ProjectBodyLayout from "./layouts/ProjectBodyLayout";
+import {
+    ActivateButtonBase,
+    CancelButtonBase,
+    DeleteButtonBase,
+    DuplicateButtonBase,
+    EditButtonBase,
+    FinishButtonBase,
+    SaveButtonBase,
+} from "./layouts/ProjectButtons";
+import ProjectHeaderLayout from "./layouts/ProjectHeaderLayout";
+
 import { editTitleAtom } from "@/atoms/projects/EditTitleAtom";
 import type { ProjectSchema } from "@/domain/projects/tables/Project";
-import ProjectButton from "@/utils/components/ProjectButton";
 
 /**
  * コンポーネント描画に必要な状態を共有する Context
  */
-type ProjectContextType = {
+type ProjectViewContextType = {
     projectStatus: typeof ProjectSchema.Type.status;
     isEdit: boolean;
 };
 
-const ProjectContext = createContext<ProjectContextType | null>(null);
+const ProjectViewContext = createContext<ProjectViewContextType | null>(null);
 
 /**
- * {@link ProjectContext} の値を取得するためのカスタムフック
+ * {@link ProjectViewContext} の値を取得するためのカスタムフック
  *
  * @note {@link ProjectView} 内で使用する必要があります。
  *
  * @throws ProjectView 外から呼び出された場合にスローされます。
  *
- * @returns {} {@link ProjectContextType}
+ * @returns {} {@link ProjectViewContextType}
  */
-const useProject = () => {
-    const ctx = useContext(ProjectContext);
+const useProjectViewContext = () => {
+    const ctx = useContext(ProjectViewContext);
     if (!ctx) {
         throw new Error("Project components must be used within ProjectView");
     }
     return ctx;
 };
 
-type Props = ProjectContextType & {
+type Props = ProjectViewContextType & {
     children: React.ReactNode;
 };
 
 /**
  * 企画共通のコンポーネント群
  *
- * @param contextValue 内部で使用するコンテキスト ({@link ProjectContextType})
+ * @param contextValue 内部で使用するコンテキスト ({@link ProjectViewContextType})
  *
  * @example
  * ```tsx
@@ -75,14 +87,14 @@ type Props = ProjectContextType & {
  */
 const ProjectView = ({ children, ...contextValue }: Props) => {
     return (
-        <ProjectContext value={contextValue}>
+        <ProjectViewContext value={contextValue}>
             <div
                 className="flex flex-col h-full w-full items-center
                     justify-center gap-6"
             >
                 {children}
             </div>
-        </ProjectContext>
+        </ProjectViewContext>
     );
 };
 
@@ -99,22 +111,15 @@ type ActionProps = {
 /** 企画操作に関するコンポーネント群を配置する用 */
 const Action = ({ children, pageName }: ActionProps) => {
     return (
-        <div className="flex w-full items-start justify-between gap-2">
-            <div className="flex flex-col gap-2">
-                <span className="text-2xl font-bold">{pageName}</span>
-            </div>
-            <div className="flex gap-2">{children}</div>
-        </div>
+        <ProjectActionLayout pageName={pageName}>
+            {children}
+        </ProjectActionLayout>
     );
 };
 
 /** 企画共通の情報を表示するコンポーネント群を配置する用 */
 const Header = ({ children }: ChildrenProps) => {
-    return (
-        <div className="flex flex-col w-full items-center justify-between gap-2">
-            {children}
-        </div>
-    );
+    return <ProjectHeaderLayout>{children}</ProjectHeaderLayout>;
 };
 
 type TitleProps = {
@@ -125,7 +130,7 @@ type TitleProps = {
  * 企画タイトルの表示と、編集中に表示される入力欄を含みます。
  */
 const Title = ({ title }: TitleProps) => {
-    const { isEdit } = useProject();
+    const { isEdit } = useProjectViewContext();
     const [state, setState] = useAtom(editTitleAtom);
 
     if (isEdit) {
@@ -149,7 +154,7 @@ const Title = ({ title }: TitleProps) => {
                             className="text-3xl font-bold text-center
                                 outline-none border-b-2 border-gray-300
                                 focus:border-gray-500 transition-colors"
-                            defaultValue={state.inputTitle}
+                            defaultValue={state.input}
                             onChange={(e) => setState(e.target.value)}
                         />
                         {state.error && (
@@ -171,9 +176,7 @@ const Title = ({ title }: TitleProps) => {
 
 /** 各企画固有のコンテンツを配置する用 */
 const Body = ({ children }: ChildrenProps) => {
-    return (
-        <div className="mt-5 flex flex-col items-center gap-6">{children}</div>
-    );
+    return <ProjectBodyLayout>{children}</ProjectBodyLayout>;
 };
 
 type EditButtonProps = {
@@ -181,20 +184,13 @@ type EditButtonProps = {
 };
 
 const EditButton = ({ onEdit }: EditButtonProps) => {
-    const { projectStatus, isEdit } = useProject();
+    const { projectStatus, isEdit } = useProjectViewContext();
 
     if (projectStatus !== "scheduled" || isEdit) {
         return null;
     }
 
-    return (
-        <ProjectButton
-            onClick={onEdit}
-            className="bg-gray-500 enabled:hover:bg-gray-600"
-        >
-            編集
-        </ProjectButton>
-    );
+    return <EditButtonBase onClick={onEdit} />;
 };
 
 type SaveButtonProps = {
@@ -205,20 +201,17 @@ type SaveButtonProps = {
 };
 
 const SaveButton = ({ disabled, onSave }: SaveButtonProps) => {
-    const { isEdit } = useProject();
+    const { isEdit } = useProjectViewContext();
 
     if (!isEdit) {
         return null;
     }
 
     return (
-        <ProjectButton
-            disabled={disabled}
+        <SaveButtonBase
             onClick={onSave}
-            className="bg-gray-500 enabled:hover:bg-gray-600"
-        >
-            保存
-        </ProjectButton>
+            disabled={disabled}
+        />
     );
 };
 
@@ -227,20 +220,13 @@ type CancelButtonProps = {
 };
 
 const CancelButton = ({ onCancel }: CancelButtonProps) => {
-    const { isEdit } = useProject();
+    const { isEdit } = useProjectViewContext();
 
     if (!isEdit) {
         return null;
     }
 
-    return (
-        <ProjectButton
-            onClick={onCancel}
-            className="bg-gray-500 enabled:hover:bg-gray-600"
-        >
-            キャンセル
-        </ProjectButton>
-    );
+    return <CancelButtonBase onClick={onCancel} />;
 };
 
 type DuplicateButtonProps = {
@@ -249,20 +235,13 @@ type DuplicateButtonProps = {
 };
 
 const DuplicateButton = ({ onDuplicate }: DuplicateButtonProps) => {
-    const { projectStatus, isEdit } = useProject();
+    const { projectStatus, isEdit } = useProjectViewContext();
 
     if (projectStatus === "active" || isEdit) {
         return null;
     }
 
-    return (
-        <ProjectButton
-            onClick={onDuplicate}
-            className="bg-gray-500 enabled:hover:bg-gray-600"
-        >
-            コピー
-        </ProjectButton>
-    );
+    return <DuplicateButtonBase onClick={onDuplicate} />;
 };
 
 type DeleteButtonProps = {
@@ -270,20 +249,13 @@ type DeleteButtonProps = {
 };
 
 const DeleteButton = ({ onDelete }: DeleteButtonProps) => {
-    const { projectStatus, isEdit } = useProject();
+    const { projectStatus, isEdit } = useProjectViewContext();
 
     if (projectStatus === "active" || isEdit) {
         return null;
     }
 
-    return (
-        <ProjectButton
-            onClick={onDelete}
-            className="bg-gray-500 enabled:hover:bg-red-600"
-        >
-            削除
-        </ProjectButton>
-    );
+    return <DeleteButtonBase onClick={onDelete} />;
 };
 
 type ActivateButtonProps = {
@@ -291,20 +263,13 @@ type ActivateButtonProps = {
 };
 
 const ActivateButton = ({ onActivate }: ActivateButtonProps) => {
-    const { projectStatus, isEdit } = useProject();
+    const { projectStatus, isEdit } = useProjectViewContext();
 
     if (projectStatus !== "scheduled" || isEdit) {
         return null;
     }
 
-    return (
-        <ProjectButton
-            onClick={onActivate}
-            className="bg-green-600 enabled:hover:bg-green-700"
-        >
-            企画開始
-        </ProjectButton>
-    );
+    return <ActivateButtonBase onClick={onActivate} />;
 };
 
 type FinishButtonProps = {
@@ -312,20 +277,13 @@ type FinishButtonProps = {
 };
 
 const FinishButton = ({ onFinish }: FinishButtonProps) => {
-    const { projectStatus, isEdit } = useProject();
+    const { projectStatus, isEdit } = useProjectViewContext();
 
     if (projectStatus !== "active" || isEdit) {
         return null;
     }
 
-    return (
-        <ProjectButton
-            onClick={onFinish}
-            className="bg-red-600 enabled:hover:bg-red-700"
-        >
-            企画終了
-        </ProjectButton>
-    );
+    return <FinishButtonBase onClick={onFinish} />;
 };
 
 ProjectView.Action = Action;

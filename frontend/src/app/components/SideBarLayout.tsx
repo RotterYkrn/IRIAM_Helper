@@ -1,9 +1,10 @@
 import { ExternalLink } from "lucide-react";
 import { Suspense } from "react";
 
-import CreateProjectButton from "./projects/CreateProjectButton";
-import ProjectSideBarLayout from "./projects/ProjectSideBarLayout";
+import SideBarProjectListContainer from "./projects/containers/SideBarProjectListContainer";
+import SelectProjectTypeDialog from "./projects/presenters/SelectProjectTypeDialog";
 
+import { Button } from "@/components/ui/button";
 import { useAppContext } from "@/contexts/apps/useAppContext";
 
 /**
@@ -18,20 +19,21 @@ const SideBarLayout = () => {
                 className="flex h-12 bg-pink-200 items-center justify-start
                     px-2"
             >
-                <button
+                <Button
+                    variant="ghost"
+                    size="icon"
+                    className="active:scale-100"
                     onClick={() => setIsOpenSideBar(false)}
-                    className="flex h-8 w-8 items-center justify-center
-                        rounded-md transition hover:bg-pink-100"
                 >
                     ×
-                </button>
+                </Button>
             </div>
-            <div className="flex min-h-screen w-70 flex-col p-4">
+            <div className="flex min-h-screen w-70 flex-col p-2">
                 {/* 上部コンテンツ：space-y-4 で間隔を保ち、flex-1 で残りのスペースを専有 */}
-                <div className="flex-1 space-y-4 overflow-y-auto">
-                    <CreateProjectButton />
+                <div className="flex-1 overflow-y-auto">
+                    <SelectProjectTypeDialog className="w-full justify-start" />
                     <Suspense fallback={<div>読込中...</div>}>
-                        <ProjectSideBarLayout />
+                        <SideBarProjectListContainer />
                     </Suspense>
                 </div>
 

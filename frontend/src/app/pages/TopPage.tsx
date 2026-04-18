@@ -1,5 +1,5 @@
-import CreateProjectButton from "../components/projects/CreateProjectButton";
-import ProjectTopLayout from "../components/projects/ProjectTopLayout";
+import TopProjectListContainer from "../components/projects/containers/TopProjectListContainer";
+import SelectProjectTypeDialog from "../components/projects/presenters/SelectProjectTypeDialog";
 
 /**
  * トップページ用レイアウト
@@ -9,12 +9,17 @@ import ProjectTopLayout from "../components/projects/ProjectTopLayout";
  */
 const TopPage = () => {
     return (
-        <div className="flex flex-col items-center justify-center space-y-4">
-            <h1 className="text-3xl font-bold">企画一覧</h1>
-            <div className="flex w-150 justify-end">
-                <CreateProjectButton />
+        <div className="flex items-center justify-center">
+            <div
+                className="flex flex-col w-150 items-center justify-center
+                    space-y-4"
+            >
+                <h1 className="text-3xl font-bold">企画一覧</h1>
+                <div className="flex w-full justify-start">
+                    <SelectProjectTypeDialog />
+                </div>
+                <TopProjectListContainer />
             </div>
-            <ProjectTopLayout />
         </div>
     );
 };

@@ -1,4 +1,4 @@
-import ProjectSideBarGroup from "./ProjectSideBarGroup";
+import SideBarProjectRowPresenter from "../presenters/SideBarProjectRowPresenter";
 
 import { useFetchProjectForList } from "@/hooks/projects/useFetchProjectForList";
 
@@ -8,7 +8,7 @@ import { useFetchProjectForList } from "@/hooks/projects/useFetchProjectForList"
  * @description
  * 開催予定、開催中、過去の企画を分類して表示します。
  */
-const ProjectSideBarLayout = () => {
+const SideBarProjectListContainer = () => {
     const { data, isLoading } = useFetchProjectForList();
 
     if (isLoading) {
@@ -23,15 +23,15 @@ const ProjectSideBarLayout = () => {
 
     return (
         <>
-            <ProjectSideBarGroup
+            <SideBarProjectRowPresenter
                 title="開催中の企画"
                 projects={active}
             />
-            <ProjectSideBarGroup
+            <SideBarProjectRowPresenter
                 title="開催予定の企画"
                 projects={scheduled}
             />
-            <ProjectSideBarGroup
+            <SideBarProjectRowPresenter
                 title="過去の企画"
                 projects={finished}
             />
@@ -39,4 +39,4 @@ const ProjectSideBarLayout = () => {
     );
 };
 
-export default ProjectSideBarLayout;
+export default SideBarProjectListContainer;

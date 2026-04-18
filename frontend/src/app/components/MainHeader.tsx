@@ -1,3 +1,6 @@
+import { Link } from "react-router-dom";
+
+import { Button } from "@/components/ui/button";
 import { useAppContext } from "@/contexts/apps/useAppContext";
 
 /**
@@ -11,22 +14,27 @@ const MainHeader = () => {
             className="sticky top-0 z-1 w-full flex h-12 items-center gap-2
                 bg-pink-200 px-4"
         >
-            <button
-                onClick={() => setIsOpenSideBar(true)}
-                className="flex h-8 w-8 items-center justify-center rounded-md
-                    border border-white transition hover:bg-pink-100
-                    cursor-pointer"
+            <Button
+                variant="ghost"
+                size="icon"
+                className="border-white active:scale-100"
                 title="メニュー"
+                onClick={() => setIsOpenSideBar(true)}
             >
                 ☰
-            </button>
-            <button
-                onClick={() => (window.location.href = "/")}
-                className="flex items-center justify-center text-xl font-black
-                    cursor-pointer"
+            </Button>
+            <Button
+                variant="ghost"
+                asChild
+                className="p-0 hover:bg-transparent active:scale-100"
             >
-                🏠IRIAM企画補助つーるぅ（仮）
-            </button>
+                <Link
+                    to="/"
+                    aria-label="ホームへ戻る"
+                >
+                    🏠IRIAM企画補助つーるぅ（仮）
+                </Link>
+            </Button>
         </header>
     );
 };

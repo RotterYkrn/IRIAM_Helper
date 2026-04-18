@@ -1,5 +1,7 @@
 import type React from "react";
 
+import { Button } from "@/components/ui/button";
+
 /**
  * 以下の企画全体操作のための汎用ボタン
  * [編集, 保存, キャンセル, 削除, コピー, 企画開始, 企画終了]
@@ -8,19 +10,9 @@ import type React from "react";
  */
 const ProjectButton = ({
     children,
-    className,
     ...props
 }: React.ComponentPropsWithoutRef<"button">) => {
-    return (
-        <button
-            {...props}
-            className={`rounded px-4 py-2 text-white active:scale-95
-                disabled:opacity-50 disabled:active:scale-100
-                disabled:cursor-not-allowed cursor-pointer ${className ?? ""}`}
-        >
-            {children}
-        </button>
-    );
+    return <Button {...props}>{children}</Button>;
 };
 
 export default ProjectButton;

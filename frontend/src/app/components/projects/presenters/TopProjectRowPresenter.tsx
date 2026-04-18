@@ -2,6 +2,7 @@ import { Chunk } from "effect";
 import { useState } from "react";
 import { Link } from "react-router-dom";
 
+import { Button } from "@/components/ui/button";
 import type { ProjectDtoSchema } from "@/domain/projects/dto/ProjectDto";
 
 type ProjectGroupProps = {
@@ -17,33 +18,39 @@ type ProjectGroupProps = {
  * @description
  * 企画の開催状況ごとの一覧を表示するのに使います。
  */
-const ProjectTopGroup = ({ title, projects }: ProjectGroupProps) => {
+const TopProjectRowPresenter = ({ title, projects }: ProjectGroupProps) => {
     const [isOpen, setIsOpen] = useState(true);
 
     return (
         <div className="w-150 border border-pink-200 rounded-md shadow">
             {/* カテゴリ名（クリックで開閉） */}
-            <button
+            <Button
+                size={"lg"}
+                className={`w-full bg-pink-50 hover:bg-pink-100 border-none
+                    text-black font-bold
+                    ${isOpen ? "rounded-t-md" : "rounded-md"} active:scale-100`}
                 onClick={() => setIsOpen(!isOpen)}
-                className="w-full flex items-center justify-between p-3
-                    bg-pink-50 hover:bg-pink-100 font-bold rounded-md
-                    transition-colors"
             >
                 {title}
-            </button>
+            </Button>
 
             {/* 子リンク一覧（開いている時だけ表示） */}
             {isOpen &&
                 (projects.length !== 0 ? (
                     Chunk.map(projects, (p) => (
-                        <Link
+                        <Button
                             key={p.id}
-                            to={`/projects/${p.type}/${p.id}`}
-                            className="block p-3 hover:bg-gray-100
-                                transition-colors"
+                            variant={"ghost"}
+                            size={"lg"}
+                            asChild
+                            className="w-full justify-start px-3
+                                active:scale-100"
+                            onClick={() => setIsOpen(!isOpen)}
                         >
-                            {p.title}
-                        </Link>
+                            <Link to={`/projects/${p.type}/${p.id}`}>
+                                {p.title}
+                            </Link>
+                        </Button>
                     ))
                 ) : (
                     <p className="flex p-3 items-center justify-center">
@@ -54,4 +61,4 @@ const ProjectTopGroup = ({ title, projects }: ProjectGroupProps) => {
     );
 };
 
-export default ProjectTopGroup;
+export default TopProjectRowPresenter;

@@ -1,13 +1,15 @@
 import * as Dialog from "@radix-ui/react-dialog";
 import { ExternalLink } from "lucide-react";
+import { useState } from "react";
 import { useNavigate } from "react-router-dom";
+import { twMerge } from "tailwind-merge";
 
+import { Button } from "@/components/ui/button";
 import { useAppContext } from "@/contexts/apps/useAppContext";
 
 /** Dialog.Root に渡すプロパティ */
 type Props = {
-    open: boolean;
-    onOpenChange: (open: boolean) => void;
+    className?: string;
 };
 
 /**
@@ -16,12 +18,13 @@ type Props = {
  * @description
  * 企画新規作成時に、作成する企画の種類を選択するために使用します。
  */
-const SelectProjectTypeDialog = ({ open, onOpenChange }: Props) => {
+const SelectProjectTypeDialog = ({ className }: Props) => {
     const { setIsOpenSideBar } = useAppContext();
+    const [open, setOpen] = useState(false);
     const navigate = useNavigate();
 
     const handleSelect = (type: string) => {
-        onOpenChange(false);
+        setOpen(false);
         setIsOpenSideBar(false);
         navigate(`/projects/create/${type}`);
     };
@@ -29,8 +32,17 @@ const SelectProjectTypeDialog = ({ open, onOpenChange }: Props) => {
     return (
         <Dialog.Root
             open={open}
-            onOpenChange={onOpenChange}
+            onOpenChange={setOpen}
         >
+            <Dialog.Trigger>
+                <Button
+                    variant={"ghost"}
+                    className={twMerge("", className)}
+                    onClick={() => setOpen(true)}
+                >
+                    ＋ 企画新規作成
+                </Button>
+            </Dialog.Trigger>
             <Dialog.Portal>
                 <Dialog.Overlay className="fixed z-45 inset-0 bg-black/50" />
 

@@ -3,7 +3,7 @@ import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { useEffectEvent, useLayoutEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-import CreateProjectLayout from "../projects/CreateProjectLayout";
+import CreateProjectContainer from "../projects/containers/CreateProjectContainer";
 
 import EditEnduranceActionRow from "./EditEnduranceActionRow";
 import EnduranceView from "./EnduranceView";
@@ -82,7 +82,7 @@ const CreateEnduranceProjectLayout = () => {
     };
 
     return (
-        <CreateProjectLayout
+        <CreateProjectContainer
             isSaveDisabled={disabled}
             onSave={onSave}
         >
@@ -134,7 +134,7 @@ const CreateEnduranceProjectLayout = () => {
                     </EnduranceView.SabotageActionsField>
                 </EnduranceView.ActionsField>
             </EnduranceView>
-        </CreateProjectLayout>
+        </CreateProjectContainer>
     );
 };
 

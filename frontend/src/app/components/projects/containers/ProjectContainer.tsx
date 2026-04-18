@@ -1,19 +1,16 @@
 import { useNavigate } from "react-router-dom";
 
-import ProjectView from "./ProjectView";
+import ProjectView from "../ProjectView";
 
-import type { Project } from "@/domain/projects/tables/Project";
+import { useProjectContext } from "@/contexts/projects/useProjectContext";
 import { useActivateProject } from "@/hooks/projects/useActivateProject";
 import { useDeleteProject } from "@/hooks/projects/useDeleteProject";
 import { useFinishProject } from "@/hooks/projects/useFinishProject";
 import { errorToast, successToast } from "@/utils/toast";
 
-type ProjectLayoutProps = {
+type Props = {
     /** 各企画固有のコンテンツ */
     children: React.ReactNode;
-    project: Omit<Project, "created_at" | "updated_at">;
-    isEdit: boolean;
-    setIsEdit: (v: boolean) => void;
     isSaveDisabled: boolean;
     onEdit: () => void;
     onSave: () => void;
@@ -21,20 +18,24 @@ type ProjectLayoutProps = {
 };
 
 /** 企画の共通レイアウト */
-const ProjectLayout = ({
+const ProjectContainer = ({
     children,
-    project,
-    isEdit,
-    setIsEdit,
     isSaveDisabled,
     onEdit,
     onSave,
     onDuplicate,
-}: ProjectLayoutProps) => {
+}: Props) => {
     const navigate = useNavigate();
+    const { project, isEdit, setIsEdit } = useProjectContext();
+
     const deleteMutation = useDeleteProject();
     const activateMutation = useActivateProject();
     const finishMutation = useFinishProject();
+
+    const handleEdit = () => {
+        onEdit();
+        setIsEdit(true);
+    };
 
     const onCancel = () => {
         if (!confirm("変更を破棄しますか？")) {
@@ -119,7 +120,7 @@ const ProjectLayout = ({
             isEdit={isEdit}
         >
             <ProjectView.Action pageName="">
-                <ProjectView.EditButton onEdit={onEdit} />
+                <ProjectView.EditButton onEdit={handleEdit} />
                 <ProjectView.CancelButton onCancel={onCancel} />
                 <ProjectView.SaveButton
                     disabled={isSaveDisabled}
@@ -142,4 +143,4 @@ const ProjectLayout = ({
     );
 };
 
-export default ProjectLayout;
+export default ProjectContainer;

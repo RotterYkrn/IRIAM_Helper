@@ -1,10 +1,9 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { Chunk, pipe } from "effect";
 import { useAtomValue, useSetAtom } from "jotai";
-import { useState } from "react";
 
 import EnduranceView from "../endurances-new/EnduranceView";
-import ProjectLayout from "../projects/ProjectLayout";
+import ProjectContainer from "../projects/containers/ProjectContainer";
 
 import EditEnduranceUnitRow from "./EditEnduranceUnitRow";
 import EnduranceUnitRow from "./EnduranceUnitRow";
@@ -18,6 +17,7 @@ import {
     createUnitAtom,
     editUnitsAtom,
 } from "@/atoms/multi-endurances/EditUnitsAtom";
+import { useProjectContext } from "@/contexts/projects/useProjectContext";
 import type { MultiEnduranceUnitSchema } from "@/domain/multi-endurances/dto/MultiEnduranceProjectDto";
 import { type ProjectId } from "@/domain/projects/tables/Project";
 import { useFetchMultiEnduranceProject } from "@/hooks/multi-endurances/useFetchMultiEnduranceProject";
@@ -35,7 +35,7 @@ type Props = {
 const MultiEnduranceProjectLayout = ({ projectId }: Props) => {
     const queryClient = useQueryClient();
     // const navigate = useNavigate();
-    const [isEdit, setIsEdit] = useState(false);
+    const { isEdit, setIsEdit } = useProjectContext();
 
     const projectQuery = useFetchMultiEnduranceProject(projectId);
     const updateProject = useUpdateMultiEnduranceProject();
@@ -75,7 +75,6 @@ const MultiEnduranceProjectLayout = ({ projectId }: Props) => {
                 ),
             ),
         });
-        setIsEdit(true);
     };
 
     const onSave = () => {
@@ -124,10 +123,7 @@ const MultiEnduranceProjectLayout = ({ projectId }: Props) => {
     const actionButtonCounts = Chunk.fromIterable([1]);
 
     return (
-        <ProjectLayout
-            project={project}
-            isEdit={isEdit}
-            setIsEdit={setIsEdit}
+        <ProjectContainer
             isSaveDisabled={disabled}
             onEdit={onEdit}
             onSave={onSave}
@@ -170,7 +166,7 @@ const MultiEnduranceProjectLayout = ({ projectId }: Props) => {
                     </div>
                 )}
             </EnduranceView>
-        </ProjectLayout>
+        </ProjectContainer>
     );
 };
 
