@@ -36,7 +36,7 @@ const SelectProjectTypeDialog = ({ className }: Props) => {
         >
             <Dialog.Trigger>
                 <Button
-                    variant={"ghost"}
+                    variant={"outline"}
                     className={twMerge("", className)}
                     onClick={() => setOpen(true)}
                 >

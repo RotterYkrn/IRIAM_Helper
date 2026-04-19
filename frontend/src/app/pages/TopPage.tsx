@@ -1,5 +1,5 @@
-import TopProjectListContainer from "../components/projects/containers/TopProjectListContainer";
 import SelectProjectTypeDialog from "../components/projects/presenters/SelectProjectTypeDialog";
+import TopProjectAccordionContainer from "../components/projects/top-project-lists/TopProjectAccordionContainer";
 
 /**
  * トップページ用レイアウト
@@ -18,7 +18,7 @@ const TopPage = () => {
                 <div className="flex w-full justify-start">
                     <SelectProjectTypeDialog />
                 </div>
-                <TopProjectListContainer />
+                <TopProjectAccordionContainer />
             </div>
         </div>
     );
