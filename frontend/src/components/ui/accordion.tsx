@@ -43,7 +43,7 @@ function AccordionTrigger({
                     `group/accordion-trigger relative flex flex-1 items-start
                     justify-between rounded-md border border-transparent py-4
                     text-left text-sm font-medium transition-all outline-none
-                    cursor-pointer focus-visible:border-ring
+                    cursor-pointer hover:bg-muted focus-visible:border-ring
                     focus-visible:ring-3 focus-visible:ring-ring/50
                     focus-visible:after:border-ring disabled:pointer-events-none
                     disabled:opacity-50

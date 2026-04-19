@@ -1,8 +1,8 @@
 import { ExternalLink } from "lucide-react";
 import { Suspense } from "react";
 
-import SideBarProjectListContainer from "./projects/containers/SideBarProjectListContainer";
 import SelectProjectTypeDialog from "./projects/presenters/SelectProjectTypeDialog";
+import SideBarProjectListContainer from "./projects/side-bar-project-lists/SideBarProjectListContainer";
 
 import { Button } from "@/components/ui/button";
 import { useAppContext } from "@/contexts/apps/useAppContext";
@@ -28,9 +28,9 @@ const SideBarLayout = () => {
                     ×
                 </Button>
             </div>
-            <div className="flex min-h-screen w-70 flex-col p-2">
+            <div className="flex min-h-screen w-70 flex-col px-2 py-4">
                 {/* 上部コンテンツ：space-y-4 で間隔を保ち、flex-1 で残りのスペースを専有 */}
-                <div className="flex-1 overflow-y-auto">
+                <div className="flex-1 space-y-4 overflow-y-auto">
                     <SelectProjectTypeDialog className="w-full justify-start" />
                     <Suspense fallback={<div>読込中...</div>}>
                         <SideBarProjectListContainer />
