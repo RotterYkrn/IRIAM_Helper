@@ -31,7 +31,7 @@ const TopProjectAccordionItemPresenter = ({
             value={title}
             className="w-full border border-pink-200 rounded-md shadow"
         >
-            <AccordionTrigger className="bg-pink-50 hover:bg-pink-100 px-4 py-2
+            <AccordionTrigger className="bg-pink-50 hover:bg-pink-100 px-3 py-2
                 font-bold">
                 {title}
             </AccordionTrigger>
@@ -43,7 +43,7 @@ const TopProjectAccordionItemPresenter = ({
                             variant={"ghost"}
                             size={"lg"}
                             asChild
-                            className="w-full justify-start px-3 no-underline
+                            className="w-full justify-start px-4 no-underline
                                 overflow-hidden active:scale-100"
                         >
                             <Link to={`/projects/${p.type}/${p.id}`}>
@@ -58,42 +58,6 @@ const TopProjectAccordionItemPresenter = ({
                 )}
             </AccordionContent>
         </AccordionItem>
-        // <div className="w-150 border border-pink-200 rounded-md shadow">
-        //     {/* カテゴリ名（クリックで開閉） */}
-        //     <Button
-        //         size={"lg"}
-        //         className={`w-full bg-pink-50 hover:bg-pink-100 border-none
-        //             text-black font-bold
-        //             ${isOpen ? "rounded-t-md" : "rounded-md"} active:scale-100`}
-        //         onClick={() => setIsOpen(!isOpen)}
-        //     >
-        //         {title}
-        //     </Button>
-
-        //     {/* 子リンク一覧（開いている時だけ表示） */}
-        //     {isOpen &&
-        //         (projects.length !== 0 ? (
-        //             Chunk.map(projects, (p) => (
-        //                 <Button
-        //                     key={p.id}
-        //                     variant={"ghost"}
-        //                     size={"lg"}
-        //                     asChild
-        //                     className="w-full justify-start px-3
-        //                         active:scale-100"
-        //                     onClick={() => setIsOpen(!isOpen)}
-        //                 >
-        //                     <Link to={`/projects/${p.type}/${p.id}`}>
-        //                         {p.title}
-        //                     </Link>
-        //                 </Button>
-        //             ))
-        //         ) : (
-        //             <p className="flex p-3 items-center justify-center">
-        //                 未登録
-        //             </p>
-        //         ))}
-        // </div>
     );
 };
 

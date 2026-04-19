@@ -36,6 +36,7 @@ const TopProjectAccordionContainer = () => {
     return (
         <Accordion
             type="multiple"
+            defaultValue={itemProps.map((item) => item.title)}
             className="w-full space-y-4"
         >
             {itemProps.map((props) => (
