@@ -1,5 +1,7 @@
 import { useAtom } from "jotai";
 
+import { Input } from "../ui/input";
+
 import { editTitleAtom } from "@/atoms/projects/EditTitleAtom";
 
 const TitleInput = () => {
@@ -20,11 +22,9 @@ const TitleInput = () => {
                 </span>
 
                 <div className="flex flex-col items-center">
-                    <input
+                    <Input
                         id="project-title"
-                        className="text-3xl font-bold text-center outline-none
-                            border-b-2 border-gray-300 focus:border-gray-500
-                            transition-colors"
+                        className="text-3xl font-bold"
                         defaultValue={state.input}
                         onChange={(e) => setState(e.target.value)}
                     />

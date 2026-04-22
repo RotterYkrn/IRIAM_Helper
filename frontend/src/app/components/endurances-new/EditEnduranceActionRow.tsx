@@ -1,7 +1,7 @@
 import { useAtom, useSetAtom } from "jotai";
 import { useMemo } from "react";
 
-import EnduranceView from "./EnduranceView";
+import EnduranceView from "../ui/EnduranceView";
 
 import {
     editRescueActionsAtomsNew,

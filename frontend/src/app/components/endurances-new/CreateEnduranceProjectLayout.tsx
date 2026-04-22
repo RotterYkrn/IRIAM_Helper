@@ -4,9 +4,9 @@ import { useEffectEvent, useLayoutEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 import CreateProjectContainer from "../projects/containers/CreateProjectContainer";
+import EnduranceView from "../ui/EnduranceView";
 
 import EditEnduranceActionRow from "./EditEnduranceActionRow";
-import EnduranceView from "./EnduranceView";
 
 import {
     editSabotageActionsAtomsNew,

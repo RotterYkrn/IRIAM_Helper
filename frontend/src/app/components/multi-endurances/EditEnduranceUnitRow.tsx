@@ -5,6 +5,7 @@ import {
     editUnitLabelAtom,
     editUnitTargetCountAtom,
 } from "@/atoms/multi-endurances/EditUnitsAtom";
+import { Input } from "@/components/ui/input";
 import type { EnduranceUnitsSchema } from "@/domain/endurances-new/tables/EnduranceUnits";
 
 type Props = {
@@ -38,11 +39,12 @@ const EditEnduranceUnitRow = ({ unitId }: Props) => {
                     耐久対象
                 </span>
 
-                <input
-                    className="w-30 text-center outline-none border-b-2
-                        border-gray-300 focus:border-gray-500 transition-colors"
+                <Input
+                    id="label"
+                    className="w-30"
                     value={labelState.input}
                     placeholder="例: 入室、バッジ"
+                    aria-invalid={!!labelState.error}
                     onChange={(e) => setLabel(e.target.value)}
                 />
                 {labelState.error && (
@@ -63,13 +65,12 @@ const EditEnduranceUnitRow = ({ unitId }: Props) => {
                 </span>
 
                 <div className="flex items-center">
-                    <input
+                    <Input
                         id="target-count"
                         type="text"
-                        className="font-mono w-20 text-center outline-none
-                            border-b-2 border-gray-300 focus:border-gray-500
-                            transition-colors"
+                        className="font-mono w-20"
                         value={targetCountState.input}
+                        aria-invalid={!!targetCountState.error}
                         onChange={(e) => setTargetCount(e.target.value)}
                     />
                     {targetCountState.error && (

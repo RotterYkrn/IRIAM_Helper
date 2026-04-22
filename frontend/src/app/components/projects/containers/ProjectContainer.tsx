@@ -1,6 +1,6 @@
 import { useNavigate } from "react-router-dom";
 
-import ProjectView from "../ProjectView";
+import ProjectView from "../../ui/ProjectView";
 
 import { useProjectContext } from "@/contexts/projects/useProjectContext";
 import { useActivateProject } from "@/hooks/projects/useActivateProject";

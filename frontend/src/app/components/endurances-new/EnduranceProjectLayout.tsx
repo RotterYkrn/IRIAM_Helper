@@ -6,10 +6,10 @@ import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { useNavigate } from "react-router-dom";
 
 import ProjectContainer from "../projects/containers/ProjectContainer";
+import EnduranceView from "../ui/EnduranceView";
 
 import EditEnduranceActionRow from "./EditEnduranceActionRow";
 import EnduranceActionRow from "./EnduranceActionRow";
-import EnduranceView from "./EnduranceView";
 
 import {
     editRescueActionsAtomsNew,

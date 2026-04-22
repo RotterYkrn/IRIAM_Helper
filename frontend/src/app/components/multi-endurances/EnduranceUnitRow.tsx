@@ -1,7 +1,7 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { Schema } from "effect";
 
-import EnduranceView from "../endurances-new/EnduranceView";
+import EnduranceView from "../ui/EnduranceView";
 
 import {
     EnduranceActionHistoryActionCountSchema,

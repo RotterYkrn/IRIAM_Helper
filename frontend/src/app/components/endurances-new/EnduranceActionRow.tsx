@@ -1,6 +1,6 @@
 import { useQueryClient } from "@tanstack/react-query";
 
-import EnduranceView from "./EnduranceView";
+import EnduranceView from "../ui/EnduranceView";
 
 import type { EnduranceActionDtoSchema } from "@/domain/endurances-new/dto/EnduranceProjectDto";
 import type { EnduranceActionHistoriesNewSchema } from "@/domain/endurances-new/tables/EnduranceActionHistoriesNew";

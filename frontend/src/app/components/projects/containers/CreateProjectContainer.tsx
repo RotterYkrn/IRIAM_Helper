@@ -1,12 +1,12 @@
 import { useAtom } from "jotai";
 import { useNavigate } from "react-router-dom";
 
+import { CancelButtonBase, SaveButtonBase } from "../../ui/ProjectButtons";
+import TitleInput from "../../ui/TitleInput";
 import ProjectActionLayout from "../layouts/ProjectActionLayout";
 import ProjectBodyLayout from "../layouts/ProjectBodyLayout";
-import { CancelButtonBase, SaveButtonBase } from "../layouts/ProjectButtons";
 import ProjectHeaderLayout from "../layouts/ProjectHeaderLayout";
 import ProjectLayout from "../layouts/ProjectLayout";
-import TitleInput from "../layouts/TitleInput";
 
 import { editTitleAtom } from "@/atoms/projects/EditTitleAtom";
 

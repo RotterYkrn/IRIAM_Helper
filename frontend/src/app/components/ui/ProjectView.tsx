@@ -1,8 +1,10 @@
 import { useAtom } from "jotai";
 import { createContext, useContext } from "react";
 
-import ProjectActionLayout from "./layouts/ProjectActionLayout";
-import ProjectBodyLayout from "./layouts/ProjectBodyLayout";
+import ProjectActionLayout from "../projects/layouts/ProjectActionLayout";
+import ProjectBodyLayout from "../projects/layouts/ProjectBodyLayout";
+import ProjectHeaderLayout from "../projects/layouts/ProjectHeaderLayout";
+
 import {
     ActivateButtonBase,
     CancelButtonBase,
@@ -11,8 +13,8 @@ import {
     EditButtonBase,
     FinishButtonBase,
     SaveButtonBase,
-} from "./layouts/ProjectButtons";
-import ProjectHeaderLayout from "./layouts/ProjectHeaderLayout";
+} from "./ProjectButtons";
+import TitleInput from "./TitleInput";
 
 import { editTitleAtom } from "@/atoms/projects/EditTitleAtom";
 import type { ProjectSchema } from "@/domain/projects/tables/Project";
@@ -135,39 +137,10 @@ const Title = ({ title }: TitleProps) => {
 
     if (isEdit) {
         return (
-            <>
-                <label
-                    htmlFor="project-title"
-                    className="relative flex flex-col items-center"
-                >
-                    {/* 左上に配置されるキャプション */}
-                    <span
-                        className="absolute -top-6 left-0 text-md font-medium
-                            text-gray-600"
-                    >
-                        企画タイトル
-                    </span>
-
-                    <div className="flex flex-col items-center">
-                        <input
-                            id="project-title"
-                            className="text-3xl font-bold text-center
-                                outline-none border-b-2 border-gray-300
-                                focus:border-gray-500 transition-colors"
-                            defaultValue={state.input}
-                            onChange={(e) => setState(e.target.value)}
-                        />
-                        {state.error && (
-                            <p
-                                className="absolute top-full mt-1 text-red-500
-                                    text-sm whitespace-nowrap"
-                            >
-                                {state.error}
-                            </p>
-                        )}
-                    </div>
-                </label>
-            </>
+            <TitleInput
+                titleState={state}
+                setTitle={setState}
+            />
         );
     }
 

@@ -2,7 +2,7 @@ import { useQueryClient } from "@tanstack/react-query";
 import { Chunk, pipe } from "effect";
 import { useAtomValue, useSetAtom } from "jotai";
 
-import EnduranceView from "../endurances-new/EnduranceView";
+import EnduranceView from "../ui/EnduranceView";
 import ProjectContainer from "../projects/containers/ProjectContainer";
 
 import EditEnduranceUnitRow from "./EditEnduranceUnitRow";

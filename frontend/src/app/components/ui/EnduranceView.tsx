@@ -6,6 +6,7 @@ import {
     editRescueActionsAtomsNew,
     editSabotageActionsAtomsNew,
 } from "@/atoms/endurances-new/EditActionAtom";
+import { Input } from "@/components/ui/input";
 import type { EnduranceActionCountsSchema } from "@/domain/endurances-new/tables/EnduranceActionCounts";
 import type { EnduranceActionHistoriesNewSchema } from "@/domain/endurances-new/tables/EnduranceActionHistoriesNew";
 import type { EnduranceActionsNewSchema } from "@/domain/endurances-new/tables/EnduranceActionsNew";
@@ -100,14 +101,13 @@ const EditTargetCount = ({
                     目標数
                 </span>
 
-                <div className="flex items-center">
-                    <input
+                <div className="flex w-full justify-center items-center">
+                    <Input
                         id="target-count"
                         type="text"
-                        className="text-4xl font-mono w-30 text-center
-                            outline-none border-b-2 border-gray-300
-                            focus:border-gray-500 transition-colors"
+                        className="text-4xl font-mono w-30"
                         value={targetCountState.input}
+                        aria-invalid={!!targetCountState.error}
                         onChange={(e) => setTargetCount(e.target.value)}
                     />
                     {targetCountState.error && (
@@ -441,11 +441,11 @@ type EditLabelProps = {
 const EditLabel = ({ labelState, setLabel }: EditLabelProps) => {
     return (
         <>
-            <input
-                className="w-20 text-center outline-none border-b-2
-                    border-gray-300 focus:border-gray-500 transition-colors"
+            <Input
+                className="w-20"
                 value={labelState.input}
                 placeholder="ラベルを入力"
+                aria-invalid={!!labelState.error}
                 onChange={(e) => setLabel(e.target.value)}
             />
             {labelState.error && (
@@ -479,11 +479,11 @@ type EditAmountProps = {
 const EditAmount = ({ amountState, setAmount }: EditAmountProps) => {
     return (
         <>
-            <input
-                className="w-20 text-center outline-none border-b-2
-                    border-gray-300 focus:border-gray-500 transition-colors"
+            <Input
+                className="w-20"
                 value={amountState.input}
                 placeholder="数値を入力"
+                aria-invalid={!!amountState.error}
                 onChange={(e) => setAmount(e.target.value)}
             />
             {amountState.error && (

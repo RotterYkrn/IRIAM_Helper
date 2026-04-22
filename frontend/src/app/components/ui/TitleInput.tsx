@@ -1,3 +1,5 @@
+import { Input } from "@/components/ui/input";
+
 type Props = {
     titleState: {
         input: string;
@@ -21,13 +23,12 @@ const TitleInput = ({ titleState, setTitle }: Props) => {
                     企画タイトル
                 </span>
 
-                <div className="flex flex-col items-center">
-                    <input
+                <div className="flex flex-col justify-center items-center">
+                    <Input
                         id="project-title"
-                        className="text-3xl font-bold text-center outline-none
-                            border-b-2 border-gray-300 focus:border-gray-500
-                            transition-colors"
-                        defaultValue={titleState.input}
+                        className="text-3xl font-bold"
+                        value={titleState.input}
+                        aria-invalid={!!titleState.error}
                         onChange={(e) => setTitle(e.target.value)}
                     />
                     {titleState.error && (
