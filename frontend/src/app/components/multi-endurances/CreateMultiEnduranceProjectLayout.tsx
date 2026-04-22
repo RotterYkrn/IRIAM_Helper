@@ -16,6 +16,7 @@ import {
     createUnitAtom,
     editUnitsAtom,
 } from "@/atoms/multi-endurances/EditUnitsAtom";
+import { Button } from "@/components/ui/button";
 import { ProjectTitleSchema } from "@/domain/projects/tables/Project";
 import { useCreateMultiEnduranceProject } from "@/hooks/multi-endurances/useCreateMultiEnduranceProject";
 import { errorToast, successToast } from "@/utils/toast";
@@ -72,16 +73,15 @@ const CreateMultiEnduranceProjectLayout = () => {
                             unitId={unit.id}
                         />
                     ))}
-                    <button
+                    <Button
+                        variant="outline"
+                        className="h-35 w-40 border-2 border-dashed"
                         onClick={createUnit}
-                        className="flex flex-col items-center justify-center
-                            h-35 w-40 gap-8 rounded-md border-2 border-dashed
-                            border-gray-300 hover:bg-gray-200 transition-colors"
                     >
                         <span className="text-xl font-bold text-gray-400">
                             ⊕追加
                         </span>
-                    </button>
+                    </Button>
                 </div>
             </CreateProjectContainer>
         </div>

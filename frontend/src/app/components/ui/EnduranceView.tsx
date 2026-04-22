@@ -2,17 +2,18 @@ import { pipe, Chunk } from "effect";
 import { useSetAtom } from "jotai";
 import React, { createContext, useContext } from "react";
 
+import MinusButton from "@/app/components/ui/MinusButton";
+import PlusButton from "@/app/components/ui/PlusButton";
 import {
     editRescueActionsAtomsNew,
     editSabotageActionsAtomsNew,
 } from "@/atoms/endurances-new/EditActionAtom";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import type { EnduranceActionCountsSchema } from "@/domain/endurances-new/tables/EnduranceActionCounts";
 import type { EnduranceActionHistoriesNewSchema } from "@/domain/endurances-new/tables/EnduranceActionHistoriesNew";
 import type { EnduranceActionsNewSchema } from "@/domain/endurances-new/tables/EnduranceActionsNew";
 import type { ProjectSchema } from "@/domain/projects/tables/Project";
-import MinusButton from "@/utils/components/MinusButton";
-import PlusButton from "@/utils/components/PlusButton";
 
 /**
  * コンポーネント描画に必要な状態を共有する Context
@@ -290,13 +291,12 @@ const RescueActionsField = ({
             <div className="flex justify-between items-center gap-4">
                 <h2 className="text-lg font-bold">救済</h2>
                 {isEdit && (
-                    <button
-                        className="bg-red-200 hover:bg-red-300 px-2 py-1
-                            rounded-md border border-red-300"
+                    <Button
+                        variant={"outline"}
                         onClick={onAddAction}
                     >
                         ＋追加
-                    </button>
+                    </Button>
                 )}
                 {projectStatus !== "scheduled" && (
                     <p
@@ -349,13 +349,12 @@ const SabotageActionsField = ({
             <div className="flex justify-between items-center gap-4">
                 <h2 className="text-lg font-bold">妨害</h2>
                 {isEdit && (
-                    <button
-                        className="bg-blue-200 hover:bg-blue-300 px-2 py-1
-                            rounded-md border border-blue-400"
+                    <Button
+                        variant={"outline"}
                         onClick={onAddAction}
                     >
                         ＋追加
-                    </button>
+                    </Button>
                 )}
                 {projectStatus !== "scheduled" && (
                     <p
@@ -384,8 +383,8 @@ type ActionProps = {
 const Action = ({ children, className }: ActionProps) => {
     return (
         <div
-            className={`flex flex-col items-center justify-center p-2 gap-1
-                bg-white rounded-xl border border-slate-300 shadow-sm
+            className={`relative flex flex-col items-center justify-center p-2
+                gap-1 bg-white rounded-xl border border-slate-300 shadow-sm
                 ${className ?? "w-32"}`}
         >
             {children}
@@ -507,22 +506,6 @@ const ActionProgress = ({ children }: ProgressProps) => {
     return <div className="flex flex-row justify-center gap-2">{children}</div>;
 };
 
-type DeleteActionButtonProps = {
-    onDelete: () => void;
-};
-
-const DeleteActionButton = ({ onDelete }: DeleteActionButtonProps) => {
-    return (
-        <button
-            className="bg-gray-300 hover:bg-gray-200 px-2 py-1 rounded-md border
-                border-gray-400 cursor-pointer"
-            onClick={onDelete}
-        >
-            削除
-        </button>
-    );
-};
-
 EnduranceView.CountProgress = CountProgress;
 EnduranceView.EditTargetCount = EditTargetCount;
 
@@ -543,6 +526,5 @@ EnduranceView.EditLabel = EditLabel;
 EnduranceView.Amount = Amount;
 EnduranceView.EditAmount = EditAmount;
 EnduranceView.ActionProgress = ActionProgress;
-EnduranceView.DeleteActionButton = DeleteActionButton;
 
 export default EnduranceView;

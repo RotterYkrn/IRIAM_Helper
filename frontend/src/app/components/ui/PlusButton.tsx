@@ -9,9 +9,8 @@ const PlusButton = ({
     return (
         <button
             {...props}
-            className={`w-7 h-7 flex items-center justify-center rounded-full
-                text-xl font-bold transition bg-blue-500 hover:bg-blue-600
-                active:scale-95 text-white cursor-pointer`}
+            className={`size-7 rounded-full text-xl f bg-blue-500
+                hover:bg-blue-600 text-white`}
         >
             {children}
         </button>

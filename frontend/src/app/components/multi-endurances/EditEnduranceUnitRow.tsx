@@ -5,6 +5,7 @@ import {
     editUnitLabelAtom,
     editUnitTargetCountAtom,
 } from "@/atoms/multi-endurances/EditUnitsAtom";
+import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
 import type { EnduranceUnitsSchema } from "@/domain/endurances-new/tables/EnduranceUnits";
 
@@ -81,14 +82,14 @@ const EditEnduranceUnitRow = ({ unitId }: Props) => {
                 </div>
             </label>
 
-            <button
-                className="absolute top-0 right-0 bg-white hover:bg-gray-200
-                    px-2 py-1 rounded-md border-gray-600 cursor-pointer
-                    transition-colors"
+            <Button
+                variant="ghost"
+                size="icon"
+                className="absolute top-0 right-0"
                 onClick={deleteUnit}
             >
                 ✕
-            </button>
+            </Button>
         </div>
     );
 };

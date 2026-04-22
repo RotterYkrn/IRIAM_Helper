@@ -2,8 +2,8 @@ import { useQueryClient } from "@tanstack/react-query";
 import { Chunk, pipe } from "effect";
 import { useAtomValue, useSetAtom } from "jotai";
 
-import EnduranceView from "../ui/EnduranceView";
 import ProjectContainer from "../projects/containers/ProjectContainer";
+import EnduranceView from "../ui/EnduranceView";
 
 import EditEnduranceUnitRow from "./EditEnduranceUnitRow";
 import EnduranceUnitRow from "./EnduranceUnitRow";
@@ -17,6 +17,7 @@ import {
     createUnitAtom,
     editUnitsAtom,
 } from "@/atoms/multi-endurances/EditUnitsAtom";
+import { Button } from "@/components/ui/button";
 import { useProjectContext } from "@/contexts/projects/useProjectContext";
 import type { MultiEnduranceUnitSchema } from "@/domain/multi-endurances/dto/MultiEnduranceProjectDto";
 import { type ProjectId } from "@/domain/projects/tables/Project";
@@ -142,17 +143,15 @@ const MultiEnduranceProjectLayout = ({ projectId }: Props) => {
                                 unitId={unit.id}
                             />
                         ))}
-                        <button
+                        <Button
+                            variant="outline"
+                            className="h-35 w-40 border-2 border-dashed"
                             onClick={createUnit}
-                            className="flex flex-col items-center justify-center
-                                h-35 w-40 gap-8 rounded-md border-2
-                                border-dashed border-gray-300 hover:bg-gray-200
-                                transition-colors"
                         >
                             <span className="text-xl font-bold text-gray-400">
                                 ⊕追加
                             </span>
-                        </button>
+                        </Button>
                     </div>
                 ) : (
                     <div className="grid grid-cols-3 gap-4">

@@ -7,6 +7,7 @@ import {
     editRescueActionsAtomsNew,
     editSabotageActionsAtomsNew,
 } from "@/atoms/endurances-new/EditActionAtom";
+import { Button } from "@/components/ui/button";
 import type { EnduranceActionsNewSchema } from "@/domain/endurances-new/tables/EnduranceActionsNew";
 
 type Props = {
@@ -49,8 +50,16 @@ const EditEnduranceActionRow = ({ actionId, actionType }: Props) => {
                     amountState={amountState}
                     setAmount={setAmount}
                 />
+
+                <Button
+                    variant="ghost"
+                    size="icon"
+                    className="absolute top-0 right-0 z-10"
+                    onClick={deleteAction}
+                >
+                    ✕
+                </Button>
             </EnduranceView.EditSettingsLayout>
-            <EnduranceView.DeleteActionButton onDelete={deleteAction} />
         </EnduranceView.Action>
     );
 };

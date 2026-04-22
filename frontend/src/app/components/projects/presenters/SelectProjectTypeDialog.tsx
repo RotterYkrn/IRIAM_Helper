@@ -58,51 +58,63 @@ const SelectProjectTypeDialog = ({ className }: Props) => {
                         新しく作成する企画の種類を選択してください。
                     </Dialog.DialogDescription>
 
-                    <div className="flex flex-col gap-3">
-                        <button
-                            className="rounded border p-3 hover:bg-gray-300
-                                transition-colors"
+                    <div className="flex flex-col gap-3 mt-4">
+                        <Button
+                            variant={"outline"}
+                            size={"lg"}
+                            className="border-black"
                             onClick={() => handleSelect("endurance")}
                         >
                             カウント型耐久（単体）
-                        </button>
+                        </Button>
 
-                        <button
-                            className="rounded border p-3 hover:bg-gray-300
-                                transition-colors"
+                        <Button
+                            variant={"outline"}
+                            size={"lg"}
+                            className="border-black"
                             onClick={() => handleSelect("multi-endurance")}
                         >
                             カウント型耐久（複数）（準備中）
-                        </button>
+                        </Button>
 
-                        <button
-                            className="rounded border p-3 bg-gray-500"
+                        <Button
+                            variant={"outline"}
+                            size={"lg"}
+                            className="border-black"
                             disabled={true}
                             onClick={() => {}}
                         >
                             その他耐久（準備中）
-                        </button>
+                        </Button>
 
-                        <button
-                            className="rounded border p-3 bg-gray-500"
+                        <Button
+                            variant={"outline"}
+                            size={"lg"}
+                            className="border-black"
                             disabled={true}
                             onClick={() => handleSelect("panel-open")}
                         >
                             パネル開け（準備中）
-                        </button>
+                        </Button>
 
-                        <a
-                            href="https://namazu-tools.net/super-gacha/"
-                            target="_blank"
-                            rel="noopener noreferrer"
-                            className="flex items-center justify-center gap-2
-                                rounded border border-black p-3
-                                hover:bg-gray-300 hover:text-blue-600
-                                hover:underline transition-colors"
+                        <Button
+                            variant={"link"}
+                            size={"lg"}
+                            asChild
+                            className="border-black text-blue-600
+                                hover:underline"
                         >
-                            <span>スーパーガチャツール（なまづつーるず）</span>
-                            <ExternalLink size={16} />
-                        </a>
+                            <a
+                                href="https://namazu-tools.net/super-gacha/"
+                                target="_blank"
+                                rel="noopener noreferrer"
+                            >
+                                <span>
+                                    スーパーガチャツール（なまづつーるず）
+                                </span>
+                                <ExternalLink size={16} />
+                            </a>
+                        </Button>
                     </div>
 
                     <Dialog.Close
