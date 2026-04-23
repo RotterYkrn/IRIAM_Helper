@@ -1,10 +1,8 @@
-import { Schema } from "effect";
 import { Provider } from "jotai";
 
 import MultiEnduranceProjectLayout from "../components/multi-endurances/MultiEnduranceProjectLayout";
 
 import { ProjectProvider } from "@/contexts/projects/ProjectProvider";
-import { ProjectIdSchema } from "@/domain/projects/tables/Project";
 import { useProjectId } from "@/hooks/projects/useProjectId";
 
 /**
@@ -21,7 +19,7 @@ const MultiEnduranceProjectPage = () => {
             <ProjectProvider projectId={projectId}>
                 <MultiEnduranceProjectLayout
                     key={projectId}
-                    projectId={Schema.decodeSync(ProjectIdSchema)(projectId)}
+                    projectId={projectId}
                 />
             </ProjectProvider>
         </Provider>

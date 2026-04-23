@@ -19,7 +19,6 @@ import TitleInput from "./TitleInput";
 
 import { editTitleAtom } from "@/atoms/projects/EditTitleAtom";
 import type { ProjectDtoSchema } from "@/domain/projects/dto/ProjectDto";
-import { ProjectStatus } from "@/domain/projects/tables/Project";
 import { useActivateProject } from "@/hooks/projects/useActivateProject";
 import { useDeleteProject } from "@/hooks/projects/useDeleteProject";
 import { useFinishProject } from "@/hooks/projects/useFinishProject";
@@ -167,7 +166,7 @@ const EditButton = ({ onEdit }: EditButtonProps) => {
 
     if (
         context.type === "create" ||
-        context.project.status !== ProjectStatus.SCHEDULED ||
+        context.project.status !== "scheduled" ||
         context.isEdit
     ) {
         return null;
@@ -238,17 +237,13 @@ const DuplicateButton = ({ onDuplicate }: DuplicateButtonProps) => {
 
     if (
         context.type === "create" ||
-        context.project.status === ProjectStatus.ACTIVE ||
+        context.project.status === "active" ||
         context.isEdit
     ) {
         return null;
     }
 
     return <DuplicateButtonBase onClick={onDuplicate} />;
-};
-
-type DeleteButtonProps = {
-    onDelete: () => void;
 };
 
 const DeleteButton = () => {
@@ -258,7 +253,7 @@ const DeleteButton = () => {
 
     if (
         context.type === "create" ||
-        context.project.status === ProjectStatus.ACTIVE ||
+        context.project.status === "active" ||
         context.isEdit
     ) {
         return null;
@@ -301,7 +296,7 @@ const ActivateButton = () => {
 
     if (
         context.type === "create" ||
-        context.project.status !== ProjectStatus.SCHEDULED ||
+        context.project.status !== "scheduled" ||
         context.isEdit
     ) {
         return null;
@@ -338,7 +333,7 @@ const FinishButton = () => {
 
     if (
         context.type === "create" ||
-        context.project.status !== ProjectStatus.ACTIVE ||
+        context.project.status !== "active" ||
         context.isEdit
     ) {
         return null;

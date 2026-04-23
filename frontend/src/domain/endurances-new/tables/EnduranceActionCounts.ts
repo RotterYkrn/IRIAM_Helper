@@ -21,19 +21,13 @@ export const EnduranceActionCountIdSchema = Schema.UUID.pipe(
 );
 
 /** 耐久対象のカウント */
-export const EnduranceNormalCountSchema = Schema.NonNegative.pipe(
-    Schema.brand("EnduranceNormalCount"),
-);
+export const EnduranceNormalCountSchema = Schema.NonNegative;
 
 /** 救済の総カウント */
-export const EnduranceRescueCountSchema = Schema.NonNegative.pipe(
-    Schema.brand("EnduranceRescueCount"),
-);
+export const EnduranceRescueCountSchema = Schema.NonNegative;
 
 /** 妨害の総カウント */
-export const EnduranceSabotageCountSchema = Schema.NonNegative.pipe(
-    Schema.brand("EnduranceSabotageCount"),
-);
+export const EnduranceSabotageCountSchema = Schema.NonNegative;
 
 /** {@link EnduranceActionCountsSchema} */
 export type EnduranceActionCounts = {

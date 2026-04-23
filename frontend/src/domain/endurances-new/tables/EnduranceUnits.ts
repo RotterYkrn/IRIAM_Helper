@@ -15,9 +15,7 @@ export const EnduranceUnitIdSchema = Schema.UUID.pipe(
     Schema.brand("EnduranceUnitId"),
 );
 
-export const EnduranceUnitPositionSchema = Schema.NonNegativeInt.pipe(
-    Schema.brand("EnduranceUnitPosition"),
-);
+export const EnduranceUnitPositionSchema = Schema.NonNegativeInt;
 
 export const EnduranceUnitLabelSchema = Schema.String.pipe(
     Schema.minLength(1, {
@@ -33,9 +31,7 @@ export const EnduranceTargetCountSchema = Schema.Number.pipe(
     Schema.brand("EnduranceTargetCount"),
 );
 
-export const EnduranceCurrentCountSchema = Schema.Number.pipe(
-    Schema.brand("EnduranceCurrentCount"),
-);
+export const EnduranceCurrentCountSchema = Schema.Number;
 
 /** {@link EnduranceUnitsSchema} */
 export type EnduranceUnits = Readonly<{

@@ -1,7 +1,7 @@
 import console from "console";
 
 import { useQueryClient } from "@tanstack/react-query";
-import { Chunk, pipe, Schema } from "effect";
+import { Chunk, pipe } from "effect";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { useNavigate } from "react-router-dom";
 
@@ -27,7 +27,6 @@ import type {
     EnduranceSabotageActionDtoSchema,
 } from "@/domain/endurances-new/dto/EnduranceProjectDto";
 import type { EnduranceActionHistoriesNewSchema } from "@/domain/endurances-new/tables/EnduranceActionHistoriesNew";
-import { EnduranceActionTypeSchema } from "@/domain/endurances-new/tables/EnduranceActionsNew";
 import { useDuplicateEnduranceProjectNew } from "@/hooks/endurances-new/useDuplicateEnduranceProject";
 import { useFetchEnduranceProjectNew } from "@/hooks/endurances-new/useFetchEnduranceProject";
 import { useLogEnduranceActionHistoryNew } from "@/hooks/endurances-new/useLogEnduranceActionHistory";
@@ -230,9 +229,7 @@ const EnduranceProjectLayout = () => {
                                   <EditEnduranceActionRow
                                       key={action.id}
                                       actionId={action.id}
-                                      actionType={Schema.decodeSync(
-                                          EnduranceActionTypeSchema,
-                                      )("rescue")}
+                                      actionType={"rescue"}
                                   />
                               ))
                             : Chunk.map(
@@ -259,9 +256,7 @@ const EnduranceProjectLayout = () => {
                                   <EditEnduranceActionRow
                                       key={action.id}
                                       actionId={action.id}
-                                      actionType={Schema.decodeSync(
-                                          EnduranceActionTypeSchema,
-                                      )("sabotage")}
+                                      actionType={"sabotage"}
                                   />
                               ))
                             : Chunk.map(

@@ -8,7 +8,6 @@ import {
     EnduranceTargetCountSchema,
     EnduranceUnitIdSchema,
     EnduranceUnitLabelSchema,
-    EnduranceUnitPositionSchema,
     type EnduranceUnitsSchema,
 } from "@/domain/endurances-new/tables/EnduranceUnits";
 import type { MultiEnduranceProjectDtoSchema } from "@/domain/multi-endurances/dto/MultiEnduranceProjectDto";
@@ -57,9 +56,7 @@ export const createUnitAtom = atom(null, (_, set) => {
     set(editUnitsAtom, (prev) =>
         Chunk.append(prev, {
             id: Schema.decodeSync(EnduranceUnitIdSchema)(crypto.randomUUID()),
-            position: Schema.decodeSync(EnduranceUnitPositionSchema)(
-                prev.length,
-            ),
+            position: prev.length,
             label: {
                 input: "",
                 valid: Option.none(),
@@ -84,9 +81,7 @@ export const deleteUnitAtom = atomFamily(
                     Chunk.filter((action) => action.id !== id),
                     Chunk.map((action, i) => ({
                         ...action,
-                        position: Schema.decodeSync(
-                            EnduranceUnitPositionSchema,
-                        )(i),
+                        position: i,
                     })),
                 ),
             );
