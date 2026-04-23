@@ -36,6 +36,11 @@ export const ProjectStatusSchema = Schema.String.pipe(
     Schema.compose(Schema.Literal("scheduled", "active", "finished")),
     Schema.brand("ProjectStatus"),
 );
+export const ProjectStatus = {
+    SCHEDULED: ProjectStatusSchema.make("scheduled"),
+    ACTIVE: ProjectStatusSchema.make("active"),
+    FINISHED: ProjectStatusSchema.make("finished"),
+} as const;
 
 export const ProjectTitleSchema = Schema.String.pipe(
     Schema.minLength(1, {

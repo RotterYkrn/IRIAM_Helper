@@ -1,14 +1,4 @@
-import { useAtom } from "jotai";
-import { useNavigate } from "react-router-dom";
-
-import { CancelButtonBase, SaveButtonBase } from "../../ui/ProjectButtons";
-import TitleInput from "../../ui/TitleInput";
-import ProjectActionLayout from "../layouts/ProjectActionLayout";
-import ProjectBodyLayout from "../layouts/ProjectBodyLayout";
-import ProjectHeaderLayout from "../layouts/ProjectHeaderLayout";
-import ProjectLayout from "../layouts/ProjectLayout";
-
-import { editTitleAtom } from "@/atoms/projects/EditTitleAtom";
+import ProjectView from "../../ui/ProjectView";
 
 type Props = {
     /** 各企画固有のコンテンツ */
@@ -26,32 +16,22 @@ const CreateProjectContainer = ({
     isSaveDisabled,
     onSave,
 }: Props) => {
-    const navigate = useNavigate();
-    const [titleState, setTitle] = useAtom(editTitleAtom);
-
-    const onCancel = () => {
-        navigate("/");
-    };
-
     return (
-        <ProjectLayout>
-            <ProjectActionLayout pageName={"企画新規作成"}>
-                <CancelButtonBase onClick={onCancel} />
-                <SaveButtonBase
+        <ProjectView type={"create"}>
+            <ProjectView.Action pageName={"企画新規作成"}>
+                <ProjectView.CancelButton />
+                <ProjectView.SaveButton
                     disabled={isSaveDisabled}
-                    onClick={onSave}
+                    onSave={onSave}
                 />
-            </ProjectActionLayout>
+            </ProjectView.Action>
 
-            <ProjectHeaderLayout>
-                <TitleInput
-                    titleState={titleState}
-                    setTitle={setTitle}
-                />
-            </ProjectHeaderLayout>
+            <ProjectView.Header>
+                <ProjectView.Title />
+            </ProjectView.Header>
 
-            <ProjectBodyLayout>{children}</ProjectBodyLayout>
-        </ProjectLayout>
+            <ProjectView.Body>{children}</ProjectView.Body>
+        </ProjectView>
     );
 };
 

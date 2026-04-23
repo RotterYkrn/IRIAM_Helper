@@ -190,6 +190,7 @@ const MinusButtons = ({ disabled, onIncrement }: MinusButtonsProps) => {
 
     const buttonConfigs = pipe(
         actionButtonCounts,
+        Chunk.reverse,
         Chunk.map((count) => ({
             label: count === 1 ? "-" : `-${count}`,
             count: -count,

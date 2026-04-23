@@ -8,6 +8,9 @@ export type RecursiveReadonly<T> = T extends object
     ? { readonly [K in keyof T]: RecursiveReadonly<T[K]> }
     : T;
 
+// Tの中からKだけを任意にするユーティリティ
+export type Optional<T, K extends keyof T> = Omit<T, K> & Partial<Pick<T, K>>;
+
 /**
  * decode前がnullableのプロパティに対して、nullでないことを保証するSchemaを作成します。
  * @param self 変換前のSchema

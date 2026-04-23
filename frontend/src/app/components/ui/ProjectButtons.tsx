@@ -61,7 +61,7 @@ export const ActivateButtonBase = ({ isVisible = true, ...props }: Props) => {
     return (
         <Button
             {...props}
-            className="bg-green-600 enabled:hover:bg-green-700"
+            className="bg-green-600 hover:bg-green-600/80"
         >
             企画開始
         </Button>
@@ -76,7 +76,7 @@ export const FinishButtonBase = ({ isVisible = true, ...props }: Props) => {
     return (
         <Button
             {...props}
-            className="bg-red-600 enabled:hover:bg-red-700"
+            className="bg-red-600 hover:bg-red-600/80"
         >
             企画終了
         </Button>
