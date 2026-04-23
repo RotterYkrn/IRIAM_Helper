@@ -1,4 +1,4 @@
-import { Schema, Chunk } from "effect";
+import { Chunk } from "effect";
 import { useAtomValue, useSetAtom } from "jotai";
 import { useEffectEvent, useLayoutEffect } from "react";
 import { useNavigate } from "react-router-dom";
@@ -33,7 +33,7 @@ const CreateMultiEnduranceProjectLayout = () => {
 
     const initEvent = useEffectEvent(() =>
         initEditEndurance({
-            title: Schema.decodeSync(ProjectTitleSchema)("○○ & ✕✕ 耐久"),
+            title: ProjectTitleSchema.make("○○ & ✕✕ 耐久"),
             units: Chunk.empty(),
         }),
     );

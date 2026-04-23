@@ -1,4 +1,4 @@
-import { Chunk, Schema } from "effect";
+import { Chunk } from "effect";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { useEffectEvent, useLayoutEffect } from "react";
 import { useNavigate } from "react-router-dom";
@@ -44,8 +44,8 @@ const CreateEnduranceProjectLayout = () => {
 
     const initEvent = useEffectEvent(() =>
         initEditEndurance({
-            title: Schema.decodeSync(ProjectTitleSchema)("○○耐久"),
-            target_count: Schema.decodeSync(EnduranceTargetCountSchema)(100),
+            title: ProjectTitleSchema.make("○○耐久"),
+            target_count: EnduranceTargetCountSchema.make(100),
             rescue_actions: Chunk.empty(),
             sabotage_actions: Chunk.empty(),
         }),

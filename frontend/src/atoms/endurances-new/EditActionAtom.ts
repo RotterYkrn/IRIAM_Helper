@@ -79,9 +79,7 @@ const createEditActionAtoms = () => {
     const createAction = atom(null, (_, set) => {
         set(editActions, (prev) =>
             Chunk.append(prev, {
-                id: Schema.decodeSync(EnduranceActionIdSchema)(
-                    crypto.randomUUID(),
-                ),
+                id: EnduranceActionIdSchema.make(crypto.randomUUID()),
                 position: prev.length,
                 label: {
                     input: "",

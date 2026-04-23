@@ -55,7 +55,7 @@ export const initUnitsAtom = atom(
 export const createUnitAtom = atom(null, (_, set) => {
     set(editUnitsAtom, (prev) =>
         Chunk.append(prev, {
-            id: Schema.decodeSync(EnduranceUnitIdSchema)(crypto.randomUUID()),
+            id: EnduranceUnitIdSchema.make(crypto.randomUUID()),
             position: prev.length,
             label: {
                 input: "",
