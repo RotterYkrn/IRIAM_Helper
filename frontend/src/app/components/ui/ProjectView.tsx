@@ -2,22 +2,10 @@ import { useAtom } from "jotai";
 import { createContext, useContext } from "react";
 import { useNavigate } from "react-router-dom";
 
-import ProjectActionLayout from "../projects/layouts/ProjectActionLayout";
-import ProjectBodyLayout from "../projects/layouts/ProjectBodyLayout";
-import ProjectHeaderLayout from "../projects/layouts/ProjectHeaderLayout";
-
-import {
-    ActivateButtonBase,
-    CancelButtonBase,
-    DeleteButtonBase,
-    DuplicateButtonBase,
-    EditButtonBase,
-    FinishButtonBase,
-    SaveButtonBase,
-} from "./ProjectButtons";
 import TitleInput from "./TitleInput";
 
 import { editTitleAtom } from "@/atoms/projects/EditTitleAtom";
+import { Button } from "@/components/ui/button";
 import type { ProjectDtoSchema } from "@/domain/projects/dto/ProjectDto";
 import { useActivateProject } from "@/hooks/projects/useActivateProject";
 import { useDeleteProject } from "@/hooks/projects/useDeleteProject";
@@ -122,15 +110,24 @@ type ActionProps = {
 /** 企画操作に関するコンポーネント群を配置する用 */
 const Action = ({ children, pageName }: ActionProps) => {
     return (
-        <ProjectActionLayout pageName={pageName || ""}>
-            {children}
-        </ProjectActionLayout>
+        <div className="flex w-full items-start justify-between gap-2">
+            <div className="flex flex-col gap-2">
+                {pageName && (
+                    <span className="text-2xl font-bold">{pageName}</span>
+                )}
+            </div>
+            <div className="flex gap-2">{children}</div>
+        </div>
     );
 };
 
 /** 企画共通の情報を表示するコンポーネント群を配置する用 */
 const Header = ({ children }: ChildrenProps) => {
-    return <ProjectHeaderLayout>{children}</ProjectHeaderLayout>;
+    return (
+        <div className="flex flex-col w-full items-center justify-between gap-2">
+            {children}
+        </div>
+    );
 };
 
 /**
@@ -154,7 +151,9 @@ const Title = () => {
 
 /** 各企画固有のコンテンツを配置する用 */
 const Body = ({ children }: ChildrenProps) => {
-    return <ProjectBodyLayout>{children}</ProjectBodyLayout>;
+    return (
+        <div className="mt-5 flex flex-col items-center gap-6">{children}</div>
+    );
 };
 
 type EditButtonProps = {
@@ -177,7 +176,7 @@ const EditButton = ({ onEdit }: EditButtonProps) => {
         context.setIsEdit(true);
     };
 
-    return <EditButtonBase onClick={handleEdit} />;
+    return <Button onClick={handleEdit}>編集</Button>;
 };
 
 type SaveButtonProps = {
@@ -195,10 +194,12 @@ const SaveButton = ({ disabled, onSave }: SaveButtonProps) => {
     }
 
     return (
-        <SaveButtonBase
-            onClick={onSave}
+        <Button
             disabled={disabled}
-        />
+            onClick={onSave}
+        >
+            保存
+        </Button>
     );
 };
 
@@ -224,7 +225,7 @@ const CancelButton = () => {
         }
     };
 
-    return <CancelButtonBase onClick={handleCancel} />;
+    return <Button onClick={handleCancel}>キャンセル</Button>;
 };
 
 type DuplicateButtonProps = {
@@ -243,7 +244,7 @@ const DuplicateButton = ({ onDuplicate }: DuplicateButtonProps) => {
         return null;
     }
 
-    return <DuplicateButtonBase onClick={onDuplicate} />;
+    return <Button onClick={onDuplicate}>コピー</Button>;
 };
 
 const DeleteButton = () => {
@@ -287,7 +288,14 @@ const DeleteButton = () => {
         );
     };
 
-    return <DeleteButtonBase onClick={onDelete} />;
+    return (
+        <Button
+            variant={"destructive"}
+            onClick={onDelete}
+        >
+            削除
+        </Button>
+    );
 };
 
 const ActivateButton = () => {
@@ -324,7 +332,14 @@ const ActivateButton = () => {
         );
     };
 
-    return <ActivateButtonBase onClick={onActivate} />;
+    return (
+        <Button
+            className="bg-green-600 hover:bg-green-600/80"
+            onClick={onActivate}
+        >
+            企画開始
+        </Button>
+    );
 };
 
 const FinishButton = () => {
@@ -361,7 +376,14 @@ const FinishButton = () => {
         );
     };
 
-    return <FinishButtonBase onClick={onFinish} />;
+    return (
+        <Button
+            className="bg-red-600 hover:bg-red-600/80"
+            onClick={onFinish}
+        >
+            企画終了
+        </Button>
+    );
 };
 
 ProjectView.Action = Action;

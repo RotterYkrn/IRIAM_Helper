@@ -26,8 +26,8 @@ const EditEnduranceUnitRow = ({ unitId }: Props) => {
 
     return (
         <div
-            className="relative flex flex-col items-center justify-center h-35
-                w-40 gap-8 rounded-md border border-gray-300 shadow"
+            className="relative flex flex-col items-center justify-center h-40
+                w-40 gap-12 rounded-md border border-gray-300 shadow py-4"
         >
             <label
                 htmlFor="label"
@@ -49,13 +49,20 @@ const EditEnduranceUnitRow = ({ unitId }: Props) => {
                     onChange={(e) => setLabel(e.target.value)}
                 />
                 {labelState.error && (
-                    <p className="text-red-600 text-sm">{labelState.error}</p>
+                    <p
+                        className="absolute top-full mt-1 items-center
+                            justify-center text-red-600 text-sm
+                            whitespace-nowrap"
+                    >
+                        {labelState.error}
+                    </p>
                 )}
             </label>
 
             <label
                 htmlFor="target-count"
-                className="relative flex flex-col items-center"
+                className="relative w-full flex flex-col items-center
+                    justify-center"
             >
                 {/* 左上に配置されるキャプション */}
                 <span
@@ -65,7 +72,7 @@ const EditEnduranceUnitRow = ({ unitId }: Props) => {
                     目標数
                 </span>
 
-                <div className="flex items-center">
+                <div className="flex items-center justify-center">
                     <Input
                         id="target-count"
                         type="text"
@@ -75,7 +82,11 @@ const EditEnduranceUnitRow = ({ unitId }: Props) => {
                         onChange={(e) => setTargetCount(e.target.value)}
                     />
                     {targetCountState.error && (
-                        <p className="text-red-600 text-sm">
+                        <p
+                            className="absolute top-full mt-1 items-center
+                                justify-center text-red-600 text-sm
+                                whitespace-nowrap"
+                        >
                             {targetCountState.error}
                         </p>
                     )}

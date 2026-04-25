@@ -1,3 +1,5 @@
+import { Button } from "@/components/ui/button";
+
 /**
  * 回数カウントを増やすためのボタン
  * @param props 標準のHTMLボタンの全プロパティを継承します
@@ -7,13 +9,13 @@ const PlusButton = ({
     ...props
 }: React.ComponentPropsWithoutRef<"button">) => {
     return (
-        <button
+        <Button
             {...props}
-            className={`size-7 rounded-full text-xl f bg-blue-500
-                hover:bg-blue-600 text-white`}
+            className={`size-7 rounded-full text-xl text-white bg-blue-500
+                hover:bg-blue-500/80 `}
         >
             {children}
-        </button>
+        </Button>
     );
 };
 
