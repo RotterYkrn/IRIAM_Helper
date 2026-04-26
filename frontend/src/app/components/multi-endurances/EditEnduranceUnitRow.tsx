@@ -27,7 +27,7 @@ const EditEnduranceUnitRow = ({ unitId }: Props) => {
     }
 
     return (
-        <Card className="relative w-45 h-45">
+        <Card className="relative w-45 h-45 py-6 gap-6">
             <Button
                 variant="ghost"
                 size="icon"

@@ -121,7 +121,7 @@ const MultiEnduranceProjectLayout = ({ projectId }: Props) => {
     //     );
     // };
 
-    const actionButtonCounts = Chunk.fromIterable([1]);
+    const actionButtonCounts = Chunk.fromIterable([1, 10, 100]);
 
     return (
         <ProjectContainer

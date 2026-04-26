@@ -2,8 +2,6 @@ import { pipe, Chunk } from "effect";
 import { useSetAtom } from "jotai";
 import React, { createContext, useContext } from "react";
 
-import MinusButton from "@/app/components/ui/MinusButton";
-import PlusButton from "@/app/components/ui/PlusButton";
 import {
     editRescueActionsAtomsNew,
     editSabotageActionsAtomsNew,
@@ -161,16 +159,18 @@ const PlusButtons = ({ onIncrement }: PlusButtonsProps) => {
     );
 
     return (
-        <>
+        <div className="flex flex-row gap-2">
             {Chunk.map(buttonConfigs, (config) => (
-                <PlusButton
+                <Button
                     key={config.label}
+                    className={`h-7 px-2 rounded-full text-white bg-blue-500
+                    hover:bg-blue-500/80`}
                     onClick={() => onIncrement(config.count)}
                 >
                     {config.label}
-                </PlusButton>
+                </Button>
             ))}
-        </>
+        </div>
     );
 };
 
@@ -190,7 +190,7 @@ const MinusButtons = ({ disabled, onIncrement }: MinusButtonsProps) => {
 
     const buttonConfigs = pipe(
         actionButtonCounts,
-        Chunk.reverse,
+        // Chunk.reverse,
         Chunk.map((count) => ({
             label: count === 1 ? "-" : `-${count}`,
             count: -count,
@@ -198,17 +198,19 @@ const MinusButtons = ({ disabled, onIncrement }: MinusButtonsProps) => {
     );
 
     return (
-        <>
+        <div className="flex flex-row gap-2">
             {Chunk.map(buttonConfigs, (config) => (
-                <MinusButton
+                <Button
                     key={config.label}
+                    className={`h-7 rounded-full text-white bg-red-500
+                    hover:bg-red-500/80`}
                     disabled={disabled}
                     onClick={() => onIncrement(config.count)}
                 >
                     {config.label}
-                </MinusButton>
+                </Button>
             ))}
-        </>
+        </div>
     );
 };
 
