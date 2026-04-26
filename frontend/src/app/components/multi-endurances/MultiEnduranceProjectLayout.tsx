@@ -5,6 +5,7 @@ import { useAtomValue, useSetAtom } from "jotai";
 import ProjectContainer from "../projects/containers/ProjectContainer";
 import EnduranceView from "../ui/EnduranceView";
 
+import AddUnitButton from "./AddUnitButton";
 import EditEnduranceUnitRow from "./EditEnduranceUnitRow";
 import EnduranceUnitRow from "./EnduranceUnitRow";
 
@@ -17,7 +18,6 @@ import {
     createUnitAtom,
     editUnitsAtom,
 } from "@/atoms/multi-endurances/EditUnitsAtom";
-import { Button } from "@/components/ui/button";
 import { useProjectContext } from "@/contexts/projects/useProjectContext";
 import type { MultiEnduranceUnitSchema } from "@/domain/multi-endurances/dto/MultiEnduranceProjectDto";
 import { type ProjectId } from "@/domain/projects/tables/Project";
@@ -135,35 +135,29 @@ const MultiEnduranceProjectLayout = ({ projectId }: Props) => {
                 isEdit={isEdit}
                 actionButtonCounts={actionButtonCounts}
             >
-                {isEdit ? (
-                    <div className="grid grid-cols-3 gap-4">
-                        {Chunk.map(editUnits, (unit) => (
-                            <EditEnduranceUnitRow
-                                key={unit.id}
-                                unitId={unit.id}
-                            />
-                        ))}
-                        <Button
-                            variant="outline"
-                            className="h-35 w-40 border-2 border-dashed"
-                            onClick={createUnit}
-                        >
-                            <span className="text-xl font-bold text-gray-400">
-                                ⊕追加
-                            </span>
-                        </Button>
-                    </div>
-                ) : (
-                    <div className="grid grid-cols-3 gap-4">
-                        {Chunk.map(project.units, (id) => (
-                            <EnduranceUnitRow
-                                key={id}
-                                projectId={project.id}
-                                unitId={id}
-                            />
-                        ))}
-                    </div>
-                )}
+                <div className="grid grid-cols-3 gap-4">
+                    {isEdit ? (
+                        <>
+                            {Chunk.map(editUnits, (unit) => (
+                                <EditEnduranceUnitRow
+                                    key={unit.id}
+                                    unitId={unit.id}
+                                />
+                            ))}
+                            <AddUnitButton onClick={createUnit} />
+                        </>
+                    ) : (
+                        <>
+                            {Chunk.map(project.units, (id) => (
+                                <EnduranceUnitRow
+                                    key={id}
+                                    projectId={project.id}
+                                    unitId={id}
+                                />
+                            ))}
+                        </>
+                    )}
+                </div>
             </EnduranceView>
         </ProjectContainer>
     );

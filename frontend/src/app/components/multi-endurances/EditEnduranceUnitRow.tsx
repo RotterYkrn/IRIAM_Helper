@@ -6,7 +6,9 @@ import {
     editUnitTargetCountAtom,
 } from "@/atoms/multi-endurances/EditUnitsAtom";
 import { Button } from "@/components/ui/button";
+import { Card } from "@/components/ui/card";
 import { Input } from "@/components/ui/input";
+import { Label } from "@/components/ui/label";
 import type { EnduranceUnitsSchema } from "@/domain/endurances-new/tables/EnduranceUnits";
 
 type Props = {
@@ -25,18 +27,21 @@ const EditEnduranceUnitRow = ({ unitId }: Props) => {
     }
 
     return (
-        <div
-            className="relative flex flex-col items-center justify-center h-40
-                w-40 gap-12 rounded-md border border-gray-300 shadow py-4"
-        >
-            <label
-                htmlFor="label"
-                className="relative flex flex-col items-center mt-4"
+        <Card className="relative w-45 h-45">
+            <Button
+                variant="ghost"
+                size="icon"
+                className="absolute top-0 right-0"
+                onClick={deleteUnit}
             >
-                <span
-                    className="absolute -top-6 text-md font-medium
-                        text-gray-600"
-                >
+                ✕
+            </Button>
+
+            <Label
+                htmlFor="label"
+                className="relative"
+            >
+                <span className="text-md font-medium text-gray-600">
                     耐久対象
                 </span>
 
@@ -48,60 +53,41 @@ const EditEnduranceUnitRow = ({ unitId }: Props) => {
                     aria-invalid={!!labelState.error}
                     onChange={(e) => setLabel(e.target.value)}
                 />
-                {labelState.error && (
-                    <p
-                        className="absolute top-full mt-1 items-center
-                            justify-center text-red-600 text-sm
-                            whitespace-nowrap"
-                    >
-                        {labelState.error}
-                    </p>
-                )}
-            </label>
+                <p
+                    className="absolute top-full w-full text-red-600 text-sm
+                        whitespace-nowrap truncate"
+                    title={labelState.error || ""}
+                >
+                    {labelState.error || ""}
+                </p>
+            </Label>
 
-            <label
+            <Label
                 htmlFor="target-count"
-                className="relative w-full flex flex-col items-center
-                    justify-center"
+                className="relative"
             >
                 {/* 左上に配置されるキャプション */}
-                <span
-                    className="absolute -top-6 text-md font-medium
-                        text-gray-600"
-                >
+                <span className="text-md font-medium text-gray-600">
                     目標数
                 </span>
 
-                <div className="flex items-center justify-center">
-                    <Input
-                        id="target-count"
-                        type="text"
-                        className="font-mono w-20"
-                        value={targetCountState.input}
-                        aria-invalid={!!targetCountState.error}
-                        onChange={(e) => setTargetCount(e.target.value)}
-                    />
-                    {targetCountState.error && (
-                        <p
-                            className="absolute top-full mt-1 items-center
-                                justify-center text-red-600 text-sm
-                                whitespace-nowrap"
-                        >
-                            {targetCountState.error}
-                        </p>
-                    )}
-                </div>
-            </label>
-
-            <Button
-                variant="ghost"
-                size="icon"
-                className="absolute top-0 right-0"
-                onClick={deleteUnit}
-            >
-                ✕
-            </Button>
-        </div>
+                <Input
+                    id="target-count"
+                    type="text"
+                    className="font-mono w-20"
+                    value={targetCountState.input}
+                    aria-invalid={!!targetCountState.error}
+                    onChange={(e) => setTargetCount(e.target.value)}
+                />
+                <p
+                    className="absolute top-full w-full text-red-600 text-sm
+                        whitespace-nowrap truncate"
+                    title={targetCountState.error || ""}
+                >
+                    {targetCountState.error || ""}
+                </p>
+            </Label>
+        </Card>
     );
 };
 

@@ -43,16 +43,10 @@ const EnduranceUnitRow = ({ projectId, unitId }: Props) => {
     return (
         <EnduranceView.Action>
             <EnduranceView.SettingsLayout>
-                <div
-                    className="flex items-center justify-center
-                        whitespace-nowrap text-2xl font-bold"
-                >
+                <div className="flex-1 whitespace-nowrap text-2xl">
                     {unit.label}
                 </div>
-                <p
-                    className="flex items-center justify-center font-mono
-                        text-2xl"
-                >
+                <p className="flex-1 font-mono text-2xl">
                     {unit.current_count}/{unit.target_count}
                 </p>
             </EnduranceView.SettingsLayout>

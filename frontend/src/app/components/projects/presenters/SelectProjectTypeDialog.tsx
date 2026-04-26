@@ -98,11 +98,11 @@ const SelectProjectTypeDialog = ({ className }: Props) => {
                         </Button>
 
                         <Button
-                            variant={"link"}
+                            variant={"outline"}
                             size={"lg"}
                             asChild
                             className="border-black text-blue-600
-                                hover:underline"
+                                hover:text-blue-800 hover:underline"
                         >
                             <a
                                 href="https://namazu-tools.net/super-gacha/"
