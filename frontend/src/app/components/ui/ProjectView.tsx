@@ -151,9 +151,7 @@ const Title = () => {
 
 /** 各企画固有のコンテンツを配置する用 */
 const Body = ({ children }: ChildrenProps) => {
-    return (
-        <div className="mt-5 flex flex-col items-center gap-6">{children}</div>
-    );
+    return <div className="flex flex-col items-center gap-6">{children}</div>;
 };
 
 type EditButtonProps = {

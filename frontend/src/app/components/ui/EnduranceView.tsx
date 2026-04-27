@@ -2,6 +2,8 @@ import { pipe, Chunk } from "effect";
 import { useSetAtom } from "jotai";
 import React, { createContext, useContext } from "react";
 
+import InputField from "./InputField";
+
 import {
     editRescueActionsAtomsNew,
     editSabotageActionsAtomsNew,
@@ -20,7 +22,7 @@ type EnduranceContextType = {
     projectStatus: typeof ProjectSchema.Type.status;
     isEdit: boolean;
     actionButtonCounts: Chunk.Chunk<
-        typeof EnduranceActionHistoriesNewSchema.Encoded.action_count
+        typeof EnduranceActionHistoriesNewSchema.Type.action_count
     >;
 };
 
@@ -88,37 +90,13 @@ const EditTargetCount = ({
 }: EditTargetCountContextType) => {
     return (
         <>
-            <label
-                htmlFor="target-count"
-                className="relative flex flex-col items-center"
-            >
-                {/* 左上に配置されるキャプション */}
-                <span
-                    className="absolute -top-6 -left-6 text-md font-medium
-                        text-gray-600"
-                >
-                    目標数
-                </span>
-
-                <div className="flex w-full justify-center items-center">
-                    <Input
-                        id="target-count"
-                        type="text"
-                        className="text-4xl font-mono w-30"
-                        value={targetCountState.input}
-                        aria-invalid={!!targetCountState.error}
-                        onChange={(e) => setTargetCount(e.target.value)}
-                    />
-                    {targetCountState.error && (
-                        <p
-                            className="absolute top-full mt-1 text-red-500
-                                text-sm whitespace-nowrap"
-                        >
-                            {targetCountState.error}
-                        </p>
-                    )}
-                </div>
-            </label>
+            <InputField
+                label="目標数"
+                error={targetCountState.error}
+                setValue={setTargetCount}
+                value={targetCountState.input}
+                className="text-4xl font-mono w-30"
+            />
         </>
     );
 };

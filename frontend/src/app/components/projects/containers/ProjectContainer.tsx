@@ -43,11 +43,10 @@ const ProjectContainer = ({
                 <ProjectView.FinishButton />
             </ProjectView.Action>
 
-            <ProjectView.Header>
+            <ProjectView.Body>
                 <ProjectView.Title />
-            </ProjectView.Header>
-
-            <ProjectView.Body>{children}</ProjectView.Body>
+                {children}
+            </ProjectView.Body>
         </ProjectView>
     );
 };

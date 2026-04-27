@@ -8,7 +8,7 @@ const AddUnitButton = ({ onClick }: Props) => {
     return (
         <Button
             variant="outline"
-            className="h-45 w-45 border-2 border-dashed"
+            className="h-40 w-40 border-2 border-dashed"
             onClick={onClick}
         >
             <span className="text-xl font-bold text-gray-400">⊕追加</span>

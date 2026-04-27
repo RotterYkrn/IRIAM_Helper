@@ -1,5 +1,7 @@
 import { useAtom, useSetAtom } from "jotai";
 
+import InputField from "../ui/InputField";
+
 import {
     deleteUnitAtom,
     editUnitLabelAtom,
@@ -7,8 +9,6 @@ import {
 } from "@/atoms/multi-endurances/EditUnitsAtom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import { Input } from "@/components/ui/input";
-import { Label } from "@/components/ui/label";
 import type { EnduranceUnitsSchema } from "@/domain/endurances-new/tables/EnduranceUnits";
 
 type Props = {
@@ -27,7 +27,7 @@ const EditEnduranceUnitRow = ({ unitId }: Props) => {
     }
 
     return (
-        <Card className="relative w-45 h-45 py-6 gap-6">
+        <Card className="relative w-40 h-40 pt-2 gap-2">
             <Button
                 variant="ghost"
                 size="icon"
@@ -37,56 +37,22 @@ const EditEnduranceUnitRow = ({ unitId }: Props) => {
                 ✕
             </Button>
 
-            <Label
-                htmlFor="label"
-                className="relative"
-            >
-                <span className="text-md font-medium text-gray-600">
-                    耐久対象
-                </span>
+            <InputField
+                label="耐久対象"
+                value={labelState.input}
+                error={labelState.error}
+                setValue={setLabel}
+                placeholder="例: 入室、バッジ"
+                className="w-30"
+            />
 
-                <Input
-                    id="label"
-                    className="w-30"
-                    value={labelState.input}
-                    placeholder="例: 入室、バッジ"
-                    aria-invalid={!!labelState.error}
-                    onChange={(e) => setLabel(e.target.value)}
-                />
-                <p
-                    className="absolute top-full w-full text-red-600 text-sm
-                        whitespace-nowrap truncate"
-                    title={labelState.error || ""}
-                >
-                    {labelState.error || ""}
-                </p>
-            </Label>
-
-            <Label
-                htmlFor="target-count"
-                className="relative"
-            >
-                {/* 左上に配置されるキャプション */}
-                <span className="text-md font-medium text-gray-600">
-                    目標数
-                </span>
-
-                <Input
-                    id="target-count"
-                    type="text"
-                    className="font-mono w-20"
-                    value={targetCountState.input}
-                    aria-invalid={!!targetCountState.error}
-                    onChange={(e) => setTargetCount(e.target.value)}
-                />
-                <p
-                    className="absolute top-full w-full text-red-600 text-sm
-                        whitespace-nowrap truncate"
-                    title={targetCountState.error || ""}
-                >
-                    {targetCountState.error || ""}
-                </p>
-            </Label>
+            <InputField
+                label="目標数"
+                value={targetCountState.input}
+                error={targetCountState.error}
+                setValue={setTargetCount}
+                className="w-20 font-mono"
+            />
         </Card>
     );
 };

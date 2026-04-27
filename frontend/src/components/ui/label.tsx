@@ -11,7 +11,7 @@ function Label({
         <LabelPrimitive.Root
             data-slot="label"
             className={cn(
-                `flex flex-1 flex-col w-full items-center
+                `flex flex-1 flex-col w-full items-center justify-center
                 group-data-[disabled=true]:pointer-events-none
                 group-data-[disabled=true]:opacity-50
                 peer-disabled:cursor-not-allowed peer-disabled:opacity-50`,
