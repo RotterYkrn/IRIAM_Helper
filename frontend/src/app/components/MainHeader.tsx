@@ -26,7 +26,7 @@ const MainHeader = () => {
             <Button
                 variant="ghost"
                 asChild
-                className="p-0 hover:bg-transparent active:scale-100"
+                className="p-0 text-lg hover:bg-transparent active:scale-100"
             >
                 <Link
                     to="/"
