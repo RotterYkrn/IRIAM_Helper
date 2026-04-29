@@ -2,13 +2,21 @@ import * as Dialog from "@radix-ui/react-dialog";
 import { ChevronLeft, ChevronRight, ExternalLink } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
-import { twMerge } from "tailwind-merge";
 
 import { Button } from "@/components/ui/button";
 import { useAppContext } from "@/contexts/apps/useAppContext";
+import { cn } from "@/lib/utils";
 
 /** Dialog.Root に渡すプロパティ */
 type Props = {
+    variant?:
+        | "outline"
+        | "default"
+        | "link"
+        | "secondary"
+        | "ghost"
+        | "destructive"
+        | null;
     className?: string;
 };
 
@@ -18,7 +26,7 @@ type Props = {
  * @description
  * 企画新規作成時に、作成する企画の種類を選択するために使用します。
  */
-const SelectProjectTypeDialog = ({ className }: Props) => {
+const SelectProjectTypeDialog = ({ variant, className }: Props) => {
     const { setIsOpenSideBar } = useAppContext();
     const [open, setOpen] = useState(false);
     const [step, setStep] = useState<"main" | "endurance-detail">("main");
@@ -35,10 +43,10 @@ const SelectProjectTypeDialog = ({ className }: Props) => {
             open={open}
             onOpenChange={setOpen}
         >
-            <Dialog.Trigger>
+            <Dialog.Trigger asChild>
                 <Button
-                    variant={"outline"}
-                    className={twMerge("", className)}
+                    variant={variant || "outline"}
+                    className={cn("", className)}
                     onClick={() => setOpen(true)}
                 >
                     ＋ 企画新規作成

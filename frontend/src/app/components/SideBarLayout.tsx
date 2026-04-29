@@ -31,7 +31,10 @@ const SideBarLayout = () => {
             <div className="flex min-h-screen w-70 flex-col px-2 py-4">
                 {/* 上部コンテンツ：space-y-4 で間隔を保ち、flex-1 で残りのスペースを専有 */}
                 <div className="flex-1 space-y-4 overflow-y-auto">
-                    <SelectProjectTypeDialog className="w-full justify-start" />
+                    <SelectProjectTypeDialog
+                        variant={"ghost"}
+                        className="w-full justify-start px-2"
+                    />
                     <Suspense fallback={<div>読込中...</div>}>
                         <SideBarProjectListContainer />
                     </Suspense>
