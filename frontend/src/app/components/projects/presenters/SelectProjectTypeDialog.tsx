@@ -1,5 +1,5 @@
 import * as Dialog from "@radix-ui/react-dialog";
-import { ExternalLink } from "lucide-react";
+import { ChevronLeft, ChevronRight, ExternalLink } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 import { twMerge } from "tailwind-merge";
@@ -21,6 +21,7 @@ type Props = {
 const SelectProjectTypeDialog = ({ className }: Props) => {
     const { setIsOpenSideBar } = useAppContext();
     const [open, setOpen] = useState(false);
+    const [step, setStep] = useState<"main" | "endurance-detail">("main");
     const navigate = useNavigate();
 
     const handleSelect = (type: string) => {
@@ -59,62 +60,89 @@ const SelectProjectTypeDialog = ({ className }: Props) => {
                     </Dialog.DialogDescription>
 
                     <div className="flex flex-col gap-3 mt-4">
-                        <Button
-                            variant={"outline"}
-                            size={"lg"}
-                            className="border-black"
-                            onClick={() => handleSelect("endurance")}
-                        >
-                            カウント型耐久（単体）
-                        </Button>
+                        {step === "main" ? (
+                            <>
+                                <Button
+                                    variant={"outline"}
+                                    size={"lg"}
+                                    className="relative border-black"
+                                    onClick={() => setStep("endurance-detail")}
+                                >
+                                    耐久企画
+                                    <ChevronRight className="absolute right-2" />
+                                </Button>
 
-                        <Button
-                            variant={"outline"}
-                            size={"lg"}
-                            className="border-black"
-                            onClick={() => handleSelect("multi-endurance")}
-                        >
-                            カウント型耐久（複数）（準備中）
-                        </Button>
+                                <Button
+                                    variant={"outline"}
+                                    size={"lg"}
+                                    className="border-black"
+                                    disabled={true}
+                                    onClick={() => handleSelect("panel-open")}
+                                >
+                                    パネル開け（準備中）
+                                </Button>
 
-                        <Button
-                            variant={"outline"}
-                            size={"lg"}
-                            className="border-black"
-                            disabled={true}
-                            onClick={() => {}}
-                        >
-                            その他耐久（準備中）
-                        </Button>
+                                <Button
+                                    variant={"outline"}
+                                    size={"lg"}
+                                    asChild
+                                    className="border-black text-blue-600
+                                        hover:text-blue-800 hover:underline"
+                                >
+                                    <a
+                                        href="https://namazu-tools.net/super-gacha/"
+                                        target="_blank"
+                                        rel="noopener noreferrer"
+                                    >
+                                        <span>
+                                            スーパーガチャツール（なまづつーるず）
+                                        </span>
+                                        <ExternalLink size={16} />
+                                    </a>
+                                </Button>
+                            </>
+                        ) : (
+                            <div className="flex flex-col gap-3">
+                                <Button
+                                    variant={"outline"}
+                                    size={"lg"}
+                                    className="border-black"
+                                    onClick={() => handleSelect("endurance")}
+                                >
+                                    カウント型耐久（単体）
+                                </Button>
 
-                        <Button
-                            variant={"outline"}
-                            size={"lg"}
-                            className="border-black"
-                            disabled={true}
-                            onClick={() => handleSelect("panel-open")}
-                        >
-                            パネル開け（準備中）
-                        </Button>
+                                <Button
+                                    variant={"outline"}
+                                    size={"lg"}
+                                    className="border-black"
+                                    onClick={() =>
+                                        handleSelect("multi-endurance")
+                                    }
+                                >
+                                    カウント型耐久（複数）
+                                </Button>
 
-                        <Button
-                            variant={"outline"}
-                            size={"lg"}
-                            asChild
-                            className="border-black text-blue-600
-                                hover:text-blue-800 hover:underline"
-                        >
-                            <a
-                                href="https://namazu-tools.net/super-gacha/"
-                                target="_blank"
-                                rel="noopener noreferrer"
-                            >
-                                <span>
-                                    スーパーガチャツール（なまづつーるず）
-                                </span>
-                                <ExternalLink size={16} />
-                            </a>
-                        </Button>
+                                <Button
+                                    variant={"outline"}
+                                    size={"lg"}
+                                    className="border-black"
+                                    disabled={true}
+                                >
+                                    ギフト耐久（準備中）
+                                </Button>
+
+                                <Button
+                                    variant={"outline"}
+                                    size={"lg"}
+                                    className="relative border-black"
+                                    onClick={() => setStep("main")}
+                                >
+                                    <ChevronLeft className="absolute left-2" />
+                                    戻る
+                                </Button>
+                            </div>
+                        )}
                     </div>
 
                     <Dialog.Close
