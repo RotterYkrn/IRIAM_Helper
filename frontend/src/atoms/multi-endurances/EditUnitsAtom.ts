@@ -186,7 +186,11 @@ export const validUnitsAtom = atom((get) =>
                 target_count: action.target_count.valid,
             }),
         ),
+        (units) => (Chunk.isEmpty(units) ? Chunk.make(Option.none()) : units),
         Option.all,
         Option.map(Chunk.fromIterable),
+        Option.flatMap((units) =>
+            Chunk.isEmpty(units) ? Option.none() : Option.some(units),
+        ),
     ),
 );
