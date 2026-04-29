@@ -40,13 +40,10 @@ export const EnduranceActionHistoryActionIdSchema = Schema.NullOr(
  */
 export const EnduranceActionHistoryTypeSchema = Schema.String.pipe(
     Schema.compose(Schema.Literal("normal", "rescue", "sabotage")),
-    Schema.brand("EnduranceActionHistoryType"),
 );
 
 /** アクションを行った回数 */
-export const EnduranceActionHistoryActionCountSchema = Schema.Int.pipe(
-    Schema.brand("EnduranceActionHistoryActionCount"),
-);
+export const EnduranceActionHistoryActionCountSchema = Schema.Int;
 
 /** {@link EnduranceActionHistoriesNewSchema} */
 export type EnduranceActionHistoriesNew = Readonly<{

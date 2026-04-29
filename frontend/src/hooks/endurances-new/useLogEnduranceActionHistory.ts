@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Effect, Schema } from "effect";
+import { Effect } from "effect";
 
 import { EnduranceKey } from "../query-keys/endurances";
 import { ProjectKey } from "../query-keys/projects";
@@ -9,17 +9,8 @@ import type {
     EnduranceProjectDto,
 } from "@/domain/endurances-new/dto/EnduranceProjectDto";
 import type { LogEnduranceActionHistoryNewArgsEncoded } from "@/domain/endurances-new/rpcs/LogEnduranceActionHistoryNew";
-import {
-    EnduranceNormalCountSchema,
-    EnduranceRescueCountSchema,
-    EnduranceSabotageCountSchema,
-} from "@/domain/endurances-new/tables/EnduranceActionCounts";
 import type { EnduranceActionHistoriesNewSchema } from "@/domain/endurances-new/tables/EnduranceActionHistoriesNew";
-import {
-    EnduranceActionCountSchema,
-    EnduranceActionsNewSchema,
-} from "@/domain/endurances-new/tables/EnduranceActionsNew";
-import { EnduranceCurrentCountSchema } from "@/domain/endurances-new/tables/EnduranceUnits";
+import { EnduranceActionsNewSchema } from "@/domain/endurances-new/tables/EnduranceActionsNew";
 import { logEnduranceActionHistoryNew } from "@/use-cases/endurances-new/logEnduranceActionHistory";
 
 /**
@@ -163,15 +154,11 @@ const updateProjectNormal =
             ...old,
             unit: {
                 ...old.unit,
-                current_count: Schema.decodeSync(EnduranceCurrentCountSchema)(
-                    old.unit.current_count + actionCount,
-                ),
+                current_count: old.unit.current_count + actionCount,
             },
             action_count: {
                 ...old.action_count,
-                normal_count: Schema.decodeSync(EnduranceNormalCountSchema)(
-                    old.action_count.normal_count + actionCount,
-                ),
+                normal_count: old.action_count.normal_count + actionCount,
             },
         };
 
@@ -185,15 +172,13 @@ const updateProjectRescue =
             ...old,
             unit: {
                 ...old.unit,
-                current_count: Schema.decodeSync(EnduranceCurrentCountSchema)(
+                current_count:
                     old.unit.current_count + actionAmount * actionCount,
-                ),
             },
             action_count: {
                 ...old.action_count,
-                rescue_count: Schema.decodeSync(EnduranceRescueCountSchema)(
+                rescue_count:
                     old.action_count.rescue_count + actionAmount * actionCount,
-                ),
             },
         };
 
@@ -207,16 +192,14 @@ const updateProjectSabotage =
             ...old,
             unit: {
                 ...old.unit,
-                current_count: Schema.decodeSync(EnduranceCurrentCountSchema)(
+                current_count:
                     old.unit.current_count - actionAmount * actionCount,
-                ),
             },
             action_count: {
                 ...old.action_count,
-                sabotage_count: Schema.decodeSync(EnduranceSabotageCountSchema)(
+                sabotage_count:
                     old.action_count.sabotage_count +
-                        actionAmount * actionCount,
-                ),
+                    actionAmount * actionCount,
             },
         };
 
@@ -229,7 +212,5 @@ const updateActionCount =
     ): typeof EnduranceActionDtoSchema.Type | undefined =>
         old && {
             ...old,
-            count: Schema.decodeSync(EnduranceActionCountSchema)(
-                old.count + actionCount,
-            ),
+            count: old.count + actionCount,
         };

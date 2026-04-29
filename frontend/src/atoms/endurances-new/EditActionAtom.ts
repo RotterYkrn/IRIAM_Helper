@@ -2,21 +2,16 @@ import { Option, Chunk, Either, pipe, Schema } from "effect";
 import { atom } from "jotai";
 import { atomFamily } from "jotai-family";
 
+import type { EditState } from "../types";
+
 import type { EnduranceActionDtoSchema } from "@/domain/endurances-new/dto/EnduranceProjectDto";
 import {
     EnduranceActionAmountSchema,
     EnduranceActionIdSchema,
     EnduranceActionLabelSchema,
-    EnduranceActionPositionSchema,
     type EnduranceActionsNewSchema,
 } from "@/domain/endurances-new/tables/EnduranceActionsNew";
 import { normalizeNumber } from "@/utils/validations";
-
-type EditState<T> = {
-    input: string;
-    valid: Option.Option<T>;
-    error: string | null;
-};
 
 /**
  * 編集中の救済・妨害の各要素を管理するための型。
@@ -84,12 +79,8 @@ const createEditActionAtoms = () => {
     const createAction = atom(null, (_, set) => {
         set(editActions, (prev) =>
             Chunk.append(prev, {
-                id: Schema.decodeSync(EnduranceActionIdSchema)(
-                    crypto.randomUUID(),
-                ),
-                position: Schema.decodeSync(EnduranceActionPositionSchema)(
-                    prev.length,
-                ),
+                id: EnduranceActionIdSchema.make(crypto.randomUUID()),
+                position: prev.length,
                 label: {
                     input: "",
                     valid: Option.none(),
@@ -114,9 +105,7 @@ const createEditActionAtoms = () => {
                         Chunk.filter((action) => action.id !== id),
                         Chunk.map((action, i) => ({
                             ...action,
-                            position: Schema.decodeSync(
-                                EnduranceActionPositionSchema,
-                            )(i),
+                            position: i,
                         })),
                     ),
                 );

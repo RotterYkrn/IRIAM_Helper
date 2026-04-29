@@ -15,12 +15,13 @@ export type ProjectIdEncoded = typeof ProjectIdSchema.Encoded;
  * 企画の種類
  *
  * `"endurance"`: 耐久企画\
- * `"gacha"`: ガチャ企画\
+ * `"multi-endurance"`: 複数耐久企画\
  * `"panel_open"`: パネル開け企画
  */
 export const ProjectTypeSchema = Schema.String.pipe(
-    Schema.compose(Schema.Literal("endurance", "gacha", "panel_open")),
-    Schema.brand("ProjectType"),
+    Schema.compose(
+        Schema.Literal("endurance", "multi-endurance", "panel_open"),
+    ),
 );
 
 /**
@@ -32,7 +33,6 @@ export const ProjectTypeSchema = Schema.String.pipe(
  */
 export const ProjectStatusSchema = Schema.String.pipe(
     Schema.compose(Schema.Literal("scheduled", "active", "finished")),
-    Schema.brand("ProjectStatus"),
 );
 
 export const ProjectTitleSchema = Schema.String.pipe(

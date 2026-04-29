@@ -1,38 +1,42 @@
 import { ExternalLink } from "lucide-react";
 import { Suspense } from "react";
 
-import CreateProjectButton from "./projects/CreateProjectButton";
-import ProjectSideBarLayout from "./projects/ProjectSideBarLayout";
+import SelectProjectTypeDialog from "./projects/presenters/SelectProjectTypeDialog";
+import SideBarProjectListContainer from "./projects/side-bar-project-lists/SideBarProjectListContainer";
 
-type SideBarProps = {
-    /** サイドバーを開閉を制御するハンドラ */
-    onToggle: () => void;
-};
+import { Button } from "@/components/ui/button";
+import { useAppContext } from "@/contexts/apps/useAppContext";
 
 /**
  * サイドバーのレイアウトを定義します。
  */
-const SideBarLayout = ({ onToggle }: SideBarProps) => {
+const SideBarLayout = () => {
+    const { setIsOpenSideBar } = useAppContext();
+
     return (
         <div>
             <div
                 className="flex h-12 bg-pink-200 items-center justify-start
                     px-2"
             >
-                <button
-                    onClick={onToggle}
-                    className="flex h-8 w-8 items-center justify-center
-                        rounded-md transition hover:bg-pink-100"
+                <Button
+                    variant="ghost"
+                    size="icon"
+                    className="active:scale-100"
+                    onClick={() => setIsOpenSideBar(false)}
                 >
                     ×
-                </button>
+                </Button>
             </div>
-            <div className="flex min-h-screen w-70 flex-col p-4">
+            <div className="flex min-h-screen w-70 flex-col px-2 py-4">
                 {/* 上部コンテンツ：space-y-4 で間隔を保ち、flex-1 で残りのスペースを専有 */}
                 <div className="flex-1 space-y-4 overflow-y-auto">
-                    <CreateProjectButton />
+                    <SelectProjectTypeDialog
+                        variant={"ghost"}
+                        className="w-full justify-start px-2"
+                    />
                     <Suspense fallback={<div>読込中...</div>}>
-                        <ProjectSideBarLayout toggleSidebar={onToggle} />
+                        <SideBarProjectListContainer />
                     </Suspense>
                 </div>
 

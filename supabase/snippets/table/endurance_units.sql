@@ -4,6 +4,8 @@ create table endurance_units (
     id uuid not null primary key default gen_random_uuid(),
     project_id uuid not null,
 
+    position integer not null default 0 check(position >= 0),
+
     label text not null check(length(trim(label)) > 0),
 
     target_count numeric(10, 2) not null check (target_count > 0),

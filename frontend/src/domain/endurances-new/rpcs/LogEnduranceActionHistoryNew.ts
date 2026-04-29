@@ -40,9 +40,7 @@ const LogEnduranceActionHistoryNewArgsActionIdSchema =
                 if (idOrNull === null) {
                     return Option.none();
                 }
-                return Option.some(
-                    Schema.decodeSync(EnduranceActionIdSchema)(idOrNull),
-                );
+                return Option.some(EnduranceActionIdSchema.make(idOrNull));
             },
         },
     );
