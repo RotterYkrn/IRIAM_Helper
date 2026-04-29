@@ -1,5 +1,5 @@
 import * as Dialog from "@radix-ui/react-dialog";
-import { ChevronLeft, ChevronRight, ExternalLink } from "lucide-react";
+import { ChevronLeft, ChevronRight, ExternalLink, Plus } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -54,7 +54,8 @@ const SelectProjectTypeDialog = ({ variant, className }: Props) => {
                     className={cn("", className)}
                     onClick={handleTriggerClick}
                 >
-                    ＋ 企画新規作成
+                    <Plus />
+                    企画新規作成
                 </Button>
             </Dialog.Trigger>
             <Dialog.Portal>

@@ -1,10 +1,12 @@
-import { ExternalLink } from "lucide-react";
+import { DoorOpen, ExternalLink } from "lucide-react";
 import { Suspense } from "react";
+import { Link } from "react-router-dom";
 
-import SelectProjectTypeDialog from "./projects/presenters/SelectProjectTypeDialog";
 import SideBarProjectListContainer from "./projects/side-bar-project-lists/SideBarProjectListContainer";
+import SelectProjectTypeDialog from "./ui/SelectProjectTypeDialog";
 
 import { Button } from "@/components/ui/button";
+import { Separator } from "@/components/ui/separator";
 import { useAppContext } from "@/contexts/apps/useAppContext";
 
 /**
@@ -30,11 +32,25 @@ const SideBarLayout = () => {
             </div>
             <div className="flex min-h-screen w-70 flex-col px-2 py-4">
                 {/* 上部コンテンツ：space-y-4 で間隔を保ち、flex-1 で残りのスペースを専有 */}
-                <div className="flex-1 space-y-4 overflow-y-auto">
+                <div className="flex-1 overflow-y-auto">
                     <SelectProjectTypeDialog
                         variant={"ghost"}
                         className="w-full justify-start px-2"
                     />
+                    <Button
+                        variant="ghost"
+                        asChild
+                        className="w-full justify-start px-2"
+                        onClick={() => setIsOpenSideBar(false)}
+                    >
+                        <Link to="/entry-endurance">
+                            <DoorOpen />
+                            毎週日曜入室100人耐久
+                        </Link>
+                    </Button>
+
+                    <Separator className="my-4" />
+
                     <Suspense fallback={<div>読込中...</div>}>
                         <SideBarProjectListContainer />
                     </Suspense>
