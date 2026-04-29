@@ -1,6 +1,7 @@
 import { useQueryClient } from "@tanstack/react-query";
 import { Chunk, pipe } from "effect";
 import { useAtomValue, useSetAtom } from "jotai";
+import { useNavigate } from "react-router-dom";
 
 import ProjectContainer from "../projects/containers/ProjectContainer";
 import EnduranceView from "../ui/EnduranceView";
@@ -21,6 +22,7 @@ import {
 import { useProjectContext } from "@/contexts/projects/useProjectContext";
 import type { MultiEnduranceUnitSchema } from "@/domain/multi-endurances/dto/MultiEnduranceProjectDto";
 import { type ProjectId } from "@/domain/projects/tables/Project";
+import { useDuplicateMultiEnduranceProjectNew } from "@/hooks/multi-endurances/useDuplicateMultiEnduranceProject";
 import { useFetchMultiEnduranceProject } from "@/hooks/multi-endurances/useFetchMultiEnduranceProject";
 import { useUpdateMultiEnduranceProject } from "@/hooks/multi-endurances/useUpdateMultiEnduranceProject";
 import { EnduranceKey } from "@/hooks/query-keys/endurances";
@@ -35,12 +37,13 @@ type Props = {
  */
 const MultiEnduranceProjectLayout = ({ projectId }: Props) => {
     const queryClient = useQueryClient();
-    // const navigate = useNavigate();
+    const navigate = useNavigate();
     const { isEdit, setIsEdit } = useProjectContext();
 
     const projectQuery = useFetchMultiEnduranceProject(projectId);
     const updateProject = useUpdateMultiEnduranceProject();
-    // const duplicateEnduranceProject = useDuplicateEnduranceProjectNew();
+    const duplicateMultiEnduranceProject =
+        useDuplicateMultiEnduranceProjectNew();
 
     const editUnits = useAtomValue(editUnitsAtom);
     const validEditState = useAtomValue(validEditMultiEnduranceAtom);
@@ -102,24 +105,24 @@ const MultiEnduranceProjectLayout = ({ projectId }: Props) => {
         );
     };
 
-    // const onDuplicate = () => {
-    //     if (!confirm("この企画をコピーしますか？")) {
-    //         return;
-    //     }
-    //     duplicateEnduranceProject.mutate(
-    //         { project_id: project.id },
-    //         {
-    //             onSuccess: (id) => {
-    //                 successToast(`「${project.title}」がコピーされました`);
-    //                 navigate(`/projects/endurance/${id}`);
-    //             },
-    //             onError: (error) => {
-    //                 console.error(error);
-    //                 errorToast(`「${project.title}」のコピーに失敗しました`);
-    //             },
-    //         },
-    //     );
-    // };
+    const onDuplicate = () => {
+        if (!confirm("この企画をコピーしますか？")) {
+            return;
+        }
+        duplicateMultiEnduranceProject.mutate(
+            { project_id: project.id },
+            {
+                onSuccess: (id) => {
+                    successToast(`「${project.title}」がコピーされました`);
+                    navigate(`/projects/multi-endurance/${id}`);
+                },
+                onError: (error) => {
+                    console.error(error);
+                    errorToast(`「${project.title}」のコピーに失敗しました`);
+                },
+            },
+        );
+    };
 
     const actionButtonCounts = Chunk.fromIterable([1, 10, 100]);
 
@@ -128,7 +131,7 @@ const MultiEnduranceProjectLayout = ({ projectId }: Props) => {
             isSaveDisabled={disabled}
             onEdit={onEdit}
             onSave={onSave}
-            onDuplicate={() => {}}
+            onDuplicate={onDuplicate}
         >
             <EnduranceView
                 projectStatus={project.status}

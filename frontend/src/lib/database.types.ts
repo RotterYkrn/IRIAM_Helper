@@ -286,6 +286,10 @@ export type Database = {
         Args: { p_project_id: string }
         Returns: string
       }
+      duplicate_multi_endurance_project: {
+        Args: { p_project_id: string }
+        Returns: string
+      }
       finish_project: { Args: { p_project_id: string }; Returns: string }
       log_endurance_action_history_new: {
         Args: {
