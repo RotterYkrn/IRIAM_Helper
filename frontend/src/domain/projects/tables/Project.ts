@@ -22,7 +22,6 @@ export const ProjectTypeSchema = Schema.String.pipe(
     Schema.compose(
         Schema.Literal("endurance", "multi-endurance", "panel_open"),
     ),
-    Schema.brand("ProjectType"),
 );
 
 /**
@@ -34,7 +33,6 @@ export const ProjectTypeSchema = Schema.String.pipe(
  */
 export const ProjectStatusSchema = Schema.String.pipe(
     Schema.compose(Schema.Literal("scheduled", "active", "finished")),
-    Schema.brand("ProjectStatus"),
 );
 
 export const ProjectTitleSchema = Schema.String.pipe(

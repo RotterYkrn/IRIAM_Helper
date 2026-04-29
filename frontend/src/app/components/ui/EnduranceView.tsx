@@ -2,16 +2,18 @@ import { pipe, Chunk } from "effect";
 import { useSetAtom } from "jotai";
 import React, { createContext, useContext } from "react";
 
+import InputField from "./InputField";
+
 import {
     editRescueActionsAtomsNew,
     editSabotageActionsAtomsNew,
 } from "@/atoms/endurances-new/EditActionAtom";
+import { Button } from "@/components/ui/button";
+import { Input } from "@/components/ui/input";
 import type { EnduranceActionCountsSchema } from "@/domain/endurances-new/tables/EnduranceActionCounts";
 import type { EnduranceActionHistoriesNewSchema } from "@/domain/endurances-new/tables/EnduranceActionHistoriesNew";
 import type { EnduranceActionsNewSchema } from "@/domain/endurances-new/tables/EnduranceActionsNew";
 import type { ProjectSchema } from "@/domain/projects/tables/Project";
-import MinusButton from "@/utils/components/MinusButton";
-import PlusButton from "@/utils/components/PlusButton";
 
 /**
  * コンポーネント描画に必要な状態を共有する Context
@@ -20,7 +22,7 @@ type EnduranceContextType = {
     projectStatus: typeof ProjectSchema.Type.status;
     isEdit: boolean;
     actionButtonCounts: Chunk.Chunk<
-        typeof EnduranceActionHistoriesNewSchema.Encoded.action_count
+        typeof EnduranceActionHistoriesNewSchema.Type.action_count
     >;
 };
 
@@ -88,38 +90,13 @@ const EditTargetCount = ({
 }: EditTargetCountContextType) => {
     return (
         <>
-            <label
-                htmlFor="target-count"
-                className="relative flex flex-col items-center"
-            >
-                {/* 左上に配置されるキャプション */}
-                <span
-                    className="absolute -top-6 -left-6 text-md font-medium
-                        text-gray-600"
-                >
-                    目標数
-                </span>
-
-                <div className="flex items-center">
-                    <input
-                        id="target-count"
-                        type="text"
-                        className="text-4xl font-mono w-30 text-center
-                            outline-none border-b-2 border-gray-300
-                            focus:border-gray-500 transition-colors"
-                        value={targetCountState.input}
-                        onChange={(e) => setTargetCount(e.target.value)}
-                    />
-                    {targetCountState.error && (
-                        <p
-                            className="absolute top-full mt-1 text-red-500
-                                text-sm whitespace-nowrap"
-                        >
-                            {targetCountState.error}
-                        </p>
-                    )}
-                </div>
-            </label>
+            <InputField
+                label="目標数"
+                error={targetCountState.error}
+                setValue={setTargetCount}
+                value={targetCountState.input}
+                className="text-4xl font-mono w-30"
+            />
         </>
     );
 };
@@ -160,16 +137,18 @@ const PlusButtons = ({ onIncrement }: PlusButtonsProps) => {
     );
 
     return (
-        <>
+        <div className="flex flex-row gap-2">
             {Chunk.map(buttonConfigs, (config) => (
-                <PlusButton
+                <Button
                     key={config.label}
+                    className={`h-7 px-2 rounded-full text-white bg-blue-500
+                    hover:bg-blue-500/80`}
                     onClick={() => onIncrement(config.count)}
                 >
                     {config.label}
-                </PlusButton>
+                </Button>
             ))}
-        </>
+        </div>
     );
 };
 
@@ -189,6 +168,7 @@ const MinusButtons = ({ disabled, onIncrement }: MinusButtonsProps) => {
 
     const buttonConfigs = pipe(
         actionButtonCounts,
+        // Chunk.reverse,
         Chunk.map((count) => ({
             label: count === 1 ? "-" : `-${count}`,
             count: -count,
@@ -196,17 +176,19 @@ const MinusButtons = ({ disabled, onIncrement }: MinusButtonsProps) => {
     );
 
     return (
-        <>
+        <div className="flex flex-row gap-2">
             {Chunk.map(buttonConfigs, (config) => (
-                <MinusButton
+                <Button
                     key={config.label}
+                    className={`h-7 rounded-full text-white bg-red-500
+                    hover:bg-red-500/80`}
                     disabled={disabled}
                     onClick={() => onIncrement(config.count)}
                 >
                     {config.label}
-                </MinusButton>
+                </Button>
             ))}
-        </>
+        </div>
     );
 };
 
@@ -290,13 +272,12 @@ const RescueActionsField = ({
             <div className="flex justify-between items-center gap-4">
                 <h2 className="text-lg font-bold">救済</h2>
                 {isEdit && (
-                    <button
-                        className="bg-red-200 hover:bg-red-300 px-2 py-1
-                            rounded-md border border-red-300"
+                    <Button
+                        variant={"outline"}
                         onClick={onAddAction}
                     >
                         ＋追加
-                    </button>
+                    </Button>
                 )}
                 {projectStatus !== "scheduled" && (
                     <p
@@ -349,13 +330,12 @@ const SabotageActionsField = ({
             <div className="flex justify-between items-center gap-4">
                 <h2 className="text-lg font-bold">妨害</h2>
                 {isEdit && (
-                    <button
-                        className="bg-blue-200 hover:bg-blue-300 px-2 py-1
-                            rounded-md border border-blue-400"
+                    <Button
+                        variant={"outline"}
                         onClick={onAddAction}
                     >
                         ＋追加
-                    </button>
+                    </Button>
                 )}
                 {projectStatus !== "scheduled" && (
                     <p
@@ -384,8 +364,8 @@ type ActionProps = {
 const Action = ({ children, className }: ActionProps) => {
     return (
         <div
-            className={`flex flex-col items-center justify-center p-2 gap-1
-                bg-white rounded-xl border border-slate-300 shadow-sm
+            className={`relative flex flex-col items-center justify-center p-2
+                gap-1 bg-white rounded-xl border border-slate-300 shadow-sm
                 ${className ?? "w-32"}`}
         >
             {children}
@@ -441,11 +421,11 @@ type EditLabelProps = {
 const EditLabel = ({ labelState, setLabel }: EditLabelProps) => {
     return (
         <>
-            <input
-                className="w-20 text-center outline-none border-b-2
-                    border-gray-300 focus:border-gray-500 transition-colors"
+            <Input
+                className="w-20"
                 value={labelState.input}
                 placeholder="ラベルを入力"
+                aria-invalid={!!labelState.error}
                 onChange={(e) => setLabel(e.target.value)}
             />
             {labelState.error && (
@@ -479,11 +459,11 @@ type EditAmountProps = {
 const EditAmount = ({ amountState, setAmount }: EditAmountProps) => {
     return (
         <>
-            <input
-                className="w-20 text-center outline-none border-b-2
-                    border-gray-300 focus:border-gray-500 transition-colors"
+            <Input
+                className="w-20"
                 value={amountState.input}
                 placeholder="数値を入力"
+                aria-invalid={!!amountState.error}
                 onChange={(e) => setAmount(e.target.value)}
             />
             {amountState.error && (
@@ -507,22 +487,6 @@ const ActionProgress = ({ children }: ProgressProps) => {
     return <div className="flex flex-row justify-center gap-2">{children}</div>;
 };
 
-type DeleteActionButtonProps = {
-    onDelete: () => void;
-};
-
-const DeleteActionButton = ({ onDelete }: DeleteActionButtonProps) => {
-    return (
-        <button
-            className="bg-gray-300 hover:bg-gray-200 px-2 py-1 rounded-md border
-                border-gray-400 cursor-pointer"
-            onClick={onDelete}
-        >
-            削除
-        </button>
-    );
-};
-
 EnduranceView.CountProgress = CountProgress;
 EnduranceView.EditTargetCount = EditTargetCount;
 
@@ -543,6 +507,5 @@ EnduranceView.EditLabel = EditLabel;
 EnduranceView.Amount = Amount;
 EnduranceView.EditAmount = EditAmount;
 EnduranceView.ActionProgress = ActionProgress;
-EnduranceView.DeleteActionButton = DeleteActionButton;
 
 export default EnduranceView;

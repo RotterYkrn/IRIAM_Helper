@@ -9,7 +9,6 @@ import {
     EnduranceActionAmountSchema,
     EnduranceActionIdSchema,
     EnduranceActionLabelSchema,
-    EnduranceActionPositionSchema,
     type EnduranceActionsNewSchema,
 } from "@/domain/endurances-new/tables/EnduranceActionsNew";
 import { normalizeNumber } from "@/utils/validations";
@@ -80,12 +79,8 @@ const createEditActionAtoms = () => {
     const createAction = atom(null, (_, set) => {
         set(editActions, (prev) =>
             Chunk.append(prev, {
-                id: Schema.decodeSync(EnduranceActionIdSchema)(
-                    crypto.randomUUID(),
-                ),
-                position: Schema.decodeSync(EnduranceActionPositionSchema)(
-                    prev.length,
-                ),
+                id: EnduranceActionIdSchema.make(crypto.randomUUID()),
+                position: prev.length,
                 label: {
                     input: "",
                     valid: Option.none(),
@@ -110,9 +105,7 @@ const createEditActionAtoms = () => {
                         Chunk.filter((action) => action.id !== id),
                         Chunk.map((action, i) => ({
                             ...action,
-                            position: Schema.decodeSync(
-                                EnduranceActionPositionSchema,
-                            )(i),
+                            position: i,
                         })),
                     ),
                 );

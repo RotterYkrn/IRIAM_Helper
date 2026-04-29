@@ -1,16 +1,18 @@
-import { Suspense, useState } from "react";
+import { Suspense } from "react";
 import { Outlet } from "react-router-dom";
 
 import MainHeader from "./MainHeader";
 import SideBarLayout from "./SideBarLayout";
 import VersionLabel from "./VersionLabel";
 
+import { useAppContext } from "@/contexts/apps/useAppContext";
+
 /**
  * ページ全体の基礎レイアウトを定義します。
  * Routeの最上位に配置してください。
  */
 const Layout = () => {
-    const [open, setOpen] = useState(false);
+    const { isOpenSideBar, setIsOpenSideBar } = useAppContext();
 
     return (
         <>
@@ -19,21 +21,21 @@ const Layout = () => {
                 className={`fixed top-0 left-0 h-screen z-40 rounded-r-2xl
                     overflow-hidden bg-white border-r border-gray-400 shadow
                     transition-[width] duration-300 ease-in-out
-                    ${open ? "w-70" : "w-0"} `}
+                    ${isOpenSideBar ? "w-70" : "w-0"} `}
             >
-                <SideBarLayout setSidebarOpen={setOpen} />
+                <SideBarLayout />
             </aside>
 
             {/* サイドバーを開いたら、背景を暗くする */}
-            {open && (
+            {isOpenSideBar && (
                 <div
                     className="fixed inset-0 bg-black/40 z-30"
-                    onClick={() => setOpen(false)}
+                    onClick={() => setIsOpenSideBar(false)}
                 />
             )}
 
             <div className={"min-h-screen bg-pink-50 flex flex-col"}>
-                <MainHeader onToggle={() => setOpen((prev) => !prev)} />
+                <MainHeader />
                 <main
                     className="flex-1 p-4 md:p-8 flex justify-center
                         items-start"

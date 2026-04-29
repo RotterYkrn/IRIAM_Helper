@@ -1,7 +1,9 @@
 import { Provider } from "jotai";
-import { useParams } from "react-router-dom";
 
 import EnduranceProjectLayout from "../components/endurances-new/EnduranceProjectLayout";
+
+import { ProjectProvider } from "@/contexts/projects/ProjectProvider";
+import { useProjectId } from "@/hooks/projects/useProjectId";
 
 /**
  * 耐久企画ページ用レイアウト\
@@ -10,18 +12,13 @@ import EnduranceProjectLayout from "../components/endurances-new/EnduranceProjec
  * @note URLが`/projects/endurance/:projectId`である必要があります。
  */
 const EnduranceProjectPage = () => {
-    const { projectId } = useParams<{ projectId: string }>();
-
-    if (!projectId) {
-        return <div>Project ID is required.</div>;
-    }
+    const projectId = useProjectId();
 
     return (
         <Provider>
-            <EnduranceProjectLayout
-                key={projectId}
-                projectId={projectId}
-            />
+            <ProjectProvider projectId={projectId}>
+                <EnduranceProjectLayout key={projectId} />
+            </ProjectProvider>
         </Provider>
     );
 };

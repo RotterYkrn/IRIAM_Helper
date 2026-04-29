@@ -1,12 +1,12 @@
-import { Chunk, Schema } from "effect";
+import { Chunk } from "effect";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { useEffectEvent, useLayoutEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
-import CreateProjectLayout from "../projects/CreateProjectLayout";
+import CreateProjectContainer from "../projects/containers/CreateProjectContainer";
+import EnduranceView from "../ui/EnduranceView";
 
 import EditEnduranceActionRow from "./EditEnduranceActionRow";
-import EnduranceView from "./EnduranceView";
 
 import {
     editSabotageActionsAtomsNew,
@@ -18,16 +18,8 @@ import {
     validEditEnduranceAtom,
 } from "@/atoms/endurances-new/EditEnduranceAtom";
 import { editTargetCountAtom } from "@/atoms/endurances-new/EditTargetCountAtom";
-import {
-    EnduranceRescueCountSchema,
-    EnduranceSabotageCountSchema,
-} from "@/domain/endurances-new/tables/EnduranceActionCounts";
-import { EnduranceActionTypeSchema } from "@/domain/endurances-new/tables/EnduranceActionsNew";
 import { EnduranceTargetCountSchema } from "@/domain/endurances-new/tables/EnduranceUnits";
-import {
-    ProjectStatusSchema,
-    ProjectTitleSchema,
-} from "@/domain/projects/tables/Project";
+import { ProjectTitleSchema } from "@/domain/projects/tables/Project";
 import { useCreateEnduranceProjectNew } from "@/hooks/endurances-new/useCreateEnduranceProject";
 import { errorToast, successToast } from "@/utils/toast";
 
@@ -52,8 +44,8 @@ const CreateEnduranceProjectLayout = () => {
 
     const initEvent = useEffectEvent(() =>
         initEditEndurance({
-            title: Schema.decodeSync(ProjectTitleSchema)("○○耐久"),
-            target_count: Schema.decodeSync(EnduranceTargetCountSchema)(100),
+            title: ProjectTitleSchema.make("○○耐久"),
+            target_count: EnduranceTargetCountSchema.make(100),
             rescue_actions: Chunk.empty(),
             sabotage_actions: Chunk.empty(),
         }),
@@ -82,14 +74,12 @@ const CreateEnduranceProjectLayout = () => {
     };
 
     return (
-        <CreateProjectLayout
+        <CreateProjectContainer
             isSaveDisabled={disabled}
             onSave={onSave}
         >
             <EnduranceView
-                projectStatus={Schema.decodeSync(ProjectStatusSchema)(
-                    "scheduled",
-                )}
+                projectStatus={"scheduled"}
                 isEdit={true}
                 actionButtonCounts={Chunk.empty()}
             >
@@ -100,41 +90,33 @@ const CreateEnduranceProjectLayout = () => {
                 <EnduranceView.ActionsField>
                     <EnduranceView.RescueActionsField
                         actionLength={0}
-                        rescueCount={Schema.decodeSync(
-                            EnduranceRescueCountSchema,
-                        )(0)}
+                        rescueCount={0}
                         isWide={false}
                     >
                         {Chunk.map(editRescueState, (action) => (
                             <EditEnduranceActionRow
                                 key={action.id}
                                 actionId={action.id}
-                                actionType={Schema.decodeSync(
-                                    EnduranceActionTypeSchema,
-                                )("rescue")}
+                                actionType={"rescue"}
                             />
                         ))}
                     </EnduranceView.RescueActionsField>
                     <EnduranceView.SabotageActionsField
                         actionLength={0}
-                        sabotageCount={Schema.decodeSync(
-                            EnduranceSabotageCountSchema,
-                        )(0)}
+                        sabotageCount={0}
                         isWide={false}
                     >
                         {Chunk.map(editSabotageState, (action) => (
                             <EditEnduranceActionRow
                                 key={action.id}
                                 actionId={action.id}
-                                actionType={Schema.decodeSync(
-                                    EnduranceActionTypeSchema,
-                                )("sabotage")}
+                                actionType={"sabotage"}
                             />
                         ))}
                     </EnduranceView.SabotageActionsField>
                 </EnduranceView.ActionsField>
             </EnduranceView>
-        </CreateProjectLayout>
+        </CreateProjectContainer>
     );
 };
 

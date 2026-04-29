@@ -28,13 +28,10 @@ export const EnduranceActionIdSchema = Schema.UUID.pipe(
  */
 export const EnduranceActionTypeSchema = Schema.String.pipe(
     Schema.compose(Schema.Literal("rescue", "sabotage")),
-    Schema.brand("EnduranceActionType"),
 );
 
 /** 並び制御用 */
-export const EnduranceActionPositionSchema = Schema.NonNegativeInt.pipe(
-    Schema.brand("EnduranceActionPosition"),
-);
+export const EnduranceActionPositionSchema = Schema.NonNegativeInt;
 
 export const EnduranceActionLabelSchema = Schema.String.pipe(
     Schema.minLength(1, {
@@ -52,9 +49,7 @@ export const EnduranceActionAmountSchema = Schema.Number.pipe(
 );
 
 /** アクションを行った回数 */
-export const EnduranceActionCountSchema = Schema.NonNegativeInt.pipe(
-    Schema.brand("EnduranceActionCount"),
-);
+export const EnduranceActionCountSchema = Schema.NonNegativeInt;
 
 /** {@link EnduranceActionsNewSchema} */
 export type EnduranceActionsNew = Readonly<{
