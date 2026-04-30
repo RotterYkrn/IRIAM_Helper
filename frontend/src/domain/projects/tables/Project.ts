@@ -20,7 +20,12 @@ export type ProjectIdEncoded = typeof ProjectIdSchema.Encoded;
  */
 export const ProjectTypeSchema = Schema.String.pipe(
     Schema.compose(
-        Schema.Literal("endurance", "multi-endurance", "panel_open"),
+        Schema.Literal(
+            "enter-endurance",
+            "endurance",
+            "multi-endurance",
+            "panel_open",
+        ),
     ),
 );
 

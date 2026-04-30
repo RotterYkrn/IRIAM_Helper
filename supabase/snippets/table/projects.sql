@@ -4,7 +4,7 @@ create table projects (
     title text not null check (length(trim(title)) > 0),
 
     type text not null
-        check (type in ('endurance','multi-endurance','panel_open')),
+        check (type in ('entry-endurance','endurance','multi-endurance','panel_open')),
     
     status text not null default 'scheduled'
         check (status in ('scheduled','active','finished')),

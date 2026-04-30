@@ -232,6 +232,86 @@ export type Database = {
           },
         ]
       }
+      enter_logs: {
+        Row: {
+          entered_at: string
+          id: string
+          project_id: string
+          unit_id: string
+          user_name: string
+        }
+        Insert: {
+          entered_at?: string
+          id?: string
+          project_id: string
+          unit_id: string
+          user_name: string
+        }
+        Update: {
+          entered_at?: string
+          id?: string
+          project_id?: string
+          unit_id?: string
+          user_name?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_enter_log_project"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_enter_log_unit"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "enter_units"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      enter_units: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          event_date: string
+          id: string
+          project_id: string
+          started_at: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          event_date: string
+          id?: string
+          project_id: string
+          started_at?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          event_date?: string
+          id?: string
+          project_id?: string
+          started_at?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_enter_unit_project"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       projects: {
         Row: {
           created_at: string
@@ -274,11 +354,13 @@ export type Database = {
         }
         Returns: string
       }
+      create_enter_endurance_project: { Args: never; Returns: string }
+      create_enter_unit: {
+        Args: { p_event_date: string; p_project_id: string }
+        Returns: string
+      }
       create_multi_endurance_project: {
-        Args: {
-          p_title: string
-          p_units: Database["public"]["CompositeTypes"]["create_unit_args"][]
-        }
+        Args: { p_event_date: string }
         Returns: string
       }
       delete_project: { Args: { p_project_id: string }; Returns: undefined }
@@ -298,6 +380,15 @@ export type Database = {
           p_action_id?: string
           p_project_id: string
           p_unit_id: string
+        }
+        Returns: string
+      }
+      log_enter: {
+        Args: {
+          p_entered_at: string
+          p_project_id: string
+          p_unit_id: string
+          p_user_name: string
         }
         Returns: string
       }
