@@ -13,9 +13,7 @@ export const fetchProjectListOptions = queryOptions({
             return await Effect.runPromise(
                 fetchProjects().pipe(
                     Effect.map(
-                        Chunk.filter(
-                            (project) => project.type !== "enter-endurance",
-                        ),
+                        Chunk.filter((p) => p.type !== "enter-endurance"),
                     ),
                 ),
             );
