@@ -9,7 +9,7 @@ type Props =
           type: "none";
           event_date: Date;
           enter_count: null;
-          durationMinute: Option.None<number>;
+          durationMinute: Option.Option<never>;
           onClick: () => void;
       }
     | {

@@ -6,10 +6,14 @@ import {
     isSameMonth,
     format,
     startOfMonth,
-    differenceInMinutes,
     parse,
+    eachDayOfInterval,
+    endOfMonth,
+    isSameDay,
+    differenceInMinutes,
+    max,
 } from "date-fns";
-import { Chunk, pipe, Option, Schema } from "effect";
+import { Chunk, Option, pipe, Schema } from "effect";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -56,21 +60,43 @@ const EnterEnduranceTopLayout = ({ projectId }: Props) => {
     const filteredUnits = useMemo(
         () =>
             pipe(
-                mockUnits.units,
-                Chunk.filter((unit) => isSameMonth(unit.event_date, viewMonth)),
-                Chunk.map((unit) => ({
-                    ...unit,
-                    durationTime:
-                        unit.completed_at && unit.started_at
-                            ? pipe(
-                                  differenceInMinutes(
-                                      unit.completed_at,
-                                      unit.started_at,
-                                  ),
-                                  Option.some,
-                              )
-                            : Option.none(),
-                })),
+                {
+                    start: max([viewMonth, START_DATE]),
+                    end: endOfMonth(viewMonth),
+                },
+                ({ start, end }) =>
+                    eachDayOfInterval({ start, end }).filter(
+                        (date) => date.getDay() === 0,
+                    ),
+                Chunk.fromIterable,
+                Chunk.map((date) =>
+                    pipe(
+                        data.units,
+                        Chunk.findFirst((unit) =>
+                            isSameDay(unit.event_date, date),
+                        ),
+                        Option.match({
+                            onSome: (unit) => ({
+                                ...unit,
+                                type: "existing" as const,
+                                durationTime:
+                                    unit.completed_at && unit.started_at
+                                        ? pipe(
+                                              differenceInMinutes(
+                                                  unit.completed_at,
+                                                  unit.started_at,
+                                              ),
+                                              Option.some,
+                                          )
+                                        : Option.none(),
+                            }),
+                            onNone: () => ({
+                                type: "none" as const,
+                                event_date: date,
+                            }),
+                        }),
+                    ),
+                ),
             ),
         [data.units, viewMonth],
     );
@@ -137,18 +163,38 @@ const EnterEnduranceTopLayout = ({ projectId }: Props) => {
                 </div>
 
                 <div className="flex flex-col">
-                    {Chunk.map(filteredUnits, (unit) => (
-                        <EnterUnitRowButton
-                            key={unit.id}
-                            type="existing"
-                            event_date={unit.event_date}
-                            enter_count={unit.enter_count}
-                            durationMinute={unit.durationTime}
-                            onClick={() =>
-                                navigate(`/enter-endurance/${unit.id}`)
-                            }
-                        />
-                    ))}
+                    {Chunk.map(filteredUnits, (unit) => {
+                        switch (unit.type) {
+                            case "existing":
+                                return (
+                                    <EnterUnitRowButton
+                                        key={unit.id}
+                                        type="existing"
+                                        event_date={unit.event_date}
+                                        enter_count={unit.enter_count}
+                                        durationMinute={unit.durationTime}
+                                        onClick={() =>
+                                            navigate(
+                                                `/enter-endurance/${unit.id}`,
+                                            )
+                                        }
+                                    />
+                                );
+                            case "none":
+                                return (
+                                    <EnterUnitRowButton
+                                        key={unit.event_date.toString()}
+                                        type="none"
+                                        event_date={unit.event_date}
+                                        enter_count={null}
+                                        durationMinute={Option.none()}
+                                        onClick={() =>
+                                            navigate(`/enter-endurance/new`)
+                                        }
+                                    />
+                                );
+                        }
+                    })}
                 </div>
             </div>
         </div>
