@@ -33,8 +33,8 @@ const mockUnits = Schema.decodeSync(EnterProjectDtoSchema)({
             status: "scheduled",
             event_date: new Date(2026, 3, 19).toString(),
             enter_count: 10,
-            started_at: null,
-            completed_at: null,
+            started_at: new Date(2026, 3, 19).toString(),
+            completed_at: new Date(2026, 3, 20).toString(),
         },
     ],
 });
@@ -67,7 +67,6 @@ const EnterEnduranceTopLayout = ({ projectId }: Props) => {
                                       unit.completed_at,
                                       unit.started_at,
                                   ),
-                                  (min) => new Date(0, 0, 0, 0, min),
                                   Option.some,
                               )
                             : Option.none(),
@@ -144,7 +143,7 @@ const EnterEnduranceTopLayout = ({ projectId }: Props) => {
                             type="existing"
                             event_date={unit.event_date}
                             enter_count={unit.enter_count}
-                            durationTime={unit.durationTime}
+                            durationMinute={unit.durationTime}
                             onClick={() =>
                                 navigate(`/enter-endurance/${unit.id}`)
                             }

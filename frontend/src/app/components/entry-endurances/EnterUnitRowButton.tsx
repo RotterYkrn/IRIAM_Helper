@@ -1,5 +1,5 @@
 import { format } from "date-fns";
-import { Option } from "effect";
+import { Option, pipe } from "effect";
 
 import { Button } from "@/components/ui/button";
 import type { EnterUnitSchema } from "@/domain/enter_endurances/tables/EnterUnit";
@@ -9,21 +9,21 @@ type Props =
           type: "none";
           event_date: Date;
           enter_count: null;
-          durationTime: Option.None<Date>;
+          durationMinute: Option.None<number>;
           onClick: () => void;
       }
     | {
           type: "existing";
           event_date: Date;
           enter_count: typeof EnterUnitSchema.Type.enter_count;
-          durationTime: Option.Option<Date>;
+          durationMinute: Option.Option<number>;
           onClick: () => void;
       };
 
 const EnterUnitRowButton = ({
     event_date,
     enter_count,
-    durationTime,
+    durationMinute,
     onClick,
 }: Props) => {
     return (
@@ -45,8 +45,16 @@ const EnterUnitRowButton = ({
                     <span className="text-xs ml-1">人</span>
                 </div>
                 <div className="text-sm">
-                    {Option.isSome(durationTime)
-                        ? format(durationTime.value, "HH時間mm分")
+                    {Option.isSome(durationMinute)
+                        ? pipe(
+                              durationMinute.value,
+                              (min) => ({
+                                  hours: Math.floor(min / 60),
+                                  minutes: min % 60,
+                              }),
+                              ({ hours, minutes }) =>
+                                  `${hours}時間${minutes.toString().padStart(2, "0")}分`,
+                          )
                         : "記録なし"}
                 </div>
             </div>
