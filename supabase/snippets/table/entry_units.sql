@@ -9,6 +9,8 @@ create table enter_units (
 
     event_date date unique not null,
 
+    enter_count integer not null default 0 check (enter_count >= 0),
+
     started_at timestamp with time zone,
     completed_at timestamp with time zone,
 

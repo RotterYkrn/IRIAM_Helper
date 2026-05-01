@@ -13,16 +13,14 @@ export type EnterUnitEncoded = Readonly<
 
 export const EnterUnitIdSchema = Schema.UUID.pipe(Schema.brand("EnterUnitId"));
 
-export const EventDateSchema = Schema.String.pipe(
-    Schema.pattern(/^\d{4}-\d{2}-\d{2}$/),
-    Schema.brand("EventDate"),
-);
+export const EnterCountSchema = Schema.NonNegativeInt;
 
 export type EnterUnit = Readonly<{
     id: typeof EnterUnitIdSchema.Type;
     project_id: typeof ProjectSchema.Type.id;
     status: typeof ProjectStatusSchema.Type;
-    event_date: typeof EventDateSchema.Type;
+    event_date: Date;
+    enter_count: typeof EnterCountSchema.Type;
     started_at: Date | null;
     completed_at: Date | null;
     created_at: Date;
@@ -34,7 +32,8 @@ export const EnterUnitSchema: Schema.Schema<EnterUnit, EnterUnitEncoded> =
         id: EnterUnitIdSchema,
         project_id: ProjectIdSchema,
         status: ProjectStatusSchema,
-        event_date: EventDateSchema,
+        event_date: Schema.Date,
+        enter_count: EnterCountSchema,
         started_at: Schema.NullOr(Schema.Date),
         completed_at: Schema.NullOr(Schema.Date),
         created_at: Schema.Date,

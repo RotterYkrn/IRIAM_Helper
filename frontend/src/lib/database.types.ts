@@ -275,6 +275,7 @@ export type Database = {
         Row: {
           completed_at: string | null
           created_at: string
+          enter_count: number
           event_date: string
           id: string
           project_id: string
@@ -285,6 +286,7 @@ export type Database = {
         Insert: {
           completed_at?: string | null
           created_at?: string
+          enter_count?: number
           event_date: string
           id?: string
           project_id: string
@@ -295,6 +297,7 @@ export type Database = {
         Update: {
           completed_at?: string | null
           created_at?: string
+          enter_count?: number
           event_date?: string
           id?: string
           project_id?: string

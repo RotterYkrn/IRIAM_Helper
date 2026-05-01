@@ -20,6 +20,7 @@ export const fetchEnterEnduranceProject = (
                                 id,
                                 status,
                                 event_date,
+                                enter_count,
                                 started_at,
                                 completed_at
                             )

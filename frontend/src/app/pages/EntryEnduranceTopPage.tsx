@@ -22,7 +22,7 @@ const EntryEnduranceTopPage = () => {
             {Option.isNone(data) ? (
                 <CreateEnterEnduranceProjectButton />
             ) : (
-                <EnterEnduranceTopLayout />
+                <EnterEnduranceTopLayout projectId={data.value} />
             )}
         </div>
     );

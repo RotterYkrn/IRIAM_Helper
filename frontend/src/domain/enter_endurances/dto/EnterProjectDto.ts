@@ -9,7 +9,14 @@ import {
 
 export const EnterUnitDtoSchema = pipe(
     EnterUnitSchema,
-    Schema.pick("id", "status", "event_date", "started_at", "completed_at"),
+    Schema.pick(
+        "id",
+        "status",
+        "event_date",
+        "enter_count",
+        "started_at",
+        "completed_at",
+    ),
 );
 
 export const EnterProjectDtoSchema = Schema.Struct({

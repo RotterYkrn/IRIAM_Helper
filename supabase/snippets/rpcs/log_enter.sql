@@ -29,6 +29,13 @@ begin
         raise exception 'project is not active';
     end if;
 
+    update enter_units
+    set
+        enter_count = enter_count + 1,
+        updated_at = now()
+    where
+        id = p_unit_id;
+
     -----------------------------
     -- 履歴に記録（★最重要）
     -----------------------------
