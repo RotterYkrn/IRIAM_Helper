@@ -17,7 +17,7 @@ const MainHeader = () => {
             <Button
                 variant="ghost"
                 size="icon"
-                className="border-white active:scale-100"
+                className="border-white active:scale-none"
                 title="メニュー"
                 onClick={() => setIsOpenSideBar(true)}
             >
@@ -26,7 +26,7 @@ const MainHeader = () => {
             <Button
                 variant="ghost"
                 asChild
-                className="p-0 text-lg hover:bg-transparent active:scale-100"
+                className="p-0 text-lg hover:bg-transparent active:scale-none"
             >
                 <Link
                     to="/"

@@ -44,7 +44,7 @@ const TopProjectAccordionItemPresenter = ({
                             size={"lg"}
                             asChild
                             className="w-full justify-start px-4 no-underline
-                                overflow-hidden active:scale-100"
+                                overflow-hidden active:scale-none"
                         >
                             <Link to={`/projects/${p.type}/${p.id}`}>
                                 {p.title}

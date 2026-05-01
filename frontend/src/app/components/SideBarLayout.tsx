@@ -24,7 +24,7 @@ const SideBarLayout = () => {
                 <Button
                     variant="ghost"
                     size="icon"
-                    className="active:scale-100"
+                    className="active:scale-none"
                     onClick={() => setIsOpenSideBar(false)}
                 >
                     ×
