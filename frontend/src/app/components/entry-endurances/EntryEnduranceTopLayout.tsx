@@ -12,8 +12,9 @@ import {
     isSameDay,
     differenceInMinutes,
     max,
+    startOfDay,
 } from "date-fns";
-import { Chunk, Option, pipe, Schema } from "effect";
+import { Chunk, Match, Option, pipe } from "effect";
 import { ChevronLeft, ChevronRight } from "lucide-react";
 import { useMemo } from "react";
 import { useNavigate, useSearchParams } from "react-router-dom";
@@ -21,27 +22,14 @@ import { useNavigate, useSearchParams } from "react-router-dom";
 import EnterUnitRowButton from "./EnterUnitRowButton";
 
 import { Button } from "@/components/ui/button";
-import { EnterProjectDtoSchema } from "@/domain/enter_endurances/dto/EnterProjectDto";
+import type { EnterUnitSchema } from "@/domain/enter_endurances/tables/EnterUnit";
 import type { ProjectSchema } from "@/domain/projects/tables/Project";
+import { useCreateEnterUnit } from "@/hooks/enter-endurances/useCreateEnterUnit";
 import { useFetchEnterEnduranceProject } from "@/hooks/enter-endurances/useFetchEnterEnduranceProject";
+import { errorToast } from "@/utils/toast";
 
 const START_DATE = new Date(2026, 3, 19);
 const TODAY = new Date();
-
-const mockUnits = Schema.decodeSync(EnterProjectDtoSchema)({
-    id: crypto.randomUUID(),
-    title: "Test Project",
-    units: [
-        {
-            id: crypto.randomUUID(),
-            status: "scheduled",
-            event_date: new Date(2026, 3, 19).toString(),
-            enter_count: 10,
-            started_at: new Date(2026, 3, 19).toString(),
-            completed_at: new Date(2026, 3, 20).toString(),
-        },
-    ],
-});
 
 type Props = {
     projectId: typeof ProjectSchema.Type.id;
@@ -50,8 +38,9 @@ type Props = {
 const EnterEnduranceTopLayout = ({ projectId }: Props) => {
     const navigate = useNavigate();
     const { data, isError } = useFetchEnterEnduranceProject(projectId);
-    const [searchParams, setSearchParams] = useSearchParams();
+    const createEnterUnit = useCreateEnterUnit();
 
+    const [searchParams, setSearchParams] = useSearchParams();
     const monthParam = searchParams.get("month");
     const viewMonth = monthParam
         ? parse(monthParam, "yyyy-MM", new Date())
@@ -65,9 +54,9 @@ const EnterEnduranceTopLayout = ({ projectId }: Props) => {
                     end: endOfMonth(viewMonth),
                 },
                 ({ start, end }) =>
-                    eachDayOfInterval({ start, end }).filter(
-                        (date) => date.getDay() === 0,
-                    ),
+                    eachDayOfInterval({ start, end })
+                        .filter((date) => date.getDay() === 0)
+                        .map((date) => startOfDay(date)),
                 Chunk.fromIterable,
                 Chunk.map((date) =>
                     pipe(
@@ -120,6 +109,27 @@ const EnterEnduranceTopLayout = ({ projectId }: Props) => {
         setSearchParams({ month: format(newDate, "yyyy-MM") });
     };
 
+    const onClickExisting = (unitId: typeof EnterUnitSchema.Type.id) => () => {
+        navigate(`/enter-endurance/${unitId}`);
+    };
+
+    const onClickNone = (eventDate: Date) => () => {
+        console.log("onClickNone", eventDate);
+        createEnterUnit.mutate(
+            { project_id: projectId, event_date: eventDate },
+            {
+                onSuccess: (unitId) => {
+                    navigate(`/enter-endurance/${unitId}`);
+                },
+                onError: () => {
+                    errorToast(
+                        `${format(eventDate, "yyyy/MM/dd")} のデータの作成に失敗しました`,
+                    );
+                },
+            },
+        );
+    };
+
     return (
         <div
             className="flex flex-col items-center justify-center w-lg p-4
@@ -163,38 +173,41 @@ const EnterEnduranceTopLayout = ({ projectId }: Props) => {
                 </div>
 
                 <div className="flex flex-col">
-                    {Chunk.map(filteredUnits, (unit) => {
-                        switch (unit.type) {
-                            case "existing":
-                                return (
-                                    <EnterUnitRowButton
-                                        key={unit.id}
-                                        type="existing"
-                                        event_date={unit.event_date}
-                                        enter_count={unit.enter_count}
-                                        durationMinute={unit.durationTime}
-                                        onClick={() =>
-                                            navigate(
-                                                `/enter-endurance/${unit.id}`,
-                                            )
-                                        }
-                                    />
-                                );
-                            case "none":
-                                return (
-                                    <EnterUnitRowButton
-                                        key={unit.event_date.toString()}
-                                        type="none"
-                                        event_date={unit.event_date}
-                                        enter_count={null}
-                                        durationMinute={Option.none()}
-                                        onClick={() =>
-                                            navigate(`/enter-endurance/new`)
-                                        }
-                                    />
-                                );
-                        }
-                    })}
+                    {Chunk.map(filteredUnits, (unit) =>
+                        pipe(
+                            unit,
+                            Match.value,
+                            Match.when({ type: "existing" }, (unit) => (
+                                <EnterUnitRowButton
+                                    key={unit.id}
+                                    event_date={unit.event_date}
+                                    enter_count={unit.enter_count}
+                                    durationMinute={unit.durationTime}
+                                    isToday={isSameDay(unit.event_date, TODAY)}
+                                    isBeforeDay={isBefore(
+                                        unit.event_date,
+                                        TODAY,
+                                    )}
+                                    onClick={onClickExisting(unit.id)}
+                                />
+                            )),
+                            Match.when({ type: "none" }, (unit) => (
+                                <EnterUnitRowButton
+                                    key={unit.event_date.toString()}
+                                    event_date={unit.event_date}
+                                    enter_count={null}
+                                    durationMinute={Option.none()}
+                                    isToday={isSameDay(unit.event_date, TODAY)}
+                                    isBeforeDay={isBefore(
+                                        unit.event_date,
+                                        TODAY,
+                                    )}
+                                    onClick={onClickNone(unit.event_date)}
+                                />
+                            )),
+                            Match.exhaustive,
+                        ),
+                    )}
                 </div>
             </div>
         </div>

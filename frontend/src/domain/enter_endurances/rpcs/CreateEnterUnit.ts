@@ -28,11 +28,11 @@ export const CreateEnterUnitArgsSchema: Schema.Schema<
     event_date: EventDateSchema.pipe(mapFrom("p_event_date")),
 });
 
-export type CreateEnterUnitResultEncoded = Readonly<
+export type CreateEnterUnitReturnsEncoded = Readonly<
     Database["public"]["Functions"]["create_enter_unit"]["Returns"]
 >;
-export type CreateEnterUnitResult = typeof EnterUnitSchema.Type.id;
-export const CreateEnterUnitResultSchema: Schema.Schema<
-    CreateEnterUnitResult,
-    CreateEnterUnitResultEncoded
+export type CreateEnterUnitReturns = typeof EnterUnitSchema.Type.id;
+export const CreateEnterUnitReturnsSchema: Schema.Schema<
+    CreateEnterUnitReturns,
+    CreateEnterUnitReturnsEncoded
 > = EnterUnitIdSchema;

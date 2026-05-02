@@ -19,11 +19,11 @@ import type { Database } from "@/lib/database.types";
 //     event_date: EventDateSchema.pipe(mapFrom("p_event_date")),
 // });
 
-export type CreateEnterEnduranceResultEncoded = Readonly<
+export type CreateEnterEnduranceReturnsEncoded = Readonly<
     Database["public"]["Functions"]["create_enter_endurance_project"]["Returns"]
 >;
-export type CreateEnterEnduranceResult = typeof ProjectSchema.Type.id;
-export const CreateEnterEnduranceResultSchema: Schema.Schema<
-    CreateEnterEnduranceResult,
-    CreateEnterEnduranceResultEncoded
+export type CreateEnterEnduranceReturns = typeof ProjectSchema.Type.id;
+export const CreateEnterEnduranceReturnsSchema: Schema.Schema<
+    CreateEnterEnduranceReturns,
+    CreateEnterEnduranceReturnsEncoded
 > = ProjectIdSchema;

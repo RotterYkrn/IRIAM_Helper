@@ -1,6 +1,6 @@
 import { pipe, Effect, Schema } from "effect";
 
-import { CreateEnterEnduranceResultSchema } from "@/domain/enter_endurances/rpcs/CreateEnterEndurance";
+import { CreateEnterEnduranceReturnsSchema } from "@/domain/enter_endurances/rpcs/CreateEnterEndurance";
 import { supabase } from "@/lib/supabase";
 
 export const createEnterEnduranceProject = () =>
@@ -12,5 +12,5 @@ export const createEnterEnduranceProject = () =>
         Effect.flatMap(({ data, error }) =>
             error ? Effect.fail(error) : Effect.succeed(data),
         ),
-        Effect.flatMap(Schema.decodeEither(CreateEnterEnduranceResultSchema)),
+        Effect.flatMap(Schema.decodeEither(CreateEnterEnduranceReturnsSchema)),
     );

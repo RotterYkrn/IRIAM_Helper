@@ -2,7 +2,7 @@ DROP function IF EXISTS create_enter_unit cascade;
 
 create function create_enter_unit (
     p_project_id uuid,
-    p_event_date date
+    p_event_date timestamp with time zone
 )
 returns uuid
 language plpgsql

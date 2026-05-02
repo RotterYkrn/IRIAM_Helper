@@ -7,7 +7,7 @@ create table enter_units (
     status text not null default 'scheduled'
         check (status in ('scheduled','active','finished')),
 
-    event_date date unique not null,
+    event_date timestamp with time zone unique not null,
 
     enter_count integer not null default 0 check (enter_count >= 0),
 
