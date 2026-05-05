@@ -360,7 +360,10 @@ export type Database = {
         Returns: string
       }
       create_multi_endurance_project: {
-        Args: { p_event_date: string }
+        Args: {
+          p_title: string
+          p_units: Database["public"]["CompositeTypes"]["create_unit_args"][]
+        }
         Returns: string
       }
       delete_project: { Args: { p_project_id: string }; Returns: undefined }
