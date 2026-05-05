@@ -47,9 +47,7 @@ export const editEnteredUserNameAtom = atom(
                     Option.match({
                         onNone: () => Either.right(inputName),
                         onSome: () =>
-                            Either.left(
-                                new Error("入力された名前は既に存在しています"),
-                            ),
+                            Either.left(new Error("既に存在しています")),
                     }),
                 ),
             ),

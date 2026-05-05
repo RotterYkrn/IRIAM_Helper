@@ -30,7 +30,7 @@ const EnterList = ({ logs }: EntryListProps) => {
                                 番号
                             </TableHead>
                             <TableHead>名前</TableHead>
-                            <TableHead className="w-30">入室時刻</TableHead>
+                            <TableHead className="w-25">入室時刻</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>

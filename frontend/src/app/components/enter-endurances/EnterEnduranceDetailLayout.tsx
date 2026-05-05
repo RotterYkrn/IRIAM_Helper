@@ -86,13 +86,13 @@ const EnterEnduranceDetailLayout = () => {
                             <span>
                                 開始時刻:{" "}
                                 {data.started_at
-                                    ? format(data.started_at, "MM/dd HH:mm")
+                                    ? format(data.started_at, "M/d H:mm")
                                     : "---"}
                             </span>
                             <span>
                                 達成時刻:{" "}
                                 {data.completed_at
-                                    ? format(data.completed_at, "MM/dd HH:mm")
+                                    ? format(data.completed_at, "M/d H:mm")
                                     : "---"}
                             </span>
                         </div>
@@ -123,7 +123,7 @@ const EnterEnduranceDetailLayout = () => {
                             <>
                                 <Button
                                     className="absolute top-3.5 right-10
-                                        bg-destructive hover:bg-destructive/80"
+                                        bg-destructive hover:bg-destructive/60"
                                     onClick={handleFinish}
                                 >
                                     配信終了

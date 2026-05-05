@@ -1,6 +1,7 @@
 import { Chunk, pipe } from "effect";
 import { useSetAtom, useAtom, useAtomValue } from "jotai";
-import { useEffect, useEffectEvent } from "react";
+import { SendHorizonal } from "lucide-react";
+import { useEffect, useEffectEvent, useRef } from "react";
 
 import InputField from "../ui/InputField";
 
@@ -26,6 +27,8 @@ type Props = {
 };
 
 const InputUserNameField = ({ unitId, logs }: Props) => {
+    const inputRef = useRef<HTMLInputElement>(null);
+
     const setEnteredUserNames = useSetAtom(enteredUserNamesAtom);
     const initEditEnteredUserName = useSetAtom(initEditEnteredUserNameAtom);
     const [editUserName, setEditUserName] = useAtom(editEnteredUserNameAtom);
@@ -49,7 +52,7 @@ const InputUserNameField = ({ unitId, logs }: Props) => {
         initEnteredUserNames(logs);
     }, [logs]);
 
-    const handleSend = () => {
+    const handleSubmit = () => {
         if (!validEditUserName) {
             errorToast("ユーザー名が無効です");
             return;
@@ -68,25 +71,50 @@ const InputUserNameField = ({ unitId, logs }: Props) => {
                 onError: () => {
                     errorToast("入室の記録に失敗しました");
                 },
+                onSettled: () => {
+                    inputRef.current?.focus();
+                },
             },
         );
     };
 
+    const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
+        // Ctrl + Enter (Mac の場合は e.metaKey も含めると親切です)
+        if ((e.ctrlKey || e.metaKey) && e.key === "Enter" && isValid) {
+            e.preventDefault(); // 改行などのデフォルト挙動を防止
+            handleSubmit();
+        }
+    };
+
     return (
-        <div className="flex items-center justify-center gap-4">
+        <div className="flex items-center justify-center gap-6">
             <InputField
+                ref={inputRef}
+                className="w-50 text-lg px-1"
                 value={editUserName.input}
                 error={editUserName.error}
                 setValue={(value) => setEditUserName(value)}
                 placeholder="入室したユーザー..."
-                className="w-50 text-lg px-1"
+                onKeyDown={handleKeyDown}
+                autoFocus
             />
-            <Button
-                disabled={!isValid}
-                onClick={handleSend}
-            >
-                登録
-            </Button>
+            <div className="relative">
+                <Button
+                    size={"icon"}
+                    className="bg-sky-500 hover:bg-sky-500/80"
+                    disabled={!isValid}
+                    onClick={handleSubmit}
+                >
+                    <SendHorizonal />
+                </Button>
+                <span
+                    className="absolute top-full left-1/2 -translate-x-1/2
+                        text-xs text-muted-foreground font-semibold
+                        whitespace-nowrap"
+                >
+                    Ctrl + Enter
+                </span>
+            </div>
         </div>
     );
 };
