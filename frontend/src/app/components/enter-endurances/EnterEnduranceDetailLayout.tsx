@@ -1,5 +1,6 @@
 import { differenceInMinutes, format } from "date-fns";
 import { Match, pipe } from "effect";
+import { Link } from "react-router-dom";
 
 import EnterList from "./EnterList";
 import InputUserNameField from "./InputUserNameField";
@@ -66,6 +67,13 @@ const EnterEnduranceDetailLayout = () => {
                     p-4 gap-4"
             >
                 <h1 className="text-3xl font-bold">毎週日曜入室100人耐久</h1>
+                <Button
+                    variant={"outline"}
+                    asChild
+                    className="absolute top-3.5 left-10"
+                >
+                    <Link to="/enter-endurance">入室耐久TOP</Link>
+                </Button>
                 <div className="flex flex-col items-center justify-center gap-6">
                     <div
                         className="flex flex-col items-center justify-center
@@ -114,7 +122,7 @@ const EnterEnduranceDetailLayout = () => {
                         Match.when({ status: "active" }, () => (
                             <>
                                 <Button
-                                    className="absolute top-3 right-10
+                                    className="absolute top-3.5 right-10
                                         bg-destructive hover:bg-destructive/80"
                                     onClick={handleFinish}
                                 >
