@@ -5,7 +5,8 @@ import Layout from "./components/Layout";
 import CreateEndurancePage from "./pages/CreateEndurancePage";
 import CreateMultiEndurancePage from "./pages/CreateMultiEndurancePage";
 import EnduranceProjectPage from "./pages/EnduranceProjectPage";
-import EntryEnduranceTopPage from "./pages/EntryEnduranceTopPage";
+import EnterEnduranceDetailPage from "./pages/EnterEnduranceDetailPage";
+import EnterEnduranceTopPage from "./pages/EnterEnduranceTopPage";
 import MultiEnduranceProjectPage from "./pages/MultiEnduranceProjectPage";
 import TopPage from "./pages/TopPage";
 
@@ -22,8 +23,13 @@ const App = () => {
                     />
 
                     <Route
-                        path="/entry-endurance"
-                        element={<EntryEnduranceTopPage />}
+                        path="/enter-endurance"
+                        element={<EnterEnduranceTopPage />}
+                    />
+
+                    <Route
+                        path="/enter-endurance/:unitId"
+                        element={<EnterEnduranceDetailPage />}
                     />
 
                     <Route

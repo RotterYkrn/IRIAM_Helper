@@ -7,7 +7,7 @@ import {
     ProjectTitleSchema,
 } from "@/domain/projects/tables/Project";
 
-export const EnterUnitDtoSchema = pipe(
+const EnterUnitDtoSchema = pipe(
     EnterUnitSchema,
     Schema.pick(
         "id",

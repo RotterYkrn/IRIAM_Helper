@@ -30,7 +30,7 @@ export const fetchEnterEnduranceProject = (
                     .eq("type", "enter-endurance")
                     .order("event_date", {
                         referencedTable: "enter_units",
-                        ascending: false,
+                        ascending: true,
                     })
                     .single(),
             catch: (error) => error,

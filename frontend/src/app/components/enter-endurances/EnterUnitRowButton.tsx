@@ -3,6 +3,7 @@ import { Option, pipe } from "effect";
 
 import { Button } from "@/components/ui/button";
 import type { EnterUnitSchema } from "@/domain/enter_endurances/tables/EnterUnit";
+import { formatDurationTime } from "@/utils/formatDurationTime";
 
 type Props = {
     event_date: typeof EnterUnitSchema.Type.event_date;
@@ -47,15 +48,7 @@ const EnterUnitRowButton = ({
                 </div>
                 <div className="text-sm">
                     {Option.isSome(durationMinute)
-                        ? pipe(
-                              durationMinute.value,
-                              (min) => ({
-                                  hours: Math.floor(min / 60),
-                                  minutes: min % 60,
-                              }),
-                              ({ hours, minutes }) =>
-                                  `${hours}時間${minutes.toString().padStart(2, "0")}分`,
-                          )
+                        ? pipe(durationMinute.value, formatDurationTime)
                         : "記録なし"}
                 </div>
             </div>

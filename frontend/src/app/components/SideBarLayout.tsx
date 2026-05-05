@@ -43,7 +43,7 @@ const SideBarLayout = () => {
                         className="w-full justify-start px-2"
                         onClick={() => setIsOpenSideBar(false)}
                     >
-                        <Link to="/entry-endurance">
+                        <Link to="/enter-endurance">
                             <DoorOpen />
                             毎週日曜入室100人耐久
                         </Link>

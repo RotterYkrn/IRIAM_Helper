@@ -236,32 +236,25 @@ export type Database = {
         Row: {
           entered_at: string
           id: string
-          project_id: string
           unit_id: string
           user_name: string
+          user_number: number
         }
         Insert: {
           entered_at?: string
           id?: string
-          project_id: string
           unit_id: string
           user_name: string
+          user_number: number
         }
         Update: {
           entered_at?: string
           id?: string
-          project_id?: string
           unit_id?: string
           user_name?: string
+          user_number?: number
         }
         Relationships: [
-          {
-            foreignKeyName: "fk_enter_log_project"
-            columns: ["project_id"]
-            isOneToOne: false
-            referencedRelation: "projects"
-            referencedColumns: ["id"]
-          },
           {
             foreignKeyName: "fk_enter_log_unit"
             columns: ["unit_id"]
@@ -347,6 +340,10 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      activate_enter_unit: {
+        Args: { p_started_at: string; p_unit_id: string }
+        Returns: string
+      }
       activate_project: { Args: { p_project_id: string }; Returns: string }
       create_endurance_project_new: {
         Args: {
@@ -375,6 +372,7 @@ export type Database = {
         Args: { p_project_id: string }
         Returns: string
       }
+      finish_enter_unit: { Args: { p_unit_id: string }; Returns: string }
       finish_project: { Args: { p_project_id: string }; Returns: string }
       log_endurance_action_history_new: {
         Args: {
@@ -389,9 +387,9 @@ export type Database = {
       log_enter: {
         Args: {
           p_entered_at: string
-          p_project_id: string
           p_unit_id: string
           p_user_name: string
+          p_user_number: number
         }
         Returns: string
       }

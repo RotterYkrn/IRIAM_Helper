@@ -2,10 +2,6 @@ import { Schema } from "effect";
 
 import { EnterUnitIdSchema, type EnterUnitSchema } from "./EnterUnit";
 
-import {
-    ProjectIdSchema,
-    type ProjectSchema,
-} from "@/domain/projects/tables/Project";
 import type { Database } from "@/lib/database.types";
 
 export type EnterLogEncoded = Readonly<
@@ -13,6 +9,8 @@ export type EnterLogEncoded = Readonly<
 >;
 
 export const EnterLogIdSchema = Schema.UUID.pipe(Schema.brand("EnterLogId"));
+
+export const EnterUserNumberSchema = Schema.Int.pipe(Schema.positive());
 
 export const EnterUserNameSchema = Schema.String.pipe(
     Schema.minLength(1, {
@@ -23,8 +21,8 @@ export const EnterUserNameSchema = Schema.String.pipe(
 
 export type EnterLog = Readonly<{
     id: typeof EnterLogIdSchema.Type;
-    project_id: typeof ProjectSchema.Type.id;
     unit_id: typeof EnterUnitSchema.Type.id;
+    user_number: typeof EnterUserNumberSchema.Type;
     user_name: typeof EnterUserNameSchema.Type;
     entered_at: Date;
 }>;
@@ -32,8 +30,8 @@ export type EnterLog = Readonly<{
 export const EnterLogSchema: Schema.Schema<EnterLog, EnterLogEncoded> =
     Schema.Struct({
         id: EnterLogIdSchema,
-        project_id: ProjectIdSchema,
         unit_id: EnterUnitIdSchema,
+        user_number: EnterUserNumberSchema,
         user_name: EnterUserNameSchema,
         entered_at: Schema.Date,
     });

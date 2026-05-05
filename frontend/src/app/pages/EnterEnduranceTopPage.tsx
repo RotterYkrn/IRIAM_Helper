@@ -1,11 +1,11 @@
 import { Option } from "effect";
 
-import CreateEnterEnduranceProjectButton from "../components/entry-endurances/CreateEnterEnduranceProjectButton";
-import EnterEnduranceTopLayout from "../components/entry-endurances/EntryEnduranceTopLayout";
+import CreateEnterEnduranceProjectButton from "../components/enter-endurances/CreateEnterEnduranceProjectButton";
+import EnterEnduranceTopLayout from "../components/enter-endurances/EnterEnduranceTopLayout";
 
 import { useIsExistEnterEnduranceProject } from "@/hooks/enter-endurances/useIsExistEnterEnduranceProject";
 
-const EntryEnduranceTopPage = () => {
+const EnterEnduranceTopPage = () => {
     const { data, error } = useIsExistEnterEnduranceProject();
 
     if (error) {
@@ -28,4 +28,4 @@ const EntryEnduranceTopPage = () => {
     );
 };
 
-export default EntryEnduranceTopPage;
+export default EnterEnduranceTopPage;
