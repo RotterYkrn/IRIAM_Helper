@@ -32,6 +32,10 @@ begin
     update enter_units
     set
         enter_count = enter_count + 1,
+        completed_at = case 
+            when enter_count + 1 = 100 then now() 
+            else completed_at 
+        end,
         updated_at = now()
     where
         id = p_unit_id;
