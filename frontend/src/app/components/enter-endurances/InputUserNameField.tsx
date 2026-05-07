@@ -53,6 +53,8 @@ const InputUserNameField = ({ unitId, logs }: Props) => {
             return;
         }
 
+        initEditEnteredUserName();
+
         logEnter.mutate(
             {
                 unit_id: unitId,
@@ -60,9 +62,6 @@ const InputUserNameField = ({ unitId, logs }: Props) => {
                 user_number: logs.length + 1,
             },
             {
-                onSuccess: () => {
-                    initEditEnteredUserName();
-                },
                 onError: () => {
                     errorToast("入室の記録に失敗しました");
                 },
