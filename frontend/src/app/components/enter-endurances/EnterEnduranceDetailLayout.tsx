@@ -1,4 +1,4 @@
-import { differenceInMinutes, format } from "date-fns";
+import { differenceInMinutes, format, isSameDay } from "date-fns";
 import { Match, pipe } from "effect";
 import { useAtomValue } from "jotai";
 import { Link } from "react-router-dom";
@@ -144,13 +144,15 @@ const EnterEnduranceDetailLayout = () => {
                                 >
                                     配信開始
                                 </Button>
-                                <Button
-                                    variant={"outline"}
-                                    size={"lg"}
-                                    onClick={handleArchive}
-                                >
-                                    過去のデータを記録
-                                </Button>
+                                {!isSameDay(data.event_date, new Date()) && (
+                                    <Button
+                                        variant={"outline"}
+                                        size={"lg"}
+                                        onClick={handleArchive}
+                                    >
+                                        過去のデータを記録
+                                    </Button>
+                                )}
                             </div>
                         )),
                         Match.when({ status: "active" }, () => (
