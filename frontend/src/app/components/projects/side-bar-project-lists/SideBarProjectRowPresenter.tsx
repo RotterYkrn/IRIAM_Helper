@@ -44,7 +44,7 @@ const SideBarProjectRowPresenter = ({
                         variant={"ghost"}
                         asChild
                         className="w-full justify-start px-4 no-underline
-                            overflow-hidden active:scale-100"
+                            overflow-hidden active:scale-none"
                         onClick={() => setIsOpenSideBar(false)}
                     >
                         <Link to={`/projects/${p.type}/${p.id}`}>

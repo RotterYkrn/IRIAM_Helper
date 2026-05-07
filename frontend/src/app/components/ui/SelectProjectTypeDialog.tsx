@@ -1,5 +1,5 @@
 import * as Dialog from "@radix-ui/react-dialog";
-import { ChevronLeft, ChevronRight, ExternalLink } from "lucide-react";
+import { ChevronLeft, ChevronRight, ExternalLink, Plus } from "lucide-react";
 import { useState } from "react";
 import { useNavigate } from "react-router-dom";
 
@@ -32,6 +32,11 @@ const SelectProjectTypeDialog = ({ variant, className }: Props) => {
     const [step, setStep] = useState<"main" | "endurance-detail">("main");
     const navigate = useNavigate();
 
+    const handleTriggerClick = () => {
+        setStep("main");
+        setOpen(true);
+    };
+
     const handleSelect = (type: string) => {
         setOpen(false);
         setIsOpenSideBar(false);
@@ -47,9 +52,10 @@ const SelectProjectTypeDialog = ({ variant, className }: Props) => {
                 <Button
                     variant={variant || "outline"}
                     className={cn("", className)}
-                    onClick={() => setOpen(true)}
+                    onClick={handleTriggerClick}
                 >
-                    ＋ 企画新規作成
+                    <Plus />
+                    企画新規作成
                 </Button>
             </Dialog.Trigger>
             <Dialog.Portal>
