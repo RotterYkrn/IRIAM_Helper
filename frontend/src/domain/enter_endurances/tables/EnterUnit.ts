@@ -2,7 +2,6 @@ import { Schema } from "effect";
 
 import {
     ProjectIdSchema,
-    ProjectStatusSchema,
     type ProjectSchema,
 } from "@/domain/projects/tables/Project";
 import type { Database } from "@/lib/database.types";
@@ -13,6 +12,10 @@ export type EnterUnitEncoded = Readonly<
 
 export const EnterUnitIdSchema = Schema.UUID.pipe(Schema.brand("EnterUnitId"));
 
+export const EnterUnitStatusSchema = Schema.String.pipe(
+    Schema.compose(Schema.Literal("ready", "active", "archiving", "finished")),
+);
+
 export const EventDateSchema = Schema.Date;
 
 export const EnterCountSchema = Schema.NonNegativeInt;
@@ -20,7 +23,7 @@ export const EnterCountSchema = Schema.NonNegativeInt;
 export type EnterUnit = Readonly<{
     id: typeof EnterUnitIdSchema.Type;
     project_id: typeof ProjectSchema.Type.id;
-    status: typeof ProjectStatusSchema.Type;
+    status: typeof EnterUnitStatusSchema.Type;
     event_date: Date;
     enter_count: typeof EnterCountSchema.Type;
     started_at: Date | null;
@@ -33,7 +36,7 @@ export const EnterUnitSchema: Schema.Schema<EnterUnit, EnterUnitEncoded> =
     Schema.Struct({
         id: EnterUnitIdSchema,
         project_id: ProjectIdSchema,
-        status: ProjectStatusSchema,
+        status: EnterUnitStatusSchema,
         event_date: EventDateSchema,
         enter_count: EnterCountSchema,
         started_at: Schema.NullOr(Schema.Date),

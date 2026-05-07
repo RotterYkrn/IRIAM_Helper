@@ -4,8 +4,8 @@ create table enter_units (
     id uuid not null primary key default gen_random_uuid(),
     project_id uuid not null,
     
-    status text not null default 'scheduled'
-        check (status in ('scheduled','active','finished')),
+    status text not null default 'ready'
+        check (status in ('ready','active','archiving','finished')),
 
     event_date timestamp with time zone unique not null,
 

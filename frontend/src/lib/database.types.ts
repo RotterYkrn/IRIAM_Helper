@@ -345,6 +345,17 @@ export type Database = {
         Returns: string
       }
       activate_project: { Args: { p_project_id: string }; Returns: string }
+      archive_enter_logs: {
+        Args: {
+          p_completed_at: string
+          p_enter_count: number
+          p_logs: Database["public"]["CompositeTypes"]["archive_log_args"][]
+          p_started_at: string
+          p_unit_id: string
+        }
+        Returns: string
+      }
+      archive_enter_unit: { Args: { p_unit_id: string }; Returns: string }
       create_endurance_project_new: {
         Args: {
           p_rescue_actions: Database["public"]["CompositeTypes"]["create_endurance_action_args"][]
@@ -428,6 +439,10 @@ export type Database = {
       [_ in never]: never
     }
     CompositeTypes: {
+      archive_log_args: {
+        user_number: number | null
+        user_name: string | null
+      }
       create_endurance_action_args: {
         position: number | null
         label: string | null

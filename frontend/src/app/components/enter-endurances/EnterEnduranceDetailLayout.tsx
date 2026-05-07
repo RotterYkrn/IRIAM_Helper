@@ -1,22 +1,28 @@
 import { differenceInMinutes, format } from "date-fns";
 import { Match, pipe } from "effect";
+import { useAtomValue } from "jotai";
 import { Link } from "react-router-dom";
 
 import EnterList from "./EnterList";
 import InputUserNameField from "./InputUserNameField";
+import InputEnterArchiveData from "./InputUserNameFieldForArchive";
 
+import { enterLogsAtom } from "@/atoms/enter-endurances/EnteredUserNameAtom";
 import { Button } from "@/components/ui/button";
 import { useActivateEnterUnit } from "@/hooks/enter-endurances/useActivateEnterUnit";
+import { useArchiveEnterUnit } from "@/hooks/enter-endurances/useArchiveEnterUnit";
 import { useEnterUnitId } from "@/hooks/enter-endurances/useEnterUnitId";
 import { useFetchEnterEnduranceUnit } from "@/hooks/enter-endurances/useFetchEnterEnduranceUnit";
 import { useFinishEnterUnit } from "@/hooks/enter-endurances/useFinishEnterUnit";
 import { formatDurationTime } from "@/utils/formatDurationTime";
-import { successToast } from "@/utils/toast";
+import { errorToast, successToast } from "@/utils/toast";
 
 const EnterEnduranceDetailLayout = () => {
     const unitId = useEnterUnitId();
     const { data, error } = useFetchEnterEnduranceUnit(unitId);
+    const enterLogs = useAtomValue(enterLogsAtom);
     const activateUnit = useActivateEnterUnit();
+    const archiveUnit = useArchiveEnterUnit();
     const finishUnit = useFinishEnterUnit();
 
     if (error) {
@@ -37,9 +43,27 @@ const EnterEnduranceDetailLayout = () => {
                 successToast("入室耐久を開始しました");
             },
             onError: () => {
-                successToast("入室耐久の開始に失敗しました");
+                errorToast("入室耐久の開始に失敗しました");
             },
         });
+    };
+
+    const handleArchive = () => {
+        if (!confirm("過去のデータを記録しますか？")) {
+            return;
+        }
+
+        archiveUnit.mutate(
+            { unit_id: unitId },
+            {
+                onSuccess: () => {
+                    successToast("記録を開始しました");
+                },
+                onError: () => {
+                    errorToast("記録の開始に失敗しました");
+                },
+            },
+        );
     };
 
     const handleFinish = () => {
@@ -48,13 +72,13 @@ const EnterEnduranceDetailLayout = () => {
         }
 
         finishUnit.mutate(
-            { unitId },
+            { unit_id: unitId },
             {
                 onSuccess: () => {
                     successToast("入室耐久を終了しました");
                 },
                 onError: () => {
-                    successToast("入室耐久の終了に失敗しました");
+                    errorToast("入室耐久の終了に失敗しました");
                 },
             },
         );
@@ -110,14 +134,24 @@ const EnterEnduranceDetailLayout = () => {
                         </span>
                     </div>
                     {Match.value(data).pipe(
-                        Match.when({ status: "scheduled" }, () => (
-                            <Button
-                                size={"lg"}
-                                className="bg-green-500 hover:bg-green-500/70"
-                                onClick={handleActivate}
-                            >
-                                配信開始
-                            </Button>
+                        Match.when({ status: "ready" }, () => (
+                            <div className="flex gap-4">
+                                <Button
+                                    size={"lg"}
+                                    className="bg-green-500
+                                        hover:bg-green-500/70"
+                                    onClick={handleActivate}
+                                >
+                                    配信開始
+                                </Button>
+                                <Button
+                                    variant={"outline"}
+                                    size={"lg"}
+                                    onClick={handleArchive}
+                                >
+                                    過去のデータを記録
+                                </Button>
+                            </div>
                         )),
                         Match.when({ status: "active" }, () => (
                             <>
@@ -134,10 +168,19 @@ const EnterEnduranceDetailLayout = () => {
                                 />
                             </>
                         )),
+                        Match.when({ status: "archiving" }, () => (
+                            <>
+                                <InputEnterArchiveData />
+                            </>
+                        )),
                         Match.when({ status: "finished" }, () => null),
                         Match.exhaustive,
                     )}
-                    <EnterList logs={data.logs} />
+                    <EnterList
+                        logs={
+                            data.status !== "archiving" ? data.logs : enterLogs
+                        }
+                    />
                 </div>
             </div>
         </>

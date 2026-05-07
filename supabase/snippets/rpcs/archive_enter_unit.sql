@@ -1,6 +1,6 @@
-drop function if exists finish_enter_unit cascade;
+drop function if exists archive_enter_unit cascade;
 
-create function finish_enter_unit(
+create function archive_enter_unit(
     p_unit_id uuid
 )
 returns uuid
@@ -20,12 +20,13 @@ begin
     end if;
 
     -- draft / scheduled 以外は拒否
-    if v_status <> 'active' then
-        raise exception 'enter unit cannot be finish';
+    if v_status <> 'ready' then
+        raise exception 'enter unit cannot be archive';
     end if;
 
     update enter_units
-    set status = 'finished'
+    set 
+        status = 'archiving'
     where id = p_unit_id;
 
     return p_unit_id;

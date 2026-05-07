@@ -1,14 +1,15 @@
 import { Chunk, Either, Option, pipe, Schema } from "effect";
 import { atom } from "jotai";
 
+import type { EnterLogDtoSchema } from "@/domain/enter_endurances/dto/EnterUnitDto";
 import {
     EnterLogSchema,
     EnterUserNameSchema,
 } from "@/domain/enter_endurances/tables/EnterLogs";
 
-export const enteredUserNamesAtom = atom<
-    Chunk.Chunk<typeof EnterLogSchema.Type.user_name>
->(Chunk.empty());
+export const enterLogsAtom = atom<Chunk.Chunk<typeof EnterLogDtoSchema.Type>>(
+    Chunk.empty(),
+);
 
 type EditEnteredUserNameState = {
     input: string;
@@ -42,8 +43,8 @@ export const editEnteredUserNameAtom = atom(
             Schema.decodeEither(EnterUserNameSchema),
             Either.flatMap((inputName) =>
                 pipe(
-                    get(enteredUserNamesAtom),
-                    Chunk.findFirst((name) => name === inputName),
+                    get(enterLogsAtom),
+                    Chunk.findFirst(({ user_name }) => user_name === inputName),
                     Option.match({
                         onNone: () => Either.right(inputName),
                         onSome: () =>

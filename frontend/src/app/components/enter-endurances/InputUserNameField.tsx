@@ -1,4 +1,4 @@
-import { Chunk, pipe } from "effect";
+import { Chunk } from "effect";
 import { useSetAtom, useAtom, useAtomValue } from "jotai";
 import { SendHorizonal } from "lucide-react";
 import { useEffect, useEffectEvent, useRef } from "react";
@@ -7,7 +7,7 @@ import InputField from "../ui/InputField";
 
 import {
     editEnteredUserNameAtom,
-    enteredUserNamesAtom,
+    enterLogsAtom,
     initEditEnteredUserNameAtom,
     isValidEditEnteredUserNameAtom,
     validEditEnteredUserNameAtom,
@@ -29,7 +29,7 @@ type Props = {
 const InputUserNameField = ({ unitId, logs }: Props) => {
     const inputRef = useRef<HTMLInputElement>(null);
 
-    const setEnteredUserNames = useSetAtom(enteredUserNamesAtom);
+    const setEnterLogs = useSetAtom(enterLogsAtom);
     const initEditEnteredUserName = useSetAtom(initEditEnteredUserNameAtom);
     const [editUserName, setEditUserName] = useAtom(editEnteredUserNameAtom);
     const validEditUserName = useAtomValue(validEditEnteredUserNameAtom);
@@ -37,19 +37,14 @@ const InputUserNameField = ({ unitId, logs }: Props) => {
 
     const logEnter = useLogEnter();
 
-    const initEnteredUserNames = useEffectEvent(
+    const initEnterLogs = useEffectEvent(
         (logs: Chunk.Chunk<typeof EnterLogDtoSchema.Type>) => {
-            setEnteredUserNames(
-                pipe(
-                    logs,
-                    Chunk.map((log) => log.user_name),
-                ),
-            );
+            setEnterLogs(logs);
         },
     );
 
     useEffect(() => {
-        initEnteredUserNames(logs);
+        initEnterLogs(logs);
     }, [logs]);
 
     const handleSubmit = () => {
@@ -71,17 +66,15 @@ const InputUserNameField = ({ unitId, logs }: Props) => {
                 onError: () => {
                     errorToast("入室の記録に失敗しました");
                 },
-                onSettled: () => {
-                    inputRef.current?.focus();
-                },
             },
         );
+
+        inputRef.current?.focus();
     };
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
-        // Ctrl + Enter (Mac の場合は e.metaKey も含めると親切です)
         if ((e.ctrlKey || e.metaKey) && e.key === "Enter" && isValid) {
-            e.preventDefault(); // 改行などのデフォルト挙動を防止
+            e.preventDefault();
             handleSubmit();
         }
     };

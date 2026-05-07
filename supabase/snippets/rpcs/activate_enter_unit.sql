@@ -17,12 +17,12 @@ begin
     where id = p_unit_id;
 
     if v_status is null then
-        raise exception 'project not found';
+        raise exception 'enter unit not found';
     end if;
 
     -- draft / scheduled 以外は拒否
-    if v_status <> 'scheduled' then
-        raise exception 'project cannot be activate';
+    if v_status <> 'ready' then
+        raise exception 'enter unit cannot be activate';
     end if;
 
     update enter_units

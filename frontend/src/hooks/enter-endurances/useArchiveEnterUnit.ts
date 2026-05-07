@@ -3,21 +3,16 @@ import { Effect } from "effect";
 
 import { EnterEnduranceKey } from "../query-keys/enterEndurances";
 
-import type { EnterUnitSchema } from "@/domain/enter_endurances/tables/EnterUnit";
-import { activateEnterUnit } from "@/use-cases/enter-endurances/activateEnterUnit";
+import type { ArchiveEnterUnitArgs } from "@/domain/enter_endurances/rpcs/ArchiveEnterUnit";
+import { archiveEnterUnit } from "@/use-cases/enter-endurances/archiveEnterUnit";
 
-export const useActivateEnterUnit = () => {
+export const useArchiveEnterUnit = () => {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: async (unitId: typeof EnterUnitSchema.Type.id) => {
+        mutationFn: async (args: ArchiveEnterUnitArgs) => {
             try {
-                const result = await Effect.runPromise(
-                    activateEnterUnit({
-                        unit_id: unitId,
-                        started_at: new Date(),
-                    }),
-                );
+                const result = await Effect.runPromise(archiveEnterUnit(args));
                 return result;
             } catch (error) {
                 console.error(error);

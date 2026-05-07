@@ -22,11 +22,11 @@ begin
     where id = p_unit_id;
 
     if v_status is null then
-        raise exception 'project not found';
+        raise exception 'enter unit not found';
     end if;
 
     if v_status <> 'active' then
-        raise exception 'project is not active';
+        raise exception 'enter unit is not active';
     end if;
 
     update enter_units

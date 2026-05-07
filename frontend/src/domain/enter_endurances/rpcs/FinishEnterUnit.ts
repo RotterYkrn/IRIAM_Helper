@@ -9,14 +9,14 @@ export type FinishEnterUnitArgsEncoded = Readonly<
     Database["public"]["Functions"]["finish_enter_unit"]["Args"]
 >;
 export type FinishEnterUnitArgs = Readonly<{
-    unitId: typeof EnterUnitSchema.Type.id;
+    unit_id: typeof EnterUnitSchema.Type.id;
 }>;
 
 export const FinishEnterUnitArgsSchema: Schema.Schema<
     FinishEnterUnitArgs,
     FinishEnterUnitArgsEncoded
 > = Schema.Struct({
-    unitId: EnterUnitIdSchema.pipe(mapFrom("p_unit_id")),
+    unit_id: EnterUnitIdSchema.pipe(mapFrom("p_unit_id")),
 });
 
 export type FinishEnterUnitReturnsEncoded = Readonly<
