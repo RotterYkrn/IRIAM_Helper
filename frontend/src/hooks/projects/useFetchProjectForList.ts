@@ -1,7 +1,9 @@
 import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import { Chunk, Effect } from "effect";
+import { Chunk } from "effect";
 
 import { ProjectKey } from "../query-keys/projects";
+
+import { fetchProjectListOptions } from "./fetchProjectListOptions";
 
 import { fetchProjects } from "@/use-cases/projects/fetchProjects";
 
@@ -18,15 +20,7 @@ import { fetchProjects } from "@/use-cases/projects/fetchProjects";
  */
 export const useFetchProjectForList = () => {
     return useQuery({
-        queryKey: ProjectKey.list,
-        queryFn: async () => {
-            try {
-                return await Effect.runPromise(fetchProjects());
-            } catch (error) {
-                console.error(error);
-                throw error;
-            }
-        },
+        ...fetchProjectListOptions,
         select: (projects) => ({
             scheduled: Chunk.filter(projects, (p) => p.status === "scheduled"),
             active: Chunk.filter(projects, (p) => p.status === "active"),

@@ -62,6 +62,7 @@ export default defineConfig([
             "react/jsx-uses-react": "off",
             "react/prop-types": "off",
             "react-refresh/only-export-components": "off",
+            "react-hooks/incompatible-library": "off",
         },
         settings: {
             react: {

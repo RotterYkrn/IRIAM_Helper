@@ -1,5 +1,5 @@
-import SelectProjectTypeDialog from "../components/projects/presenters/SelectProjectTypeDialog";
 import TopProjectAccordionContainer from "../components/projects/top-project-lists/TopProjectAccordionContainer";
+import SelectProjectTypeDialog from "../components/ui/SelectProjectTypeDialog";
 
 /**
  * トップページ用レイアウト

@@ -232,6 +232,82 @@ export type Database = {
           },
         ]
       }
+      enter_logs: {
+        Row: {
+          entered_at: string
+          id: string
+          unit_id: string
+          user_name: string
+          user_number: number
+        }
+        Insert: {
+          entered_at?: string
+          id?: string
+          unit_id: string
+          user_name: string
+          user_number: number
+        }
+        Update: {
+          entered_at?: string
+          id?: string
+          unit_id?: string
+          user_name?: string
+          user_number?: number
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_enter_log_unit"
+            columns: ["unit_id"]
+            isOneToOne: false
+            referencedRelation: "enter_units"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      enter_units: {
+        Row: {
+          completed_at: string | null
+          created_at: string
+          enter_count: number
+          event_date: string
+          id: string
+          project_id: string
+          started_at: string | null
+          status: string
+          updated_at: string
+        }
+        Insert: {
+          completed_at?: string | null
+          created_at?: string
+          enter_count?: number
+          event_date: string
+          id?: string
+          project_id: string
+          started_at?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Update: {
+          completed_at?: string | null
+          created_at?: string
+          enter_count?: number
+          event_date?: string
+          id?: string
+          project_id?: string
+          started_at?: string | null
+          status?: string
+          updated_at?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "fk_enter_unit_project"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "projects"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
       projects: {
         Row: {
           created_at: string
@@ -264,7 +340,22 @@ export type Database = {
       [_ in never]: never
     }
     Functions: {
+      activate_enter_unit: {
+        Args: { p_started_at: string; p_unit_id: string }
+        Returns: string
+      }
       activate_project: { Args: { p_project_id: string }; Returns: string }
+      archive_enter_logs: {
+        Args: {
+          p_completed_at: string
+          p_enter_count: number
+          p_logs: Database["public"]["CompositeTypes"]["archive_log_args"][]
+          p_started_at: string
+          p_unit_id: string
+        }
+        Returns: string
+      }
+      archive_enter_unit: { Args: { p_unit_id: string }; Returns: string }
       create_endurance_project_new: {
         Args: {
           p_rescue_actions: Database["public"]["CompositeTypes"]["create_endurance_action_args"][]
@@ -272,6 +363,11 @@ export type Database = {
           p_target_count: number
           p_title: string
         }
+        Returns: string
+      }
+      create_enter_endurance_project: { Args: never; Returns: string }
+      create_enter_unit: {
+        Args: { p_event_date: string; p_project_id: string }
         Returns: string
       }
       create_multi_endurance_project: {
@@ -290,6 +386,7 @@ export type Database = {
         Args: { p_project_id: string }
         Returns: string
       }
+      finish_enter_unit: { Args: { p_unit_id: string }; Returns: string }
       finish_project: { Args: { p_project_id: string }; Returns: string }
       log_endurance_action_history_new: {
         Args: {
@@ -298,6 +395,15 @@ export type Database = {
           p_action_id?: string
           p_project_id: string
           p_unit_id: string
+        }
+        Returns: string
+      }
+      log_enter: {
+        Args: {
+          p_entered_at: string
+          p_unit_id: string
+          p_user_name: string
+          p_user_number: number
         }
         Returns: string
       }
@@ -333,6 +439,10 @@ export type Database = {
       [_ in never]: never
     }
     CompositeTypes: {
+      archive_log_args: {
+        user_number: number | null
+        user_name: string | null
+      }
       create_endurance_action_args: {
         position: number | null
         label: string | null
