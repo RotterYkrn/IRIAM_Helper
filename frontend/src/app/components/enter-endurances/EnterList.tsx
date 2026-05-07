@@ -1,6 +1,9 @@
 import { format } from "date-fns";
-import { Chunk } from "effect";
+import { Chunk, Match, Order, pipe } from "effect";
+import { ArrowUpDown } from "lucide-react";
+import { useMemo, useState } from "react";
 
+import { Button } from "@/components/ui/button";
 import {
     Table,
     TableBody,
@@ -11,11 +14,43 @@ import {
 } from "@/components/ui/table";
 import type { EnterLogDtoSchema } from "@/domain/enter_endurances/dto/EnterUnitDto";
 
+type SortOrder = "asc" | "desc";
+
 interface EntryListProps {
     logs: Chunk.Chunk<typeof EnterLogDtoSchema.Type>;
 }
 
 const EnterList = ({ logs }: EntryListProps) => {
+    const [sortOrder, setSortOrder] = useState<SortOrder>("desc");
+    const sortedLogs = useMemo(
+        () =>
+            pipe(
+                Match.value(sortOrder),
+                Match.when("asc", () =>
+                    Chunk.sort(
+                        logs,
+                        Order.mapInput(
+                            Order.number,
+                            (log: typeof EnterLogDtoSchema.Type) =>
+                                log.user_number,
+                        ),
+                    ),
+                ),
+                Match.when("desc", () =>
+                    Chunk.sort(
+                        logs,
+                        Order.mapInput(
+                            Order.number,
+                            (log: typeof EnterLogDtoSchema.Type) =>
+                                -log.user_number,
+                        ),
+                    ),
+                ),
+                Match.exhaustive,
+            ),
+        [logs, sortOrder],
+    );
+
     return (
         <div className="flex flex-col items-center justify-center gap-2">
             <span className="text-lg font-semibold">入室者一覧</span>
@@ -27,15 +62,32 @@ const EnterList = ({ logs }: EntryListProps) => {
                     <TableHeader>
                         <TableRow className="bg-white border-pink-200 z-10">
                             <TableHead className="w-15 text-center">
-                                番号
+                                <div
+                                    className="flex items-center justify-center"
+                                >
+                                    番号
+                                    <Button
+                                        variant="ghost"
+                                        size="icon-xs"
+                                        onClick={() =>
+                                            setSortOrder(
+                                                sortOrder === "asc"
+                                                    ? "desc"
+                                                    : "asc",
+                                            )
+                                        }
+                                    >
+                                        <ArrowUpDown />
+                                    </Button>
+                                </div>
                             </TableHead>
                             <TableHead>名前</TableHead>
                             <TableHead className="w-25">入室時刻</TableHead>
                         </TableRow>
                     </TableHeader>
                     <TableBody>
-                        {Chunk.isNonEmpty(logs) ? (
-                            Chunk.map(logs, (log) => (
+                        {Chunk.isNonEmpty(sortedLogs) ? (
+                            Chunk.map(sortedLogs, (log) => (
                                 <TableRow
                                     key={log.user_number}
                                     className="border-pink-200"
