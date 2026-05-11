@@ -166,7 +166,7 @@ const EnduranceProjectLayout = () => {
 
     return (
         <ProjectContainer
-            isPendingAction={isUpdating || isDuplicating}
+            isPendingAction={isDuplicating}
             canSave={isValidEditState}
             isSaving={isUpdating}
             onEdit={onEdit}

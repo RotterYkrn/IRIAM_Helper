@@ -14,7 +14,7 @@ import { fetchMultiEnduranceProject } from "@/use-cases/multi-endurances/fetchMu
 export const useFetchMultiEnduranceProject = (projectId: ProjectId) => {
     const queryClient = useQueryClient();
 
-    return useQuery({
+    const query = useQuery({
         queryKey: ProjectKey.detail(projectId),
         queryFn: async () => {
             try {
@@ -38,4 +38,10 @@ export const useFetchMultiEnduranceProject = (projectId: ProjectId) => {
         staleTime: 5 * 60 * 1000,
         placeholderData: keepPreviousData,
     });
+
+    return {
+        data: query.data,
+        isFetching: query.isLoading,
+        fetchError: query.error,
+    };
 };

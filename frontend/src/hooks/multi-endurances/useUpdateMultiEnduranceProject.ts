@@ -9,7 +9,7 @@ import { updateMultiEnduranceProject } from "@/use-cases/multi-endurances/update
 export const useUpdateMultiEnduranceProject = () => {
     const queryClient = useQueryClient();
 
-    return useMutation({
+    const mutation = useMutation({
         mutationFn: async (args: UpdateMultiEnduranceProjectArgs) => {
             try {
                 const result = await Effect.runPromise(
@@ -27,4 +27,10 @@ export const useUpdateMultiEnduranceProject = () => {
             });
         },
     });
+
+    return {
+        update: mutation.mutate,
+        isUpdating: mutation.isPending,
+        updateError: mutation.error,
+    };
 };

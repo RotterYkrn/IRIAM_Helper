@@ -9,7 +9,7 @@ import { createMultiEnduranceProject } from "@/use-cases/multi-endurances/create
 export const useCreateMultiEnduranceProject = () => {
     const queryClient = useQueryClient();
 
-    return useMutation({
+    const mutation = useMutation({
         mutationFn: async (args: CreateMultiEnduranceProjectArgs) => {
             try {
                 const result = await Effect.runPromise(
@@ -25,4 +25,10 @@ export const useCreateMultiEnduranceProject = () => {
             queryClient.invalidateQueries({ queryKey: ProjectKey.list });
         },
     });
+
+    return {
+        create: mutation.mutate,
+        isCreating: mutation.isPending,
+        createError: mutation.error,
+    };
 };
