@@ -16,7 +16,7 @@ import { duplicateMultiEnduranceProject } from "@/use-cases/multi-endurances/dup
  * @returns TanStack Query の Mutation オブジェクト。\
  * `mutate` 関数に {@link DuplicateMultiEnduranceProjectArgs} を渡して実行します。
  */
-export const useDuplicateMultiEnduranceProjectNew = () => {
+export const useDuplicateMultiEnduranceProject = () => {
     const queryClient = useQueryClient();
 
     const mutation = useMutation({

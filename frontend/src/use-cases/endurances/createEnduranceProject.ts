@@ -1,10 +1,10 @@
 import { Effect, pipe, Schema } from "effect";
 
 import {
-    type CreateEnduranceProjectNewArgs,
-    CreateEnduranceProjectNewArgsSchema,
-    CreateEnduranceProjectNewReturnsSchema,
-} from "@/domain/endurances-new/rpcs/CreateEnduranceProjectNew";
+    type CreateEnduranceProjectArgs,
+    CreateEnduranceProjectArgsSchema,
+    CreateEnduranceProjectReturnsSchema,
+} from "@/domain/endurances/rpcs/CreateEnduranceProject";
 import { supabase } from "@/lib/supabase";
 
 /**
@@ -12,9 +12,7 @@ import { supabase } from "@/lib/supabase";
  * @param args rpcに渡す引数
  * @returns 新規作成した企画のID
  */
-export const createEnduranceProjectNew = (
-    args: CreateEnduranceProjectNewArgs,
-) =>
+export const createEnduranceProject = (args: CreateEnduranceProjectArgs) =>
     pipe(
         Effect.tryPromise({
             try: () =>
@@ -22,7 +20,7 @@ export const createEnduranceProjectNew = (
                     "create_endurance_project_new",
                     // 要求される型に readonly がついておらず渡すことができないため、
                     // encodeSync を通したうえで any を使っています。
-                    Schema.encodeSync(CreateEnduranceProjectNewArgsSchema)(
+                    Schema.encodeSync(CreateEnduranceProjectArgsSchema)(
                         args,
                         // eslint-disable-next-line @typescript-eslint/no-explicit-any
                     ) as any,
@@ -33,6 +31,6 @@ export const createEnduranceProjectNew = (
             error ? Effect.fail(error) : Effect.succeed(data),
         ),
         Effect.flatMap(
-            Schema.decodeUnknownEither(CreateEnduranceProjectNewReturnsSchema),
+            Schema.decodeUnknownEither(CreateEnduranceProjectReturnsSchema),
         ),
     );

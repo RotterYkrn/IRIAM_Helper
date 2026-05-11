@@ -11,7 +11,7 @@ import {
 } from "@/domain/projects/tables/Project";
 import type { Database } from "@/lib/database.types";
 
-/** {@link EnduranceActionsNewSchema} */
+/** {@link EnduranceActionsSchema} */
 export type EnduranceActionsEncoded = Readonly<
     Database["public"]["Tables"]["endurance_actions_new"]["Row"]
 >;
@@ -51,8 +51,8 @@ export const EnduranceActionAmountSchema = Schema.Number.pipe(
 /** アクションを行った回数 */
 export const EnduranceActionCountSchema = Schema.NonNegativeInt;
 
-/** {@link EnduranceActionsNewSchema} */
-export type EnduranceActionsNew = Readonly<{
+/** {@link EnduranceActionsSchema} */
+export type EnduranceActions = Readonly<{
     id: typeof EnduranceActionIdSchema.Type;
 
     project_id: typeof ProjectSchema.Type.id;
@@ -82,8 +82,8 @@ export type EnduranceActionsNew = Readonly<{
  * endurance_actions_new テーブル
  * 救済・妨害アクションの設定
  */
-export const EnduranceActionsNewSchema: Schema.Schema<
-    EnduranceActionsNew,
+export const EnduranceActionsSchema: Schema.Schema<
+    EnduranceActions,
     EnduranceActionsEncoded
 > = Schema.Struct({
     id: EnduranceActionIdSchema,

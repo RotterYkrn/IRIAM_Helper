@@ -3,8 +3,8 @@ import { Effect } from "effect";
 
 import { ProjectKey } from "../query-keys/projects";
 
-import type { DuplicateEnduranceProjectArgs } from "@/domain/endurances-new/rpcs/DuplicateEnduranceProject";
-import { duplicateEnduranceProject } from "@/use-cases/endurances-new/duplicateEnduranceProject";
+import type { DuplicateEnduranceProjectArgs } from "@/domain/endurances/rpcs/DuplicateEnduranceProject";
+import { duplicateEnduranceProject } from "@/use-cases/endurances/duplicateEnduranceProject";
 
 /**
  * 耐久企画（単体）を複製するためのカスタムフック。
@@ -16,7 +16,7 @@ import { duplicateEnduranceProject } from "@/use-cases/endurances-new/duplicateE
  * @returns TanStack Query の Mutation オブジェクト。\
  * `mutate` 関数に {@link DuplicateEnduranceProjectArgs} を渡して実行します。
  */
-export const useDuplicateEnduranceProjectNew = () => {
+export const useDuplicateEnduranceProject = () => {
     const queryClient = useQueryClient();
 
     const mutation = useMutation({

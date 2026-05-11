@@ -22,7 +22,7 @@ import {
 import { useProjectContext } from "@/contexts/projects/useProjectContext";
 import type { MultiEnduranceUnitSchema } from "@/domain/multi-endurances/dto/MultiEnduranceProjectDto";
 import { type ProjectId } from "@/domain/projects/tables/Project";
-import { useDuplicateMultiEnduranceProjectNew } from "@/hooks/multi-endurances/useDuplicateMultiEnduranceProject";
+import { useDuplicateMultiEnduranceProject } from "@/hooks/multi-endurances/useDuplicateMultiEnduranceProject";
 import { useFetchMultiEnduranceProject } from "@/hooks/multi-endurances/useFetchMultiEnduranceProject";
 import { useUpdateMultiEnduranceProject } from "@/hooks/multi-endurances/useUpdateMultiEnduranceProject";
 import { EnduranceKey } from "@/hooks/query-keys/endurances";
@@ -42,7 +42,7 @@ const MultiEnduranceProjectLayout = ({ projectId }: Props) => {
 
     const { data, isFetching } = useFetchMultiEnduranceProject(projectId);
     const { update, isUpdating } = useUpdateMultiEnduranceProject();
-    const { duplicate, isDuplicating } = useDuplicateMultiEnduranceProjectNew();
+    const { duplicate, isDuplicating } = useDuplicateMultiEnduranceProject();
 
     const editUnits = useAtomValue(editUnitsAtom);
     const validEditState = useAtomValue(validEditMultiEnduranceAtom);

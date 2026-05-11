@@ -3,8 +3,8 @@ import { Schema } from "effect";
 import {
     EnduranceActionIdSchema,
     EnduranceActionAmountSchema,
-    EnduranceActionsNewSchema,
-} from "./EnduranceActionsNew";
+    EnduranceActionsSchema,
+} from "./EnduranceActions";
 import {
     EnduranceUnitIdSchema,
     type EnduranceUnitsSchema,
@@ -16,8 +16,8 @@ import {
 } from "@/domain/projects/tables/Project";
 import type { Database } from "@/lib/database.types";
 
-/** {@link EnduranceActionHistoriesNewSchema} */
-export type EnduranceActionHistoriesNewEncoded = Readonly<
+/** {@link EnduranceActionHistoriesSchema} */
+export type EnduranceActionHistoriesEncoded = Readonly<
     Database["public"]["Tables"]["endurance_action_histories_new"]["Row"]
 >;
 
@@ -45,8 +45,8 @@ export const EnduranceActionHistoryTypeSchema = Schema.String.pipe(
 /** アクションを行った回数 */
 export const EnduranceActionHistoryActionCountSchema = Schema.Int;
 
-/** {@link EnduranceActionHistoriesNewSchema} */
-export type EnduranceActionHistoriesNew = Readonly<{
+/** {@link EnduranceActionHistoriesSchema} */
+export type EnduranceActionHistories = Readonly<{
     id: typeof EnduranceActionHistoryIdSchema.Type;
 
     project_id: typeof ProjectSchema.Type.id;
@@ -59,7 +59,7 @@ export type EnduranceActionHistoriesNew = Readonly<{
     /** {@link EnduranceActionHistoryTypeSchema} */
     action_type: typeof EnduranceActionHistoryTypeSchema.Type;
 
-    action_amount: typeof EnduranceActionsNewSchema.Type.amount;
+    action_amount: typeof EnduranceActionsSchema.Type.amount;
 
     /** {@link EnduranceActionHistoryActionCountSchema} */
     action_count: typeof EnduranceActionHistoryActionCountSchema.Type;
@@ -71,9 +71,9 @@ export type EnduranceActionHistoriesNew = Readonly<{
  * endurance_action_histories_newテーブルの型\
  * 各カウントの履歴
  */
-export const EnduranceActionHistoriesNewSchema: Schema.Schema<
-    EnduranceActionHistoriesNew,
-    EnduranceActionHistoriesNewEncoded
+export const EnduranceActionHistoriesSchema: Schema.Schema<
+    EnduranceActionHistories,
+    EnduranceActionHistoriesEncoded
 > = Schema.Struct({
     id: EnduranceActionHistoryIdSchema,
     project_id: ProjectIdSchema,

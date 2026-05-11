@@ -7,27 +7,27 @@ import { ProjectKey } from "../query-keys/projects";
 import type {
     EnduranceActionDtoSchema,
     EnduranceProjectDto,
-} from "@/domain/endurances-new/dto/EnduranceProjectDto";
-import type { LogEnduranceActionHistoryNewArgsEncoded } from "@/domain/endurances-new/rpcs/LogEnduranceActionHistoryNew";
-import type { EnduranceActionHistoriesNewSchema } from "@/domain/endurances-new/tables/EnduranceActionHistoriesNew";
-import { EnduranceActionsNewSchema } from "@/domain/endurances-new/tables/EnduranceActionsNew";
-import { logEnduranceActionHistoryNew } from "@/use-cases/endurances-new/logEnduranceActionHistory";
+} from "@/domain/endurances/dto/EnduranceProjectDto";
+import type { LogEnduranceActionHistoryArgsEncoded } from "@/domain/endurances/rpcs/LogEnduranceActionHistory";
+import type { EnduranceActionHistoriesSchema } from "@/domain/endurances/tables/EnduranceActionHistories";
+import { EnduranceActionsSchema } from "@/domain/endurances/tables/EnduranceActions";
+import { logEnduranceActionHistory } from "@/use-cases/endurances/logEnduranceActionHistory";
 
 /**
- * {@link useLogEnduranceActionHistoryNew} の mutate の引数
+ * {@link useLogEnduranceActionHistory} の mutate の引数
  *
  * @description
  * - `p_action_history_type = "normal"` の場合、`p_action_id` は不要
  * - `p_action_history_type = "rescue" | "sabotage"` の場合、`p_action_id` および `amount` を設定する
  */
-type UseLogEnduranceActionHistoryNewArgs =
-    | (Omit<LogEnduranceActionHistoryNewArgsEncoded, "p_action_id"> & {
+type UseLogEnduranceActionHistoryArgs =
+    | (Omit<LogEnduranceActionHistoryArgsEncoded, "p_action_id"> & {
           p_action_history_type: "normal";
       })
-    | (LogEnduranceActionHistoryNewArgsEncoded & {
+    | (LogEnduranceActionHistoryArgsEncoded & {
           p_action_history_type: "rescue" | "sabotage";
-          p_action_id: typeof EnduranceActionsNewSchema.Encoded.id;
-          amount: typeof EnduranceActionsNewSchema.Encoded.amount;
+          p_action_id: typeof EnduranceActionsSchema.Encoded.id;
+          amount: typeof EnduranceActionsSchema.Encoded.amount;
       });
 
 /**
@@ -41,16 +41,16 @@ type UseLogEnduranceActionHistoryNewArgs =
  * - `onError`: サーバー通信に失敗した場合、実行前のカウント数へ正確にロールバックします。
  *
  * @returns  TanStack QueryのMutationオブジェクト。\
- * `mutate`関数には {@link UseLogEnduranceActionHistoryNewArgs} を渡してください。
+ * `mutate`関数には {@link UseLogEnduranceActionHistoryArgs} を渡してください。
  */
-export const useLogEnduranceActionHistoryNew = () => {
+export const useLogEnduranceActionHistory = () => {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: async (args: UseLogEnduranceActionHistoryNewArgs) => {
+        mutationFn: async (args: UseLogEnduranceActionHistoryArgs) => {
             try {
                 const result = await Effect.runPromise(
-                    logEnduranceActionHistoryNew(args),
+                    logEnduranceActionHistory(args),
                 );
 
                 return result;
@@ -59,7 +59,7 @@ export const useLogEnduranceActionHistoryNew = () => {
                 throw error;
             }
         },
-        onMutate: async (args: UseLogEnduranceActionHistoryNewArgs) => {
+        onMutate: async (args: UseLogEnduranceActionHistoryArgs) => {
             // 楽観的更新
             switch (args.p_action_history_type) {
                 case "normal":
@@ -146,9 +146,7 @@ export const useLogEnduranceActionHistoryNew = () => {
 };
 
 const updateProjectNormal =
-    (
-        actionCount: typeof EnduranceActionHistoriesNewSchema.Encoded.action_count,
-    ) =>
+    (actionCount: typeof EnduranceActionHistoriesSchema.Encoded.action_count) =>
     (old: EnduranceProjectDto | undefined): EnduranceProjectDto | undefined =>
         old && {
             ...old,
@@ -164,8 +162,8 @@ const updateProjectNormal =
 
 const updateProjectRescue =
     (
-        actionAmount: typeof EnduranceActionsNewSchema.Encoded.amount,
-        actionCount: typeof EnduranceActionHistoriesNewSchema.Encoded.action_count,
+        actionAmount: typeof EnduranceActionsSchema.Encoded.amount,
+        actionCount: typeof EnduranceActionHistoriesSchema.Encoded.action_count,
     ) =>
     (old: EnduranceProjectDto | undefined): EnduranceProjectDto | undefined =>
         old && {
@@ -184,8 +182,8 @@ const updateProjectRescue =
 
 const updateProjectSabotage =
     (
-        actionAmount: typeof EnduranceActionsNewSchema.Encoded.amount,
-        actionCount: typeof EnduranceActionHistoriesNewSchema.Encoded.action_count,
+        actionAmount: typeof EnduranceActionsSchema.Encoded.amount,
+        actionCount: typeof EnduranceActionHistoriesSchema.Encoded.action_count,
     ) =>
     (old: EnduranceProjectDto | undefined): EnduranceProjectDto | undefined =>
         old && {
@@ -204,9 +202,7 @@ const updateProjectSabotage =
         };
 
 const updateActionCount =
-    (
-        actionCount: typeof EnduranceActionHistoriesNewSchema.Encoded.action_count,
-    ) =>
+    (actionCount: typeof EnduranceActionHistoriesSchema.Encoded.action_count) =>
     (
         old: typeof EnduranceActionDtoSchema.Type | undefined,
     ): typeof EnduranceActionDtoSchema.Type | undefined =>

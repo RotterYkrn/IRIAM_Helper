@@ -4,7 +4,7 @@ import {
     type DuplicateEnduranceProjectArgs,
     DuplicateEnduranceProjectArgsSchema,
     DuplicateEnduranceProjectReturnsSchema,
-} from "@/domain/endurances-new/rpcs/DuplicateEnduranceProject";
+} from "@/domain/endurances/rpcs/DuplicateEnduranceProject";
 import { supabase } from "@/lib/supabase";
 
 /**

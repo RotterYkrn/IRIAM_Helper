@@ -12,25 +12,25 @@ import EditEnduranceActionRow from "./EditEnduranceActionRow";
 import EnduranceActionRow from "./EnduranceActionRow";
 
 import {
-    editRescueActionsAtomsNew,
-    editSabotageActionsAtomsNew,
-} from "@/atoms/endurances-new/EditActionAtom";
+    editRescueActionsAtoms,
+    editSabotageActionsAtoms,
+} from "@/atoms/endurances/EditActionAtom";
 import {
     initEditEnduranceAtom,
     isValidEditEnduranceAtom,
     validEditEnduranceAtom,
-} from "@/atoms/endurances-new/EditEnduranceAtom";
-import { editTargetCountAtom } from "@/atoms/endurances-new/EditTargetCountAtom";
+} from "@/atoms/endurances/EditEnduranceAtom";
+import { editTargetCountAtom } from "@/atoms/endurances/EditTargetCountAtom";
 import { useProjectContext } from "@/contexts/projects/useProjectContext";
 import type {
     EnduranceRescueActionDtoSchema,
     EnduranceSabotageActionDtoSchema,
-} from "@/domain/endurances-new/dto/EnduranceProjectDto";
-import type { EnduranceActionHistoriesNewSchema } from "@/domain/endurances-new/tables/EnduranceActionHistoriesNew";
-import { useDuplicateEnduranceProjectNew } from "@/hooks/endurances-new/useDuplicateEnduranceProject";
-import { useFetchEnduranceProjectNew } from "@/hooks/endurances-new/useFetchEnduranceProject";
-import { useLogEnduranceActionHistoryNew } from "@/hooks/endurances-new/useLogEnduranceActionHistory";
-import { useUpdateEnduranceProjectNew } from "@/hooks/endurances-new/useUpdateEnduranceProject";
+} from "@/domain/endurances/dto/EnduranceProjectDto";
+import type { EnduranceActionHistoriesSchema } from "@/domain/endurances/tables/EnduranceActionHistories";
+import { useDuplicateEnduranceProject } from "@/hooks/endurances/useDuplicateEnduranceProject";
+import { useFetchEnduranceProject } from "@/hooks/endurances/useFetchEnduranceProject";
+import { useLogEnduranceActionHistory } from "@/hooks/endurances/useLogEnduranceActionHistory";
+import { useUpdateEnduranceProject } from "@/hooks/endurances/useUpdateEnduranceProject";
 import { EnduranceKey } from "@/hooks/query-keys/endurances";
 import { errorToast, successToast } from "@/utils/toast";
 
@@ -42,10 +42,10 @@ const EnduranceProjectLayout = () => {
     const navigate = useNavigate();
     const { project, isEdit, setIsEdit } = useProjectContext();
 
-    const { data, isFetching } = useFetchEnduranceProjectNew(project.id);
-    const { update, isUpdating } = useUpdateEnduranceProjectNew();
-    const { duplicate, isDuplicating } = useDuplicateEnduranceProjectNew();
-    const logEnduranceActionHistory = useLogEnduranceActionHistoryNew();
+    const { data, isFetching } = useFetchEnduranceProject(project.id);
+    const { update, isUpdating } = useUpdateEnduranceProject();
+    const { duplicate, isDuplicating } = useDuplicateEnduranceProject();
+    const logEnduranceActionHistory = useLogEnduranceActionHistory();
 
     const validEditState = useAtomValue(validEditEnduranceAtom);
     const initEditEndurance = useSetAtom(initEditEnduranceAtom);
@@ -53,9 +53,9 @@ const EnduranceProjectLayout = () => {
 
     const [editTargetCountState, setEditTargetCount] =
         useAtom(editTargetCountAtom);
-    const editRescueState = useAtomValue(editRescueActionsAtomsNew.editActions);
+    const editRescueState = useAtomValue(editRescueActionsAtoms.editActions);
     const editSabotageState = useAtomValue(
-        editSabotageActionsAtomsNew.editActions,
+        editSabotageActionsAtoms.editActions,
     );
 
     if (isFetching) {
@@ -150,7 +150,7 @@ const EnduranceProjectLayout = () => {
     const actionButtonCounts = Chunk.fromIterable([1]);
 
     const onIncrementNormal = (
-        actionCount: typeof EnduranceActionHistoriesNewSchema.Encoded.action_count,
+        actionCount: typeof EnduranceActionHistoriesSchema.Encoded.action_count,
     ) => {
         logEnduranceActionHistory.mutate({
             p_project_id: data.id,

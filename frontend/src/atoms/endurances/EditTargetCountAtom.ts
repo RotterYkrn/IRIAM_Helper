@@ -4,7 +4,7 @@ import { atom } from "jotai";
 import {
     EnduranceTargetCountSchema,
     type EnduranceUnitsSchema,
-} from "@/domain/endurances-new/tables/EnduranceUnits";
+} from "@/domain/endurances/tables/EnduranceUnits";
 import { normalizeNumber } from "@/utils/validations";
 
 type EditTargetCountState = {

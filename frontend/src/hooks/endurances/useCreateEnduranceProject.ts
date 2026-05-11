@@ -3,8 +3,8 @@ import { Effect } from "effect";
 
 import { ProjectKey } from "../query-keys/projects";
 
-import type { CreateEnduranceProjectNewArgs } from "@/domain/endurances-new/rpcs/CreateEnduranceProjectNew";
-import { createEnduranceProjectNew } from "@/use-cases/endurances-new/createEnduranceProject";
+import type { CreateEnduranceProjectArgs } from "@/domain/endurances/rpcs/CreateEnduranceProject";
+import { createEnduranceProject } from "@/use-cases/endurances/createEnduranceProject";
 
 /**
  * 耐久企画（単体）を新規作成するためのカスタムフック。
@@ -14,16 +14,16 @@ import { createEnduranceProjectNew } from "@/use-cases/endurances-new/createEndu
  * {@link ProjectKey.list}\
  *
  * @returns TanStack Query の Mutation オブジェクト。\
- * `mutate` 関数に {@link CreateEnduranceProjectNewArgs} を渡して実行します。
+ * `mutate` 関数に {@link CreateEnduranceProjectArgs} を渡して実行します。
  */
-export const useCreateEnduranceProjectNew = () => {
+export const useCreateEnduranceProject = () => {
     const queryClient = useQueryClient();
 
     const mutation = useMutation({
-        mutationFn: async (args: CreateEnduranceProjectNewArgs) => {
+        mutationFn: async (args: CreateEnduranceProjectArgs) => {
             try {
                 const result = await Effect.runPromise(
-                    createEnduranceProjectNew(args),
+                    createEnduranceProject(args),
                 );
                 return result;
             } catch (error) {

@@ -1,6 +1,6 @@
 import { Provider } from "jotai";
 
-import CreateEnduranceProjectLayout from "../components/endurances-new/CreateEnduranceProjectLayout";
+import CreateEnduranceProjectLayout from "../components/endurances/CreateEnduranceProjectLayout";
 
 /**
  * 耐久企画新規作成ページ用レイアウト。\

@@ -1,10 +1,10 @@
 import { Effect, pipe, Schema } from "effect";
 
 import {
-    type LogEnduranceActionHistoryNewArgsEncoded,
-    LogEnduranceActionHistoryNewArgsSchema,
-    LogEnduranceActionHistoryNewReturnsSchema,
-} from "@/domain/endurances-new/rpcs/LogEnduranceActionHistoryNew";
+    type LogEnduranceActionHistoryArgsEncoded,
+    LogEnduranceActionHistoryArgsSchema,
+    LogEnduranceActionHistoryReturnsSchema,
+} from "@/domain/endurances/rpcs/LogEnduranceActionHistory";
 import { type ProjectId } from "@/domain/projects/tables/Project";
 import { supabase } from "@/lib/supabase";
 
@@ -13,17 +13,17 @@ import { supabase } from "@/lib/supabase";
  * @param args rpcに渡す引数
  * @returns 対応する企画のID
  */
-export const logEnduranceActionHistoryNew = (
-    args: LogEnduranceActionHistoryNewArgsEncoded,
+export const logEnduranceActionHistory = (
+    args: LogEnduranceActionHistoryArgsEncoded,
 ): Effect.Effect<ProjectId, unknown> =>
     pipe(
         args,
-        Schema.decodeEither(LogEnduranceActionHistoryNewArgsSchema),
+        Schema.decodeEither(LogEnduranceActionHistoryArgsSchema),
         Effect.tryMapPromise({
             try: (args) =>
                 supabase.rpc(
                     "log_endurance_action_history_new",
-                    Schema.encodeSync(LogEnduranceActionHistoryNewArgsSchema)(
+                    Schema.encodeSync(LogEnduranceActionHistoryArgsSchema)(
                         args,
                     ),
                 ),
@@ -33,8 +33,6 @@ export const logEnduranceActionHistoryNew = (
             error ? Effect.fail(error) : Effect.succeed(data),
         ),
         Effect.flatMap(
-            Schema.decodeUnknownEither(
-                LogEnduranceActionHistoryNewReturnsSchema,
-            ),
+            Schema.decodeUnknownEither(LogEnduranceActionHistoryReturnsSchema),
         ),
     );

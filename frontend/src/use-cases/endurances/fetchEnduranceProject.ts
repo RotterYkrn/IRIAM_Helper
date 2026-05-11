@@ -1,6 +1,6 @@
 import { Effect, pipe, Schema } from "effect";
 
-import { EnduranceProjectDtoSchema } from "@/domain/endurances-new/dto/EnduranceProjectDto";
+import { EnduranceProjectDtoSchema } from "@/domain/endurances/dto/EnduranceProjectDto";
 import {
     ProjectIdSchema,
     type ProjectIdEncoded,
@@ -12,7 +12,7 @@ import { supabase } from "@/lib/supabase";
  * @param projectId 企画ID
  * @returns 耐久企画（単体）の情報
  */
-export const fetchEnduranceProjectNew = (projectId: ProjectIdEncoded) =>
+export const fetchEnduranceProject = (projectId: ProjectIdEncoded) =>
     pipe(
         projectId,
         Schema.decodeEither(ProjectIdSchema),

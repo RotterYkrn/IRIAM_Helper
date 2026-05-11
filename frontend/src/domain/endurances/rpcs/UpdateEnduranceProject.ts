@@ -5,8 +5,8 @@ import {
     EnduranceActionIdSchema,
     EnduranceActionLabelSchema,
     EnduranceActionPositionSchema,
-    EnduranceActionsNewSchema,
-} from "../tables/EnduranceActionsNew";
+    EnduranceActionsSchema,
+} from "../tables/EnduranceActions";
 import {
     EnduranceTargetCountSchema,
     EnduranceUnitIdSchema,
@@ -33,15 +33,15 @@ export type UpdateEnduranceActionArgs = Readonly<{
      * {@link EnduranceActionIdSchema}\
      * 新規追加の場合は null
      */
-    id: typeof EnduranceActionsNewSchema.Type.id | null;
+    id: typeof EnduranceActionsSchema.Type.id | null;
 
     /** {@link EnduranceActionPositionSchema} */
-    position: typeof EnduranceActionsNewSchema.Type.position;
+    position: typeof EnduranceActionsSchema.Type.position;
 
-    label: typeof EnduranceActionsNewSchema.Type.label;
+    label: typeof EnduranceActionsSchema.Type.label;
 
     /** {@link EnduranceActionAmountSchema} */
-    amount: typeof EnduranceActionsNewSchema.Type.amount;
+    amount: typeof EnduranceActionsSchema.Type.amount;
 }>;
 export const UpdateEnduranceActionArgsSchema: Schema.Schema<
     UpdateEnduranceActionArgs,
@@ -56,10 +56,10 @@ export const UpdateEnduranceActionArgsChunkSchema = Schema.Chunk(
     UpdateEnduranceActionArgsSchema,
 );
 
-export type UpdateEnduranceProjectNewArgsEncoded = RecursiveReadonly<
+export type UpdateEnduranceProjectArgsEncoded = RecursiveReadonly<
     Database["public"]["Functions"]["update_endurance_project_new"]["Args"]
 >;
-export type UpdateEnduranceProjectNewArgs = Readonly<{
+export type UpdateEnduranceProjectArgs = Readonly<{
     id: typeof ProjectSchema.Type.id;
     unit_id: typeof EnduranceUnitsSchema.Type.id;
     title: typeof ProjectSchema.Type.title;
@@ -67,9 +67,9 @@ export type UpdateEnduranceProjectNewArgs = Readonly<{
     rescue_actions: typeof UpdateEnduranceActionArgsChunkSchema.Type;
     sabotage_actions: typeof UpdateEnduranceActionArgsChunkSchema.Type;
 }>;
-export const UpdateEnduranceProjectNewArgsSchema: Schema.Schema<
-    UpdateEnduranceProjectNewArgs,
-    UpdateEnduranceProjectNewArgsEncoded
+export const UpdateEnduranceProjectArgsSchema: Schema.Schema<
+    UpdateEnduranceProjectArgs,
+    UpdateEnduranceProjectArgsEncoded
 > = Schema.Struct({
     id: ProjectIdSchema.pipe(mapFrom("p_project_id")),
     unit_id: EnduranceUnitIdSchema.pipe(mapFrom("p_unit_id")),
@@ -83,11 +83,11 @@ export const UpdateEnduranceProjectNewArgsSchema: Schema.Schema<
     ),
 });
 
-export type UpdateEnduranceProjectNewReturnsEncoded = Readonly<
+export type UpdateEnduranceProjectReturnsEncoded = Readonly<
     Database["public"]["Functions"]["update_endurance_project_new"]["Returns"]
 >;
-export type UpdateEnduranceProjectNewReturns = typeof ProjectSchema.Type.id;
-export const UpdateEnduranceProjectNewReturnsSchema: Schema.Schema<
-    UpdateEnduranceProjectNewReturns,
-    UpdateEnduranceProjectNewReturnsEncoded
+export type UpdateEnduranceProjectReturns = typeof ProjectSchema.Type.id;
+export const UpdateEnduranceProjectReturnsSchema: Schema.Schema<
+    UpdateEnduranceProjectReturns,
+    UpdateEnduranceProjectReturnsEncoded
 > = ProjectIdSchema;

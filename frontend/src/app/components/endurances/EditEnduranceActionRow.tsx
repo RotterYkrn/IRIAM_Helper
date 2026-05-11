@@ -5,16 +5,16 @@ import EnduranceView from "../ui/EnduranceView";
 import InputField from "../ui/InputField";
 
 import {
-    editRescueActionsAtomsNew,
-    editSabotageActionsAtomsNew,
-} from "@/atoms/endurances-new/EditActionAtom";
+    editRescueActionsAtoms,
+    editSabotageActionsAtoms,
+} from "@/atoms/endurances/EditActionAtom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import type { EnduranceActionsNewSchema } from "@/domain/endurances-new/tables/EnduranceActionsNew";
+import type { EnduranceActionsSchema } from "@/domain/endurances/tables/EnduranceActions";
 
 type Props = {
-    actionId: typeof EnduranceActionsNewSchema.Type.id;
-    actionType: typeof EnduranceActionsNewSchema.Type.type;
+    actionId: typeof EnduranceActionsSchema.Type.id;
+    actionType: typeof EnduranceActionsSchema.Type.type;
 };
 
 /**
@@ -26,8 +26,8 @@ const EditEnduranceActionRow = ({ actionId, actionType }: Props) => {
     const editActionsAtom = useMemo(
         () =>
             actionType === "rescue"
-                ? editRescueActionsAtomsNew
-                : editSabotageActionsAtomsNew,
+                ? editRescueActionsAtoms
+                : editSabotageActionsAtoms,
         [actionType],
     );
 

@@ -1,6 +1,6 @@
 import { Provider } from "jotai";
 
-import EnduranceProjectLayout from "../components/endurances-new/EnduranceProjectLayout";
+import EnduranceProjectLayout from "../components/endurances/EnduranceProjectLayout";
 
 import { ProjectProvider } from "@/contexts/projects/ProjectProvider";
 import { useProjectId } from "@/hooks/projects/useProjectId";

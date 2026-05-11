@@ -2,12 +2,12 @@ import { Schema } from "effect";
 
 import {
     EnduranceActionHistoryActionCountSchema,
-    type EnduranceActionHistoriesNewSchema,
-} from "@/domain/endurances-new/tables/EnduranceActionHistoriesNew";
+    type EnduranceActionHistoriesSchema,
+} from "@/domain/endurances/tables/EnduranceActionHistories";
 import {
     EnduranceUnitIdSchema,
     EnduranceUnitsSchema,
-} from "@/domain/endurances-new/tables/EnduranceUnits";
+} from "@/domain/endurances/tables/EnduranceUnits";
 import {
     ProjectIdSchema,
     type ProjectSchema,
@@ -21,7 +21,7 @@ export type LogMultiEnduranceActionHistoryArgsEncoded = Readonly<
 export type LogMultiEnduranceActionHistoryArgs = Readonly<{
     project_id: typeof ProjectSchema.Type.id;
     unit_id: typeof EnduranceUnitsSchema.Type.id;
-    action_count: typeof EnduranceActionHistoriesNewSchema.Type.action_count;
+    action_count: typeof EnduranceActionHistoriesSchema.Type.action_count;
 }>;
 export const LogMultiEnduranceActionHistoryArgsSchema: Schema.Schema<
     LogMultiEnduranceActionHistoryArgs,

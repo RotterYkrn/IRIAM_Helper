@@ -8,7 +8,7 @@ import {
     EnduranceActionLabelSchema,
     EnduranceActionAmountSchema,
     EnduranceActionCountSchema,
-} from "../tables/EnduranceActionsNew";
+} from "../tables/EnduranceActions";
 import { EnduranceUnitsSchema } from "../tables/EnduranceUnits";
 
 import { ProjectDtoSchema } from "@/domain/projects/dto/ProjectDto";

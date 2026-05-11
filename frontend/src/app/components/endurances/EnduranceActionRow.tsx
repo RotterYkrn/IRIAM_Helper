@@ -2,16 +2,16 @@ import { useQueryClient } from "@tanstack/react-query";
 
 import EnduranceView from "../ui/EnduranceView";
 
-import type { EnduranceActionDtoSchema } from "@/domain/endurances-new/dto/EnduranceProjectDto";
-import type { EnduranceActionHistoriesNewSchema } from "@/domain/endurances-new/tables/EnduranceActionHistoriesNew";
-import type { EnduranceActionsNewSchema } from "@/domain/endurances-new/tables/EnduranceActionsNew";
-import { useLogEnduranceActionHistoryNew } from "@/hooks/endurances-new/useLogEnduranceActionHistory";
+import type { EnduranceActionDtoSchema } from "@/domain/endurances/dto/EnduranceProjectDto";
+import type { EnduranceActionHistoriesSchema } from "@/domain/endurances/tables/EnduranceActionHistories";
+import type { EnduranceActionsSchema } from "@/domain/endurances/tables/EnduranceActions";
+import { useLogEnduranceActionHistory } from "@/hooks/endurances/useLogEnduranceActionHistory";
 import { EnduranceKey } from "@/hooks/query-keys/endurances";
 
 type Props = {
-    projectId: typeof EnduranceActionsNewSchema.Type.project_id;
-    unitId: typeof EnduranceActionsNewSchema.Type.unit_id;
-    actionId: typeof EnduranceActionsNewSchema.Type.id;
+    projectId: typeof EnduranceActionsSchema.Type.project_id;
+    unitId: typeof EnduranceActionsSchema.Type.unit_id;
+    actionId: typeof EnduranceActionsSchema.Type.id;
 };
 
 /**
@@ -21,7 +21,7 @@ type Props = {
  */
 const EnduranceActionRow = ({ projectId, unitId, actionId }: Props) => {
     const queryClient = useQueryClient();
-    const logEnduranceActionHistory = useLogEnduranceActionHistoryNew();
+    const logEnduranceActionHistory = useLogEnduranceActionHistory();
 
     const action = queryClient.getQueryData<
         typeof EnduranceActionDtoSchema.Type
@@ -33,12 +33,12 @@ const EnduranceActionRow = ({ projectId, unitId, actionId }: Props) => {
 
     const onIncrement =
         (
-            actionType: typeof EnduranceActionsNewSchema.Type.type,
-            actionId: typeof EnduranceActionsNewSchema.Type.id,
-            actionAmount: typeof EnduranceActionsNewSchema.Encoded.amount,
+            actionType: typeof EnduranceActionsSchema.Type.type,
+            actionId: typeof EnduranceActionsSchema.Type.id,
+            actionAmount: typeof EnduranceActionsSchema.Encoded.amount,
         ) =>
         (
-            actionCount: typeof EnduranceActionHistoriesNewSchema.Encoded.action_count,
+            actionCount: typeof EnduranceActionHistoriesSchema.Encoded.action_count,
         ) => {
             logEnduranceActionHistory.mutate({
                 p_project_id: projectId,

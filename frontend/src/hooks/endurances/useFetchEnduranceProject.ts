@@ -9,7 +9,7 @@ import { EnduranceKey } from "../query-keys/endurances";
 import { ProjectKey } from "../query-keys/projects";
 
 import type { ProjectIdEncoded } from "@/domain/projects/tables/Project";
-import { fetchEnduranceProjectNew } from "@/use-cases/endurances-new/fetchEnduranceProject";
+import { fetchEnduranceProject } from "@/use-cases/endurances/fetchEnduranceProject";
 
 /**
  * 耐久企画の情報を取得するためのカスタムフック。
@@ -21,9 +21,9 @@ import { fetchEnduranceProjectNew } from "@/use-cases/endurances-new/fetchEndura
  * - キャッシュの有効期限(staleTime): 5分
  *
  * @returns TanStack Query の Query オブジェクトの配列\
- * {@link fetchEnduranceProjectNew} を実行する
+ * {@link fetchEnduranceProject} を実行する
  */
-export const useFetchEnduranceProjectNew = (projectId: ProjectIdEncoded) => {
+export const useFetchEnduranceProject = (projectId: ProjectIdEncoded) => {
     const queryClient = useQueryClient();
 
     const query = useQuery({
@@ -31,7 +31,7 @@ export const useFetchEnduranceProjectNew = (projectId: ProjectIdEncoded) => {
         queryFn: async () => {
             try {
                 const result = await Effect.runPromise(
-                    fetchEnduranceProjectNew(projectId),
+                    fetchEnduranceProject(projectId),
                 );
 
                 Chunk.map(result.rescue_actions, (action) => {

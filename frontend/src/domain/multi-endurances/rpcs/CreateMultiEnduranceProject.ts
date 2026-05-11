@@ -5,7 +5,7 @@ import {
     EnduranceUnitLabelSchema,
     EnduranceUnitPositionSchema,
     EnduranceUnitsSchema,
-} from "@/domain/endurances-new/tables/EnduranceUnits";
+} from "@/domain/endurances/tables/EnduranceUnits";
 import {
     ProjectIdSchema,
     ProjectTitleSchema,

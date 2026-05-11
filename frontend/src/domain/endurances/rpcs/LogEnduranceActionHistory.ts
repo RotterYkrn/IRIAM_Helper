@@ -3,9 +3,9 @@ import { Option, Schema } from "effect";
 import {
     EnduranceActionHistoryActionCountSchema,
     EnduranceActionHistoryTypeSchema,
-    type EnduranceActionHistoriesNewSchema,
-} from "../tables/EnduranceActionHistoriesNew";
-import { EnduranceActionIdSchema } from "../tables/EnduranceActionsNew";
+    type EnduranceActionHistoriesSchema,
+} from "../tables/EnduranceActionHistories";
+import { EnduranceActionIdSchema } from "../tables/EnduranceActions";
 import {
     EnduranceUnitIdSchema,
     type EnduranceUnitsSchema,
@@ -18,7 +18,7 @@ import {
 import type { Database } from "@/lib/database.types";
 import { mapFrom } from "@/utils/schema";
 
-export type LogEnduranceActionHistoryNewArgsEncoded = Readonly<
+export type LogEnduranceActionHistoryArgsEncoded = Readonly<
     Database["public"]["Functions"]["log_endurance_action_history_new"]["Args"]
 >;
 
@@ -27,44 +27,43 @@ export type LogEnduranceActionHistoryNewArgsEncoded = Readonly<
  * アクションタイプによって null が許容される
  *
  * 制約実装:\
- * {@link LogEnduranceActionHistoryNewArgsSchemaNormal}\
- * {@link LogEnduranceActionHistoryNewArgsSchemaRescueSabotage}
+ * {@link LogEnduranceActionHistoryArgsSchemaNormal}\
+ * {@link LogEnduranceActionHistoryArgsSchemaRescueSabotage}
  */
-const LogEnduranceActionHistoryNewArgsActionIdSchema =
-    Schema.optionalToRequired(
-        EnduranceActionIdSchema,
-        Schema.NullOr(EnduranceActionIdSchema),
-        {
-            decode: Option.getOrNull,
-            encode: (idOrNull) => {
-                if (idOrNull === null) {
-                    return Option.none();
-                }
-                return Option.some(EnduranceActionIdSchema.make(idOrNull));
-            },
+const LogEnduranceActionHistoryArgsActionIdSchema = Schema.optionalToRequired(
+    EnduranceActionIdSchema,
+    Schema.NullOr(EnduranceActionIdSchema),
+    {
+        decode: Option.getOrNull,
+        encode: (idOrNull) => {
+            if (idOrNull === null) {
+                return Option.none();
+            }
+            return Option.some(EnduranceActionIdSchema.make(idOrNull));
         },
-    );
+    },
+);
 
-/** {@link LogEnduranceActionHistoryNewArgsSchemaBase} */
-type LogEnduranceActionHistoryNewArgsBase = Readonly<{
+/** {@link LogEnduranceActionHistoryArgsSchemaBase} */
+type LogEnduranceActionHistoryArgsBase = Readonly<{
     project_id: typeof ProjectSchema.Type.id;
     unit_id: typeof EnduranceUnitsSchema.Type.id;
-    action_id: typeof EnduranceActionHistoriesNewSchema.Type.action_id | null;
-    action_history_type: typeof EnduranceActionHistoriesNewSchema.Type.action_type;
-    action_count: typeof EnduranceActionHistoriesNewSchema.Type.action_count;
+    action_id: typeof EnduranceActionHistoriesSchema.Type.action_id | null;
+    action_history_type: typeof EnduranceActionHistoriesSchema.Type.action_type;
+    action_count: typeof EnduranceActionHistoriesSchema.Type.action_count;
 }>;
 
 /**
  * log_endurance_action_history_new RPC の引数\
  * オブジェクト型定義のみ
  */
-const LogEnduranceActionHistoryNewArgsSchemaBase: Schema.Schema<
-    LogEnduranceActionHistoryNewArgsBase,
-    LogEnduranceActionHistoryNewArgsEncoded
+const LogEnduranceActionHistoryArgsSchemaBase: Schema.Schema<
+    LogEnduranceActionHistoryArgsBase,
+    LogEnduranceActionHistoryArgsEncoded
 > = Schema.Struct({
     project_id: ProjectIdSchema.pipe(mapFrom("p_project_id")),
     unit_id: EnduranceUnitIdSchema.pipe(mapFrom("p_unit_id")),
-    action_id: LogEnduranceActionHistoryNewArgsActionIdSchema.pipe(
+    action_id: LogEnduranceActionHistoryArgsActionIdSchema.pipe(
         Schema.fromKey("p_action_id"),
     ),
     action_history_type: EnduranceActionHistoryTypeSchema.pipe(
@@ -79,12 +78,12 @@ const LogEnduranceActionHistoryNewArgsSchemaBase: Schema.Schema<
  * log_endurance_action_history_new RPC の引数\
  * `action_type = "normal"` 時の制約定義
  */
-const LogEnduranceActionHistoryNewArgsSchemaNormal =
-    LogEnduranceActionHistoryNewArgsSchemaBase.pipe(
+const LogEnduranceActionHistoryArgsSchemaNormal =
+    LogEnduranceActionHistoryArgsSchemaBase.pipe(
         Schema.filter(
             (
                 a,
-            ): a is LogEnduranceActionHistoryNewArgsBase & {
+            ): a is LogEnduranceActionHistoryArgsBase & {
                 action_id: null;
                 action_history_type: "normal";
             } => a.action_history_type === "normal" && a.action_id === null,
@@ -100,14 +99,14 @@ const LogEnduranceActionHistoryNewArgsSchemaNormal =
  * log_endurance_action_history_new RPC の引数\
  * `action_type = "rescue" | "sabotage"` 時の制約定義
  */
-const LogEnduranceActionHistoryNewArgsSchemaRescueSabotage =
-    LogEnduranceActionHistoryNewArgsSchemaBase.pipe(
+const LogEnduranceActionHistoryArgsSchemaRescueSabotage =
+    LogEnduranceActionHistoryArgsSchemaBase.pipe(
         Schema.filter(
             (
                 a,
-            ): a is LogEnduranceActionHistoryNewArgsBase & {
+            ): a is LogEnduranceActionHistoryArgsBase & {
                 action_id: Exclude<
-                    typeof EnduranceActionHistoriesNewSchema.Type.action_id,
+                    typeof EnduranceActionHistoriesSchema.Type.action_id,
                     null
                 >;
                 action_history_type: "rescue" | "sabotage";
@@ -123,34 +122,34 @@ const LogEnduranceActionHistoryNewArgsSchemaRescueSabotage =
         ),
     );
 
-/** {@link LogEnduranceActionHistoryNewArgsSchema} */
-export type LogEnduranceActionHistoryNewArgs =
-    | typeof LogEnduranceActionHistoryNewArgsSchemaNormal.Type
-    | typeof LogEnduranceActionHistoryNewArgsSchemaRescueSabotage.Type;
+/** {@link LogEnduranceActionHistoryArgsSchema} */
+export type LogEnduranceActionHistoryArgs =
+    | typeof LogEnduranceActionHistoryArgsSchemaNormal.Type
+    | typeof LogEnduranceActionHistoryArgsSchemaRescueSabotage.Type;
 
 /**
  * log_endurance_action_history_new RPC の引数\
  * `action_type` の値による制約追加
  *
  * 制約定義:\
- * {@link LogEnduranceActionHistoryNewArgsSchemaNormal}\
- * {@link LogEnduranceActionHistoryNewArgsSchemaRescueSabotage}
+ * {@link LogEnduranceActionHistoryArgsSchemaNormal}\
+ * {@link LogEnduranceActionHistoryArgsSchemaRescueSabotage}
  */
-export const LogEnduranceActionHistoryNewArgsSchema: Schema.Schema<
-    LogEnduranceActionHistoryNewArgs,
-    LogEnduranceActionHistoryNewArgsEncoded
+export const LogEnduranceActionHistoryArgsSchema: Schema.Schema<
+    LogEnduranceActionHistoryArgs,
+    LogEnduranceActionHistoryArgsEncoded
 > = Schema.Union(
-    LogEnduranceActionHistoryNewArgsSchemaNormal,
-    LogEnduranceActionHistoryNewArgsSchemaRescueSabotage,
+    LogEnduranceActionHistoryArgsSchemaNormal,
+    LogEnduranceActionHistoryArgsSchemaRescueSabotage,
 );
 
-export type LogEnduranceActionHistoryNewReturnsEncoded = Readonly<
+export type LogEnduranceActionHistoryReturnsEncoded = Readonly<
     Database["public"]["Functions"]["log_endurance_action_history_new"]["Returns"]
 >;
 
-export type LogEnduranceActionHistoryNewReturns = typeof ProjectSchema.Type.id;
+export type LogEnduranceActionHistoryReturns = typeof ProjectSchema.Type.id;
 
-export const LogEnduranceActionHistoryNewReturnsSchema: Schema.Schema<
-    LogEnduranceActionHistoryNewReturns,
-    LogEnduranceActionHistoryNewReturnsEncoded
+export const LogEnduranceActionHistoryReturnsSchema: Schema.Schema<
+    LogEnduranceActionHistoryReturns,
+    LogEnduranceActionHistoryReturnsEncoded
 > = ProjectIdSchema;

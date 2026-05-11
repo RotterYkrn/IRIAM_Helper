@@ -1,6 +1,6 @@
 import { pipe, Schema } from "effect";
 
-import { EnduranceUnitsSchema } from "@/domain/endurances-new/tables/EnduranceUnits";
+import { EnduranceUnitsSchema } from "@/domain/endurances/tables/EnduranceUnits";
 import { ProjectDtoSchema } from "@/domain/projects/dto/ProjectDto";
 
 export const MultiEnduranceUnitSchema = pipe(

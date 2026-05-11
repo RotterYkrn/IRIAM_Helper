@@ -9,18 +9,18 @@ import EnduranceView from "../ui/EnduranceView";
 import EditEnduranceActionRow from "./EditEnduranceActionRow";
 
 import {
-    editSabotageActionsAtomsNew,
-    editRescueActionsAtomsNew,
-} from "@/atoms/endurances-new/EditActionAtom";
+    editSabotageActionsAtoms,
+    editRescueActionsAtoms,
+} from "@/atoms/endurances/EditActionAtom";
 import {
     initEditEnduranceAtom,
     isValidEditEnduranceAtom,
     validEditEnduranceAtom,
-} from "@/atoms/endurances-new/EditEnduranceAtom";
-import { editTargetCountAtom } from "@/atoms/endurances-new/EditTargetCountAtom";
-import { EnduranceTargetCountSchema } from "@/domain/endurances-new/tables/EnduranceUnits";
+} from "@/atoms/endurances/EditEnduranceAtom";
+import { editTargetCountAtom } from "@/atoms/endurances/EditTargetCountAtom";
+import { EnduranceTargetCountSchema } from "@/domain/endurances/tables/EnduranceUnits";
 import { ProjectTitleSchema } from "@/domain/projects/tables/Project";
-import { useCreateEnduranceProjectNew } from "@/hooks/endurances-new/useCreateEnduranceProject";
+import { useCreateEnduranceProject } from "@/hooks/endurances/useCreateEnduranceProject";
 import { errorToast, successToast } from "@/utils/toast";
 
 /**
@@ -35,12 +35,12 @@ const CreateEnduranceProjectLayout = () => {
 
     const [editTargetCountState, setEditTargetCount] =
         useAtom(editTargetCountAtom);
-    const editRescueState = useAtomValue(editRescueActionsAtomsNew.editActions);
+    const editRescueState = useAtomValue(editRescueActionsAtoms.editActions);
     const editSabotageState = useAtomValue(
-        editSabotageActionsAtomsNew.editActions,
+        editSabotageActionsAtoms.editActions,
     );
 
-    const { create, isCreating } = useCreateEnduranceProjectNew();
+    const { create, isCreating } = useCreateEnduranceProject();
 
     const initEvent = useEffectEvent(() =>
         initEditEndurance({

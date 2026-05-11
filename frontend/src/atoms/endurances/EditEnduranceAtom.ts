@@ -4,19 +4,19 @@ import { atom } from "jotai";
 import { editTitleAtom, validEditTitleAtom } from "../projects/EditTitleAtom";
 
 import {
-    editRescueActionsAtomsNew,
-    editSabotageActionsAtomsNew,
+    editRescueActionsAtoms,
+    editSabotageActionsAtoms,
 } from "./EditActionAtom";
 import {
     editTargetCountAtom,
     validEditTargetCountAtom,
 } from "./EditTargetCountAtom";
 
-import type { EnduranceProjectDtoSchema } from "@/domain/endurances-new/dto/EnduranceProjectDto";
-import type { EnduranceUnitsSchema } from "@/domain/endurances-new/tables/EnduranceUnits";
+import type { EnduranceProjectDtoSchema } from "@/domain/endurances/dto/EnduranceProjectDto";
+import type { EnduranceUnitsSchema } from "@/domain/endurances/tables/EnduranceUnits";
 import type { ProjectSchema } from "@/domain/projects/tables/Project";
 
-type EditEnduranceStateNew = Readonly<{
+type EditEnduranceState = Readonly<{
     title: typeof ProjectSchema.Type.title;
     target_count: typeof EnduranceUnitsSchema.Type.target_count;
     rescue_actions: typeof EnduranceProjectDtoSchema.Type.rescue_actions;
@@ -30,8 +30,8 @@ const baseEditEnduranceAtom = atom((get) =>
     Option.all({
         title: get(validEditTitleAtom),
         target_count: get(validEditTargetCountAtom),
-        rescue_actions: get(editRescueActionsAtomsNew.validActions),
-        sabotage_actions: get(editSabotageActionsAtomsNew.validActions),
+        rescue_actions: get(editRescueActionsAtoms.validActions),
+        sabotage_actions: get(editSabotageActionsAtoms.validActions),
     }),
 );
 
@@ -57,10 +57,10 @@ export const isValidEditEnduranceAtom = atom((get) =>
  */
 export const initEditEnduranceAtom = atom(
     null,
-    (_, set, initial: EditEnduranceStateNew) => {
+    (_, set, initial: EditEnduranceState) => {
         set(editTitleAtom, initial.title);
         set(editTargetCountAtom, initial.target_count.toString());
-        set(editRescueActionsAtomsNew.initActions, initial.rescue_actions);
-        set(editSabotageActionsAtomsNew.initActions, initial.sabotage_actions);
+        set(editRescueActionsAtoms.initActions, initial.rescue_actions);
+        set(editSabotageActionsAtoms.initActions, initial.sabotage_actions);
     },
 );
