@@ -42,14 +42,14 @@ const EnduranceProjectLayout = () => {
     const navigate = useNavigate();
     const { project, isEdit, setIsEdit } = useProjectContext();
 
-    const enduranceDataQuery = useFetchEnduranceProjectNew(project.id);
-    const updateEnduranceProject = useUpdateEnduranceProjectNew();
-    const duplicateEnduranceProject = useDuplicateEnduranceProjectNew();
+    const { data, isFetching } = useFetchEnduranceProjectNew(project.id);
+    const { update, isUpdating } = useUpdateEnduranceProjectNew();
+    const { duplicate, isDuplicating } = useDuplicateEnduranceProjectNew();
     const logEnduranceActionHistory = useLogEnduranceActionHistoryNew();
 
     const validEditState = useAtomValue(validEditEnduranceAtom);
     const initEditEndurance = useSetAtom(initEditEnduranceAtom);
-    const disabled = !useAtomValue(isValidEditEnduranceAtom);
+    const isValidEditState = useAtomValue(isValidEditEnduranceAtom);
 
     const [editTargetCountState, setEditTargetCount] =
         useAtom(editTargetCountAtom);
@@ -58,24 +58,22 @@ const EnduranceProjectLayout = () => {
         editSabotageActionsAtomsNew.editActions,
     );
 
-    if (enduranceDataQuery.isLoading) {
+    if (isFetching) {
         return <div className="flex justify-center">読み込み中...</div>;
     }
 
-    if (!enduranceDataQuery.data) {
+    if (!data) {
         return (
             <div className="flex justify-center">企画の取得に失敗しました</div>
         );
     }
 
-    const enduranceData = enduranceDataQuery.data;
-
     const onEdit = () => {
         initEditEndurance({
-            title: enduranceData.title,
-            target_count: enduranceData.unit.target_count,
+            title: data.title,
+            target_count: data.unit.target_count,
             rescue_actions: pipe(
-                enduranceData.rescue_actions,
+                data.rescue_actions,
                 Chunk.map((id) =>
                     queryClient.getQueryData<
                         typeof EnduranceRescueActionDtoSchema.Type
@@ -89,7 +87,7 @@ const EnduranceProjectLayout = () => {
                 ),
             ),
             sabotage_actions: pipe(
-                enduranceData.sabotage_actions,
+                data.sabotage_actions,
                 Chunk.map((id) =>
                     queryClient.getQueryData<
                         typeof EnduranceSabotageActionDtoSchema.Type
@@ -111,10 +109,10 @@ const EnduranceProjectLayout = () => {
             return;
         }
 
-        updateEnduranceProject.mutate(
+        update(
             {
-                id: enduranceData.id,
-                unit_id: enduranceData.unit.id,
+                id: data.id,
+                unit_id: data.unit.id,
                 ...validEditState,
             },
             {
@@ -134,20 +132,16 @@ const EnduranceProjectLayout = () => {
         if (!confirm("この企画をコピーしますか？")) {
             return;
         }
-        duplicateEnduranceProject.mutate(
-            { project_id: enduranceData.id },
+        duplicate(
+            { project_id: data.id },
             {
                 onSuccess: (id) => {
-                    successToast(
-                        `「${enduranceData.title}」がコピーされました`,
-                    );
+                    successToast(`「${data.title}」がコピーされました`);
                     navigate(`/projects/endurance/${id}`);
                 },
                 onError: (error) => {
                     console.error(error);
-                    errorToast(
-                        `「${enduranceData.title}」のコピーに失敗しました`,
-                    );
+                    errorToast(`「${data.title}」のコピーに失敗しました`);
                 },
             },
         );
@@ -159,26 +153,28 @@ const EnduranceProjectLayout = () => {
         actionCount: typeof EnduranceActionHistoriesNewSchema.Encoded.action_count,
     ) => {
         logEnduranceActionHistory.mutate({
-            p_project_id: enduranceData.id,
-            p_unit_id: enduranceData.unit.id,
+            p_project_id: data.id,
+            p_unit_id: data.unit.id,
             p_action_history_type: "normal",
             p_action_count: actionCount,
         });
     };
 
     // 片方の要素がない場合は、各アクションの幅を広く使わせる
-    const isWideRescue = enduranceData.sabotage_actions.length === 0;
-    const isWideSabotage = enduranceData.rescue_actions.length === 0;
+    const isWideRescue = data.sabotage_actions.length === 0;
+    const isWideSabotage = data.rescue_actions.length === 0;
 
     return (
         <ProjectContainer
-            isSaveDisabled={disabled}
+            isPendingAction={isUpdating || isDuplicating}
+            canSave={isValidEditState}
+            isSaving={isUpdating}
             onEdit={onEdit}
             onSave={onSave}
             onDuplicate={onDuplicate}
         >
             <EnduranceView
-                projectStatus={enduranceData.status}
+                projectStatus={data.status}
                 isEdit={isEdit}
                 actionButtonCounts={actionButtonCounts}
             >
@@ -191,7 +187,7 @@ const EnduranceProjectLayout = () => {
                     <EnduranceView.CountProgress
                         left={
                             <div className="text-right text-4xl font-mono">
-                                {enduranceData.unit.current_count}
+                                {data.unit.current_count}
                             </div>
                         }
                         center={
@@ -201,18 +197,18 @@ const EnduranceProjectLayout = () => {
                         }
                         right={
                             <div className="text-left text-4xl font-mono">
-                                {enduranceData.unit.target_count}
+                                {data.unit.target_count}
                             </div>
                         }
                     />
                 )}
                 <EnduranceView.NormalAction>
                     <EnduranceView.MinusButtons
-                        disabled={enduranceData.action_count.normal_count <= 0}
+                        disabled={data.action_count.normal_count <= 0}
                         onIncrement={onIncrementNormal}
                     />
                     <EnduranceView.ActionCount
-                        actionCount={enduranceData.action_count.normal_count}
+                        actionCount={data.action_count.normal_count}
                     />
                     <EnduranceView.PlusButtons
                         onIncrement={onIncrementNormal}
@@ -220,8 +216,8 @@ const EnduranceProjectLayout = () => {
                 </EnduranceView.NormalAction>
                 <EnduranceView.ActionsField>
                     <EnduranceView.RescueActionsField
-                        actionLength={enduranceData.rescue_actions.length}
-                        rescueCount={enduranceData.action_count.rescue_count}
+                        actionLength={data.rescue_actions.length}
+                        rescueCount={data.action_count.rescue_count}
                         isWide={isWideRescue}
                     >
                         {isEdit
@@ -232,23 +228,18 @@ const EnduranceProjectLayout = () => {
                                       actionType={"rescue"}
                                   />
                               ))
-                            : Chunk.map(
-                                  enduranceData.rescue_actions,
-                                  (actionId) => (
-                                      <EnduranceActionRow
-                                          key={actionId}
-                                          projectId={enduranceData.id}
-                                          unitId={enduranceData.unit.id}
-                                          actionId={actionId}
-                                      />
-                                  ),
-                              )}
+                            : Chunk.map(data.rescue_actions, (actionId) => (
+                                  <EnduranceActionRow
+                                      key={actionId}
+                                      projectId={data.id}
+                                      unitId={data.unit.id}
+                                      actionId={actionId}
+                                  />
+                              ))}
                     </EnduranceView.RescueActionsField>
                     <EnduranceView.SabotageActionsField
-                        actionLength={enduranceData.sabotage_actions.length}
-                        sabotageCount={
-                            enduranceData.action_count.sabotage_count
-                        }
+                        actionLength={data.sabotage_actions.length}
+                        sabotageCount={data.action_count.sabotage_count}
                         isWide={isWideSabotage}
                     >
                         {isEdit
@@ -259,17 +250,14 @@ const EnduranceProjectLayout = () => {
                                       actionType={"sabotage"}
                                   />
                               ))
-                            : Chunk.map(
-                                  enduranceData.sabotage_actions,
-                                  (actionId) => (
-                                      <EnduranceActionRow
-                                          key={actionId}
-                                          projectId={enduranceData.id}
-                                          unitId={enduranceData.unit.id}
-                                          actionId={actionId}
-                                      />
-                                  ),
-                              )}
+                            : Chunk.map(data.sabotage_actions, (actionId) => (
+                                  <EnduranceActionRow
+                                      key={actionId}
+                                      projectId={data.id}
+                                      unitId={data.unit.id}
+                                      actionId={actionId}
+                                  />
+                              ))}
                     </EnduranceView.SabotageActionsField>
                 </EnduranceView.ActionsField>
             </EnduranceView>

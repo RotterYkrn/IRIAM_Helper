@@ -31,7 +31,7 @@ const CreateEnduranceProjectLayout = () => {
 
     const validEditState = useAtomValue(validEditEnduranceAtom);
     const initEditEndurance = useSetAtom(initEditEnduranceAtom);
-    const disabled = !useAtomValue(isValidEditEnduranceAtom);
+    const isValidEditState = useAtomValue(isValidEditEnduranceAtom);
 
     const [editTargetCountState, setEditTargetCount] =
         useAtom(editTargetCountAtom);
@@ -40,7 +40,7 @@ const CreateEnduranceProjectLayout = () => {
         editSabotageActionsAtomsNew.editActions,
     );
 
-    const createMutation = useCreateEnduranceProjectNew();
+    const { create, isCreating } = useCreateEnduranceProjectNew();
 
     const initEvent = useEffectEvent(() =>
         initEditEndurance({
@@ -61,7 +61,7 @@ const CreateEnduranceProjectLayout = () => {
             return;
         }
 
-        createMutation.mutate(validEditState, {
+        create(validEditState, {
             onSuccess: (projectId) => {
                 successToast(`「${validEditState.title}」を作成しました`);
                 navigate(`/projects/endurance/${projectId}`);
@@ -75,7 +75,8 @@ const CreateEnduranceProjectLayout = () => {
 
     return (
         <CreateProjectContainer
-            isSaveDisabled={disabled}
+            canSave={isValidEditState}
+            isSaving={isCreating}
             onSave={onSave}
         >
             <EnduranceView

@@ -19,7 +19,7 @@ import { updateEnduranceProjectNew } from "@/use-cases/endurances-new/updateEndu
 export const useUpdateEnduranceProjectNew = () => {
     const queryClient = useQueryClient();
 
-    return useMutation({
+    const mutation = useMutation({
         mutationFn: async (args: UpdateEnduranceProjectNewArgs) => {
             try {
                 const result = await Effect.runPromise(
@@ -40,4 +40,10 @@ export const useUpdateEnduranceProjectNew = () => {
             });
         },
     });
+
+    return {
+        update: mutation.mutate,
+        isUpdating: mutation.isPending,
+        updateError: mutation.error,
+    };
 };

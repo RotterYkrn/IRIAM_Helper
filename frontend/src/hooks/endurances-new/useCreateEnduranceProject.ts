@@ -19,7 +19,7 @@ import { createEnduranceProjectNew } from "@/use-cases/endurances-new/createEndu
 export const useCreateEnduranceProjectNew = () => {
     const queryClient = useQueryClient();
 
-    return useMutation({
+    const mutation = useMutation({
         mutationFn: async (args: CreateEnduranceProjectNewArgs) => {
             try {
                 const result = await Effect.runPromise(
@@ -35,4 +35,10 @@ export const useCreateEnduranceProjectNew = () => {
             queryClient.invalidateQueries({ queryKey: ProjectKey.list });
         },
     });
+
+    return {
+        create: mutation.mutate,
+        isCreating: mutation.isPending,
+        createError: mutation.error,
+    };
 };

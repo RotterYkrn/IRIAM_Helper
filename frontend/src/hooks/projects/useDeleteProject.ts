@@ -3,7 +3,7 @@ import { Effect } from "effect";
 
 import { ProjectKey } from "../query-keys/projects";
 
-import type { DeleteProjectArgsEncoded } from "@/domain/projects/rpcs/DeleteProject";
+import type { DeleteProjectArgs } from "@/domain/projects/rpcs/DeleteProject";
 import { deleteProject } from "@/use-cases/projects/deleteProject";
 
 /**
@@ -14,13 +14,13 @@ import { deleteProject } from "@/use-cases/projects/deleteProject";
  * {@link ProjectKey.list}
  *
  * @returns TanStack Query の Mutation オブジェクト。\
- * `mutate` 関数に {@link DeleteProjectArgsEncoded} を渡して実行します。
+ * `mutate` 関数に {@link DeleteProjectArgs} を渡して実行します。
  */
 export const useDeleteProject = () => {
     const queryClient = useQueryClient();
 
-    return useMutation({
-        mutationFn: async (args: DeleteProjectArgsEncoded) => {
+    const mutation = useMutation({
+        mutationFn: async (args: DeleteProjectArgs) => {
             try {
                 const result = await Effect.runPromise(deleteProject(args));
                 return result;
@@ -34,4 +34,10 @@ export const useDeleteProject = () => {
             queryClient.invalidateQueries({ queryKey: ProjectKey.list });
         },
     });
+
+    return {
+        delete: mutation.mutate,
+        isDeleting: mutation.isPending,
+        deleteError: mutation.error,
+    };
 };

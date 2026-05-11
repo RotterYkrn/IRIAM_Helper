@@ -26,7 +26,7 @@ import { fetchEnduranceProjectNew } from "@/use-cases/endurances-new/fetchEndura
 export const useFetchEnduranceProjectNew = (projectId: ProjectIdEncoded) => {
     const queryClient = useQueryClient();
 
-    return useQuery({
+    const query = useQuery({
         queryKey: ProjectKey.detail(projectId),
         queryFn: async () => {
             try {
@@ -66,4 +66,10 @@ export const useFetchEnduranceProjectNew = (projectId: ProjectIdEncoded) => {
         staleTime: 5 * 60 * 1000,
         placeholderData: keepPreviousData,
     });
+
+    return {
+        data: query.data,
+        fetchError: query.error,
+        isFetching: query.isLoading,
+    };
 };

@@ -19,7 +19,7 @@ import { duplicateEnduranceProject } from "@/use-cases/endurances-new/duplicateE
 export const useDuplicateEnduranceProjectNew = () => {
     const queryClient = useQueryClient();
 
-    return useMutation({
+    const mutation = useMutation({
         mutationFn: async (args: DuplicateEnduranceProjectArgs) => {
             try {
                 const result = await Effect.runPromise(
@@ -35,4 +35,10 @@ export const useDuplicateEnduranceProjectNew = () => {
             queryClient.invalidateQueries({ queryKey: ProjectKey.list });
         },
     });
+
+    return {
+        duplicate: mutation.mutate,
+        isDuplicating: mutation.isPending,
+        duplicateError: mutation.error,
+    };
 };

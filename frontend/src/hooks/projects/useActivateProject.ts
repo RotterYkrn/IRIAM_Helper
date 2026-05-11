@@ -3,7 +3,7 @@ import { Effect } from "effect";
 
 import { ProjectKey } from "../query-keys/projects";
 
-import type { ActivateProjectArgsEncoded } from "@/domain/projects/rpcs/ActivateProject";
+import type { ActivateProjectArgs } from "@/domain/projects/rpcs/ActivateProject";
 import { activateProject } from "@/use-cases/projects/activateProject";
 
 /**
@@ -15,13 +15,13 @@ import { activateProject } from "@/use-cases/projects/activateProject";
  * {@link ProjectKey.detail}
  *
  * @returns TanStack Query の Mutation オブジェクト。\
- * `mutate` 関数に {@link ActivateProjectArgsEncoded} を渡して実行します。
+ * `mutate` 関数に {@link ActivateProjectArgs} を渡して実行します。
  */
 export const useActivateProject = () => {
     const queryClient = useQueryClient();
 
-    return useMutation({
-        mutationFn: async (args: ActivateProjectArgsEncoded) => {
+    const mutation = useMutation({
+        mutationFn: async (args: ActivateProjectArgs) => {
             try {
                 const result = await Effect.runPromise(activateProject(args));
                 return result;
@@ -38,4 +38,10 @@ export const useActivateProject = () => {
             });
         },
     });
+
+    return {
+        activate: mutation.mutate,
+        isActivating: mutation.isPending,
+        activateError: mutation.error,
+    };
 };
