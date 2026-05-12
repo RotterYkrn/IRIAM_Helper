@@ -1,7 +1,7 @@
 import { Chunk } from "effect";
 import { useSetAtom, useAtom, useAtomValue } from "jotai";
-import { SendHorizonal } from "lucide-react";
-import { useEffect, useEffectEvent, useRef } from "react";
+import { Loader2, SendHorizonal } from "lucide-react";
+import { useEffectEvent, useLayoutEffect, useRef } from "react";
 
 import InputField from "../ui/InputField";
 
@@ -43,7 +43,7 @@ const InputUserNameField = ({ unitId, logs }: Props) => {
         },
     );
 
-    useEffect(() => {
+    useLayoutEffect(() => {
         initEnterLogs(logs);
     }, [logs]);
 
@@ -53,8 +53,6 @@ const InputUserNameField = ({ unitId, logs }: Props) => {
             return;
         }
 
-        initEditEnteredUserName();
-
         logEnter(
             {
                 unit_id: unitId,
@@ -62,13 +60,14 @@ const InputUserNameField = ({ unitId, logs }: Props) => {
                 user_number: logs.length + 1,
             },
             {
+                onSuccess: () => {
+                    initEditEnteredUserName();
+                },
                 onError: () => {
                     errorToast("入室の記録に失敗しました");
                 },
             },
         );
-
-        inputRef.current?.focus();
     };
 
     const handleKeyDown = (e: React.KeyboardEvent<HTMLInputElement>) => {
@@ -87,17 +86,23 @@ const InputUserNameField = ({ unitId, logs }: Props) => {
                 error={editUserName.error}
                 setValue={(value) => setEditUserName(value)}
                 placeholder="入室したユーザー..."
+                readOnly={isLoggingEnter}
                 onKeyDown={handleKeyDown}
                 autoFocus
             />
             <div className="relative">
                 <Button
                     size={"icon"}
-                    className="bg-sky-500 hover:bg-sky-500/80"
-                    disabled={!isValid}
+                    className="bg-sky-500 hover:bg-sky-500/80
+                        disabled:bg-gray-400"
+                    disabled={!isValid || isLoggingEnter}
                     onClick={handleSubmit}
                 >
-                    <SendHorizonal />
+                    {isLoggingEnter ? (
+                        <Loader2 className="animate-spin" />
+                    ) : (
+                        <SendHorizonal />
+                    )}
                 </Button>
                 <span
                     className="absolute top-full left-1/2 -translate-x-1/2

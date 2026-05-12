@@ -12,7 +12,6 @@ export const useActivateEnterUnit = () => {
     const mutation = useMutation({
         mutationFn: async (unitId: typeof EnterUnitSchema.Type.id) => {
             try {
-                await new Promise((resolve) => setTimeout(resolve, 1000)); // デバッグ用の遅延
                 const result = await Effect.runPromise(
                     activateEnterUnit({
                         unit_id: unitId,

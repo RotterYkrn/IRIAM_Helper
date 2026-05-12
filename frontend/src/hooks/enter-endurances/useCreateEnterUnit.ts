@@ -12,7 +12,6 @@ export const useCreateEnterUnit = () => {
     const mutation = useMutation({
         mutationFn: async (args: CreateEnterUnitArgs) => {
             try {
-                await new Promise((resolve) => setTimeout(resolve, 1000)); // デバッグ用の遅延
                 const result = await Effect.runPromise(createEnterUnit(args));
                 return result;
             } catch (error) {

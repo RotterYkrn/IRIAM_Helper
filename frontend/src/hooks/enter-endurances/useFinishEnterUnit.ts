@@ -12,7 +12,6 @@ export const useFinishEnterUnit = () => {
     const mutation = useMutation({
         mutationFn: async (args: FinishEnterUnitArgs) => {
             try {
-                await new Promise((resolve) => setTimeout(resolve, 1000)); // デバッグ用の遅延
                 const result = await Effect.runPromise(finishEnterUnit(args));
                 return result;
             } catch (error) {

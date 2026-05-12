@@ -21,8 +21,7 @@ const EnterEnduranceDetailLayout = () => {
     const unitId = useEnterUnitId();
 
     const { data, error } = useFetchEnterEnduranceUnit(unitId);
-    const { activateUnit: activate, isActivatingUnit: isActivating } =
-        useActivateEnterUnit();
+    const { activateUnit, isActivatingUnit } = useActivateEnterUnit();
     const { archive, isArchiving } = useArchiveEnterUnit();
     const { finish, isFinishing } = useFinishEnterUnit();
 
@@ -41,7 +40,7 @@ const EnterEnduranceDetailLayout = () => {
             return;
         }
 
-        activate(unitId, {
+        activateUnit(unitId, {
             onSuccess: () => {
                 successToast("入室耐久を開始しました");
             },
@@ -143,7 +142,7 @@ const EnterEnduranceDetailLayout = () => {
                                     size={"lg"}
                                     className="bg-green-500
                                         hover:bg-green-500/70"
-                                    disabled={isActivating || isArchiving}
+                                    disabled={isActivatingUnit || isArchiving}
                                     onClick={handleActivate}
                                 >
                                     配信開始
@@ -152,7 +151,9 @@ const EnterEnduranceDetailLayout = () => {
                                     <Button
                                         variant={"outline"}
                                         size={"lg"}
-                                        disabled={isArchiving || isActivating}
+                                        disabled={
+                                            isArchiving || isActivatingUnit
+                                        }
                                         onClick={handleArchive}
                                     >
                                         過去のデータを記録

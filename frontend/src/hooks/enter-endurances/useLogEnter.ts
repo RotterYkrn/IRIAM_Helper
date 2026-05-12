@@ -25,7 +25,7 @@ export const useLogEnter = () => {
                 throw error;
             }
         },
-        onMutate: async (args) => {
+        onSuccess: async (_, args) => {
             await queryClient.setQueryData<EnterUnitDto>(
                 EnterEnduranceKey.unit(args.unit_id),
                 (old) =>
@@ -38,11 +38,6 @@ export const useLogEnter = () => {
                         }),
                     },
             );
-        },
-        onSettled: (_, __, { unit_id }) => {
-            queryClient.invalidateQueries({
-                queryKey: EnterEnduranceKey.unit(unit_id),
-            });
         },
     });
 

@@ -12,7 +12,6 @@ export const useArchiveEnterUnit = () => {
     const mutation = useMutation({
         mutationFn: async (args: ArchiveEnterUnitArgs) => {
             try {
-                await new Promise((resolve) => setTimeout(resolve, 1000)); // デバッグ用の遅延
                 const result = await Effect.runPromise(archiveEnterUnit(args));
                 return result;
             } catch (error) {
