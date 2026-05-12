@@ -35,7 +35,7 @@ const InputUserNameField = ({ unitId, logs }: Props) => {
     const validEditUserName = useAtomValue(validEditEnteredUserNameAtom);
     const isValid = useAtomValue(isValidEditEnteredUserNameAtom);
 
-    const logEnter = useLogEnter();
+    const { logEnter, isLoggingEnter } = useLogEnter();
 
     const initEnterLogs = useEffectEvent(
         (logs: Chunk.Chunk<typeof EnterLogDtoSchema.Type>) => {
@@ -55,7 +55,7 @@ const InputUserNameField = ({ unitId, logs }: Props) => {
 
         initEditEnteredUserName();
 
-        logEnter.mutate(
+        logEnter(
             {
                 unit_id: unitId,
                 user_name: validEditUserName,

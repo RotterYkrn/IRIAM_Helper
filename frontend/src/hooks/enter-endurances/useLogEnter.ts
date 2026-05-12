@@ -10,7 +10,7 @@ import { logEnter } from "@/use-cases/enter-endurances/logEnter";
 export const useLogEnter = () => {
     const queryClient = useQueryClient();
 
-    return useMutation({
+    const mutation = useMutation({
         mutationFn: async (args: Omit<LogEnterArgs, "entered_at">) => {
             try {
                 const result = await Effect.runPromise(
@@ -45,4 +45,10 @@ export const useLogEnter = () => {
             });
         },
     });
+
+    return {
+        logEnter: mutation.mutate,
+        isLoggingEnter: mutation.isPending,
+        logEnterError: mutation.error,
+    };
 };

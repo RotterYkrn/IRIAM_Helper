@@ -9,9 +9,10 @@ import { finishEnterUnit } from "@/use-cases/enter-endurances/finishEnterUnit";
 export const useFinishEnterUnit = () => {
     const queryClient = useQueryClient();
 
-    return useMutation({
+    const mutation = useMutation({
         mutationFn: async (args: FinishEnterUnitArgs) => {
             try {
+                await new Promise((resolve) => setTimeout(resolve, 1000)); // デバッグ用の遅延
                 const result = await Effect.runPromise(finishEnterUnit(args));
                 return result;
             } catch (error) {
@@ -25,4 +26,10 @@ export const useFinishEnterUnit = () => {
             });
         },
     });
+
+    return {
+        finish: mutation.mutate,
+        isFinishing: mutation.isPending,
+        finishError: mutation.error,
+    };
 };

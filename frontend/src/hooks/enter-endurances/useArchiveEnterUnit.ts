@@ -9,9 +9,10 @@ import { archiveEnterUnit } from "@/use-cases/enter-endurances/archiveEnterUnit"
 export const useArchiveEnterUnit = () => {
     const queryClient = useQueryClient();
 
-    return useMutation({
+    const mutation = useMutation({
         mutationFn: async (args: ArchiveEnterUnitArgs) => {
             try {
+                await new Promise((resolve) => setTimeout(resolve, 1000)); // デバッグ用の遅延
                 const result = await Effect.runPromise(archiveEnterUnit(args));
                 return result;
             } catch (error) {
@@ -25,4 +26,10 @@ export const useArchiveEnterUnit = () => {
             });
         },
     });
+
+    return {
+        archive: mutation.mutate,
+        isArchiving: mutation.isPending,
+        archiveError: mutation.error,
+    };
 };

@@ -9,9 +9,10 @@ import { activateEnterUnit } from "@/use-cases/enter-endurances/activateEnterUni
 export const useActivateEnterUnit = () => {
     const queryClient = useQueryClient();
 
-    return useMutation({
+    const mutation = useMutation({
         mutationFn: async (unitId: typeof EnterUnitSchema.Type.id) => {
             try {
+                await new Promise((resolve) => setTimeout(resolve, 1000)); // デバッグ用の遅延
                 const result = await Effect.runPromise(
                     activateEnterUnit({
                         unit_id: unitId,
@@ -30,4 +31,10 @@ export const useActivateEnterUnit = () => {
             });
         },
     });
+
+    return {
+        activateUnit: mutation.mutate,
+        isActivatingUnit: mutation.isPending,
+        activateUnitError: mutation.error,
+    };
 };

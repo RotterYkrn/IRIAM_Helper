@@ -19,11 +19,14 @@ import { errorToast, successToast } from "@/utils/toast";
 
 const EnterEnduranceDetailLayout = () => {
     const unitId = useEnterUnitId();
+
     const { data, error } = useFetchEnterEnduranceUnit(unitId);
+    const { activateUnit: activate, isActivatingUnit: isActivating } =
+        useActivateEnterUnit();
+    const { archive, isArchiving } = useArchiveEnterUnit();
+    const { finish, isFinishing } = useFinishEnterUnit();
+
     const enterLogs = useAtomValue(enterLogsAtom);
-    const activateUnit = useActivateEnterUnit();
-    const archiveUnit = useArchiveEnterUnit();
-    const finishUnit = useFinishEnterUnit();
 
     if (error) {
         return (
@@ -38,7 +41,7 @@ const EnterEnduranceDetailLayout = () => {
             return;
         }
 
-        activateUnit.mutate(unitId, {
+        activate(unitId, {
             onSuccess: () => {
                 successToast("入室耐久を開始しました");
             },
@@ -53,7 +56,7 @@ const EnterEnduranceDetailLayout = () => {
             return;
         }
 
-        archiveUnit.mutate(
+        archive(
             { unit_id: unitId },
             {
                 onSuccess: () => {
@@ -71,7 +74,7 @@ const EnterEnduranceDetailLayout = () => {
             return;
         }
 
-        finishUnit.mutate(
+        finish(
             { unit_id: unitId },
             {
                 onSuccess: () => {
@@ -140,6 +143,7 @@ const EnterEnduranceDetailLayout = () => {
                                     size={"lg"}
                                     className="bg-green-500
                                         hover:bg-green-500/70"
+                                    disabled={isActivating || isArchiving}
                                     onClick={handleActivate}
                                 >
                                     配信開始
@@ -148,6 +152,7 @@ const EnterEnduranceDetailLayout = () => {
                                     <Button
                                         variant={"outline"}
                                         size={"lg"}
+                                        disabled={isArchiving || isActivating}
                                         onClick={handleArchive}
                                     >
                                         過去のデータを記録
@@ -160,6 +165,7 @@ const EnterEnduranceDetailLayout = () => {
                                 <Button
                                     className="absolute top-3.5 right-10
                                         bg-destructive hover:bg-destructive/60"
+                                    disabled={isFinishing}
                                     onClick={handleFinish}
                                 >
                                     配信終了
