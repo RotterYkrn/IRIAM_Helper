@@ -19,53 +19,15 @@ export const fetchEnduranceProject = (projectId: ProjectIdEncoded) =>
         Effect.tryMapPromise({
             try: (id) =>
                 supabase
-                    .from("projects")
-                    .select(
-                        `
-                            id,
-                            type,
-                            title,
-                            status,
-                            unit:endurance_units (
-                                id,
-                                target_count,
-                                current_count
-                            ),
-                            action_count:endurance_action_counts (
-                                normal_count,
-                                rescue_count,
-                                sabotage_count
-                            ),
-                            all_actions:endurance_actions_new (
-                                id,
-                                type,
-                                position,
-                                label,
-                                amount,
-                                count
-                            )
-                        `,
-                    )
+                    .from("endurance_project_dto")
+                    .select("*")
                     .eq("id", id)
                     .eq("type", "endurance")
-                    .order("position", {
-                        referencedTable: "endurance_actions_new",
-                        ascending: true,
-                    })
                     .single(),
             catch: (error) => error,
         }),
         Effect.flatMap(({ data, error }) =>
             error ? Effect.fail(error) : Effect.succeed(data),
         ),
-        Effect.map((project) => ({
-            ...project,
-            rescue_actions: project.all_actions.filter(
-                (a) => a.type === "rescue",
-            ),
-            sabotage_actions: project.all_actions.filter(
-                (a) => a.type === "sabotage",
-            ),
-        })),
         Effect.flatMap(Schema.decodeEither(EnduranceProjectDtoSchema)),
     );

@@ -70,6 +70,13 @@ export type Database = {
             foreignKeyName: "fk_endurance_action_counts_project"
             columns: ["project_id"]
             isOneToOne: false
+            referencedRelation: "endurance_project_dto"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_endurance_action_counts_project"
+            columns: ["project_id"]
+            isOneToOne: false
             referencedRelation: "projects"
             referencedColumns: ["id"]
           },
@@ -119,6 +126,13 @@ export type Database = {
             columns: ["action_id"]
             isOneToOne: false
             referencedRelation: "endurance_actions_new"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_endurance_histories_project"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "endurance_project_dto"
             referencedColumns: ["id"]
           },
           {
@@ -179,6 +193,13 @@ export type Database = {
             foreignKeyName: "fk_action_project"
             columns: ["project_id"]
             isOneToOne: false
+            referencedRelation: "endurance_project_dto"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_action_project"
+            columns: ["project_id"]
+            isOneToOne: false
             referencedRelation: "projects"
             referencedColumns: ["id"]
           },
@@ -223,6 +244,13 @@ export type Database = {
           updated_at?: string
         }
         Relationships: [
+          {
+            foreignKeyName: "fk_endurance_unit_project"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "endurance_project_dto"
+            referencedColumns: ["id"]
+          },
           {
             foreignKeyName: "fk_endurance_unit_project"
             columns: ["project_id"]
@@ -303,6 +331,13 @@ export type Database = {
             foreignKeyName: "fk_enter_unit_project"
             columns: ["project_id"]
             isOneToOne: false
+            referencedRelation: "endurance_project_dto"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_enter_unit_project"
+            columns: ["project_id"]
+            isOneToOne: false
             referencedRelation: "projects"
             referencedColumns: ["id"]
           },
@@ -337,7 +372,27 @@ export type Database = {
       }
     }
     Views: {
-      [_ in never]: never
+      endurance_project_dto: {
+        Row: {
+          action_count:
+            | Database["public"]["CompositeTypes"]["dto_endurance_action_count"]
+            | null
+          id: string | null
+          rescue_actions:
+            | Database["public"]["CompositeTypes"]["dto_endurance_action"][]
+            | null
+          sabotage_actions:
+            | Database["public"]["CompositeTypes"]["dto_endurance_action"][]
+            | null
+          status: string | null
+          title: string | null
+          type: string | null
+          unit:
+            | Database["public"]["CompositeTypes"]["dto_endurance_unit"]
+            | null
+        }
+        Relationships: []
+      }
     }
     Functions: {
       activate_enter_unit: {
@@ -452,6 +507,24 @@ export type Database = {
         position: number | null
         label: string | null
         target_count: number | null
+      }
+      dto_endurance_action: {
+        id: string | null
+        type: string | null
+        position: number | null
+        label: string | null
+        amount: number | null
+        count: number | null
+      }
+      dto_endurance_action_count: {
+        normal_count: number | null
+        rescue_count: number | null
+        sabotage_count: number | null
+      }
+      dto_endurance_unit: {
+        id: string | null
+        target_count: number | null
+        current_count: number | null
       }
       update_endurance_action_args: {
         id: string | null
