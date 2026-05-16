@@ -1,6 +1,10 @@
 import { Schema } from "effect";
 
 import {
+    EnduranceProjectDtoSchema,
+    type EnduranceProjectDto,
+} from "../dto/EnduranceProjectDto";
+import {
     EnduranceActionAmountSchema,
     EnduranceActionLabelSchema,
     EnduranceActionPositionSchema,
@@ -12,7 +16,6 @@ import {
 } from "../tables/EnduranceUnits";
 
 import {
-    ProjectIdSchema,
     ProjectTitleSchema,
     type ProjectSchema,
 } from "@/domain/projects/tables/Project";
@@ -76,11 +79,11 @@ export const CreateEnduranceProjectArgsSchema: Schema.Schema<
     ),
 });
 
-export type CreateEnduranceProjectReturnsEncoded = Readonly<
+export type CreateEnduranceProjectReturnsEncoded = RecursiveReadonly<
     Database["public"]["Functions"]["create_endurance_project_new"]["Returns"]
 >;
-export type CreateEnduranceProjectReturns = typeof ProjectSchema.Type.id;
+export type CreateEnduranceProjectReturns = EnduranceProjectDto;
 export const CreateEnduranceProjectReturnsSchema: Schema.Schema<
     CreateEnduranceProjectReturns,
     CreateEnduranceProjectReturnsEncoded
-> = ProjectIdSchema;
+> = EnduranceProjectDtoSchema;

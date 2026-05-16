@@ -8,6 +8,7 @@ import { Chunk, Effect } from "effect";
 import { EnduranceKey } from "../query-keys/endurances";
 import { ProjectKey } from "../query-keys/projects";
 
+import type { EnduranceProjectDto } from "@/domain/endurances/dto/EnduranceProjectDto";
 import type { ProjectIdEncoded } from "@/domain/projects/tables/Project";
 import { fetchEnduranceProject } from "@/use-cases/endurances/fetchEnduranceProject";
 
@@ -33,31 +34,7 @@ export const useFetchEnduranceProject = (projectId: ProjectIdEncoded) => {
                 const result = await Effect.runPromise(
                     fetchEnduranceProject(projectId),
                 );
-
-                Chunk.map(result.rescue_actions, (action) => {
-                    queryClient.setQueryData(
-                        EnduranceKey.action(action.id),
-                        action,
-                    );
-                });
-                Chunk.map(result.sabotage_actions, (action) => {
-                    queryClient.setQueryData(
-                        EnduranceKey.action(action.id),
-                        action,
-                    );
-                });
-
-                return {
-                    ...result,
-                    rescue_actions: Chunk.map(
-                        result.rescue_actions,
-                        (action) => action.id,
-                    ),
-                    sabotage_actions: Chunk.map(
-                        result.sabotage_actions,
-                        (action) => action.id,
-                    ),
-                };
+                return setEnduranceProjectQueryData(queryClient, result);
             } catch (error) {
                 console.error(error);
                 throw error;
@@ -71,5 +48,29 @@ export const useFetchEnduranceProject = (projectId: ProjectIdEncoded) => {
         data: query.data,
         fetchError: query.error,
         isFetching: query.isLoading,
+    };
+};
+
+export const setEnduranceProjectQueryData = (
+    queryClient: ReturnType<typeof useQueryClient>,
+    project: EnduranceProjectDto,
+) => {
+    Chunk.map(project.rescue_actions, (action) => {
+        queryClient.setQueryData(EnduranceKey.action(action.id), action);
+    });
+    Chunk.map(project.sabotage_actions, (action) => {
+        queryClient.setQueryData(EnduranceKey.action(action.id), action);
+    });
+
+    return {
+        ...project,
+        rescue_actions: Chunk.map(
+            project.rescue_actions,
+            (action) => action.id,
+        ),
+        sabotage_actions: Chunk.map(
+            project.sabotage_actions,
+            (action) => action.id,
+        ),
     };
 };

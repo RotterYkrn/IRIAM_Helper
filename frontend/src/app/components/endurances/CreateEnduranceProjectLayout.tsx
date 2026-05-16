@@ -62,13 +62,13 @@ const CreateEnduranceProjectLayout = () => {
         }
 
         create(validEditState, {
-            onSuccess: (projectId) => {
-                successToast(`「${validEditState.title}」を作成しました`);
-                navigate(`/projects/endurance/${projectId}`);
+            onSuccess: ({ id, title }) => {
+                successToast(`「${title}」を作成しました`);
+                navigate(`/projects/endurance/${id}`);
             },
-            onError: (error) => {
+            onError: (error, { title }) => {
                 console.error(error);
-                errorToast(`「${validEditState.title}」の作成に失敗しました`);
+                errorToast(`「${title}」の作成に失敗しました`);
             },
         });
     };
