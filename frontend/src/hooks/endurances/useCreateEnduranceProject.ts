@@ -3,7 +3,7 @@ import { Effect } from "effect";
 
 import { ProjectKey } from "../query-keys/projects";
 
-import { setEnduranceProjectQueryData } from "./useFetchEnduranceProject";
+import { updateEnduranceProjectQueryData } from "./utils";
 
 import type { CreateEnduranceProjectArgs } from "@/domain/endurances/rpcs/CreateEnduranceProject";
 import { createEnduranceProject } from "@/use-cases/endurances/createEnduranceProject";
@@ -34,18 +34,7 @@ export const useCreateEnduranceProject = () => {
             }
         },
         onSuccess: async (createdProject) => {
-            console.log(
-                "Created project:",
-                createdProject.rescue_actions.toJSON(),
-            );
-            queryClient.setQueryData(
-                ProjectKey.detail(createdProject.id),
-                setEnduranceProjectQueryData(queryClient, createdProject),
-            );
-            queryClient.invalidateQueries({
-                queryKey: ProjectKey.detail(createdProject.id),
-            });
-            queryClient.invalidateQueries({ queryKey: ProjectKey.list });
+            updateEnduranceProjectQueryData(queryClient, createdProject);
         },
     });
 
