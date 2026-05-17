@@ -458,7 +458,30 @@ export type Database = {
       delete_project: { Args: { p_project_id: string }; Returns: undefined }
       duplicate_endurance_project: {
         Args: { p_project_id: string }
-        Returns: string
+        Returns: {
+          action_count:
+            | Database["public"]["CompositeTypes"]["dto_endurance_action_count"]
+            | null
+          id: string | null
+          rescue_actions:
+            | Database["public"]["CompositeTypes"]["dto_endurance_action"][]
+            | null
+          sabotage_actions:
+            | Database["public"]["CompositeTypes"]["dto_endurance_action"][]
+            | null
+          status: string | null
+          title: string | null
+          type: string | null
+          unit:
+            | Database["public"]["CompositeTypes"]["dto_endurance_unit"]
+            | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "endurance_project_dto"
+          isOneToOne: true
+          isSetofReturn: false
+        }
       }
       duplicate_multi_endurance_project: {
         Args: { p_project_id: string }

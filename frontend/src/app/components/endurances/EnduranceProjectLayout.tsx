@@ -135,7 +135,7 @@ const EnduranceProjectLayout = () => {
         duplicate(
             { project_id: data.id },
             {
-                onSuccess: (id) => {
+                onSuccess: ({ id }) => {
                     successToast(`「${data.title}」がコピーされました`);
                     navigate(`/projects/endurance/${id}`);
                 },
