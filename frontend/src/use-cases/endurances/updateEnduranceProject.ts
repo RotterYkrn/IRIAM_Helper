@@ -1,11 +1,11 @@
 import { Schema, Effect, pipe } from "effect";
 
+import type { EnduranceProjectDto } from "@/domain/endurances/dto/EnduranceProjectDto";
 import {
     type UpdateEnduranceProjectArgs,
     UpdateEnduranceProjectArgsSchema,
     UpdateEnduranceProjectReturnsSchema,
 } from "@/domain/endurances/rpcs/UpdateEnduranceProject";
-import { type ProjectId } from "@/domain/projects/tables/Project";
 import { supabase } from "@/lib/supabase";
 
 /**
@@ -15,7 +15,7 @@ import { supabase } from "@/lib/supabase";
  */
 export const updateEnduranceProject = (
     args: UpdateEnduranceProjectArgs,
-): Effect.Effect<ProjectId, unknown> =>
+): Effect.Effect<EnduranceProjectDto, unknown> =>
     pipe(
         Effect.tryPromise({
             try: () =>
@@ -34,6 +34,6 @@ export const updateEnduranceProject = (
             error ? Effect.fail(error) : Effect.succeed(data),
         ),
         Effect.flatMap(
-            Schema.decodeUnknownEither(UpdateEnduranceProjectReturnsSchema),
+            Schema.decodeEither(UpdateEnduranceProjectReturnsSchema),
         ),
     );

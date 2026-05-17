@@ -3,6 +3,8 @@ import { Effect } from "effect";
 
 import { ProjectKey } from "../query-keys/projects";
 
+import { setEnduranceProjectQueryData } from "./useFetchEnduranceProject";
+
 import type { UpdateEnduranceProjectArgs } from "@/domain/endurances/rpcs/UpdateEnduranceProject";
 import { updateEnduranceProject } from "@/use-cases/endurances/updateEnduranceProject";
 
@@ -31,12 +33,16 @@ export const useUpdateEnduranceProject = () => {
                 throw error;
             }
         },
-        onSuccess: (projectId) => {
+        onSuccess: (updatedProject) => {
+            queryClient.setQueryData(
+                ProjectKey.detail(updatedProject.id),
+                setEnduranceProjectQueryData(queryClient, updatedProject),
+            );
             queryClient.invalidateQueries({
-                queryKey: ProjectKey.detail(projectId),
+                queryKey: ProjectKey.detail(updatedProject.id),
             });
             queryClient.invalidateQueries({
-                queryKey: ["actionStat", projectId],
+                queryKey: ProjectKey.list,
             });
         },
     });

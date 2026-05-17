@@ -1,6 +1,10 @@
 import { Schema } from "effect";
 
 import {
+    EnduranceProjectDtoSchema,
+    type EnduranceProjectDto,
+} from "../dto/EnduranceProjectDto";
+import {
     EnduranceActionAmountSchema,
     EnduranceActionIdSchema,
     EnduranceActionLabelSchema,
@@ -83,11 +87,11 @@ export const UpdateEnduranceProjectArgsSchema: Schema.Schema<
     ),
 });
 
-export type UpdateEnduranceProjectReturnsEncoded = Readonly<
+export type UpdateEnduranceProjectReturnsEncoded = RecursiveReadonly<
     Database["public"]["Functions"]["update_endurance_project_new"]["Returns"]
 >;
-export type UpdateEnduranceProjectReturns = typeof ProjectSchema.Type.id;
+export type UpdateEnduranceProjectReturns = EnduranceProjectDto;
 export const UpdateEnduranceProjectReturnsSchema: Schema.Schema<
     UpdateEnduranceProjectReturns,
     UpdateEnduranceProjectReturnsEncoded
-> = ProjectIdSchema;
+> = EnduranceProjectDtoSchema;

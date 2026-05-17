@@ -16,12 +16,13 @@ create function update_endurance_project_new(
     p_rescue_actions update_endurance_action_args[],
     p_sabotage_actions update_endurance_action_args[]
 )
-returns uuid
+returns endurance_project_dto
 language plpgsql
 SET search_path = public
 as $$
 declare
     v_action update_endurance_action_args;
+    v_result_row endurance_project_dto;
 begin
     -- projects
     update projects
@@ -105,6 +106,11 @@ begin
         end if;
     end loop;
 
-    return p_project_id;
+    SELECT * INTO v_result_row 
+    FROM endurance_project_dto 
+    WHERE id = p_project_id 
+    LIMIT 1;
+
+    RETURN v_result_row;
 end;
 $$;

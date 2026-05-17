@@ -502,7 +502,30 @@ export type Database = {
           p_title: string
           p_unit_id: string
         }
-        Returns: string
+        Returns: {
+          action_count:
+            | Database["public"]["CompositeTypes"]["dto_endurance_action_count"]
+            | null
+          id: string | null
+          rescue_actions:
+            | Database["public"]["CompositeTypes"]["dto_endurance_action"][]
+            | null
+          sabotage_actions:
+            | Database["public"]["CompositeTypes"]["dto_endurance_action"][]
+            | null
+          status: string | null
+          title: string | null
+          type: string | null
+          unit:
+            | Database["public"]["CompositeTypes"]["dto_endurance_unit"]
+            | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "endurance_project_dto"
+          isOneToOne: true
+          isSetofReturn: false
+        }
       }
       update_multi_endurance_project: {
         Args: {
