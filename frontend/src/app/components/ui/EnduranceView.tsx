@@ -13,6 +13,7 @@ import { Input } from "@/components/ui/input";
 import type { EnduranceActionCountsSchema } from "@/domain/endurances/tables/EnduranceActionCounts";
 import type { EnduranceActionHistoriesSchema } from "@/domain/endurances/tables/EnduranceActionHistories";
 import type { EnduranceActionsSchema } from "@/domain/endurances/tables/EnduranceActions";
+import type { EnduranceUnitsSchema } from "@/domain/endurances/tables/EnduranceUnits";
 import type { ProjectSchema } from "@/domain/projects/tables/Project";
 
 /**
@@ -61,18 +62,19 @@ const EnduranceView = ({ children, ...contextValue }: Props) => {
 };
 
 type CountProgressProps = {
-    left: React.ReactNode;
-    center: React.ReactNode;
-    right: React.ReactNode;
+    target_count: typeof EnduranceUnitsSchema.Type.target_count;
+    current_count: typeof EnduranceUnitsSchema.Type.current_count;
 };
 
-const CountProgress = ({ left, center, right }: CountProgressProps) => {
-    return (
+const CountProgress = ({ target_count, current_count }: CountProgressProps) => {
+    return target_count !== 0 ? (
         <div className="w-full grid grid-cols-[1fr_auto_1fr] items-center gap-4">
-            {left}
-            {center}
-            {right}
+            <div className="text-right text-4xl font-mono">{current_count}</div>
+            <div className="text-5xl font-mono text-gray-400">/</div>
+            <div className="text-left text-4xl font-mono">{target_count}</div>
         </div>
+    ) : (
+        <div className="text-4xl font-mono">{current_count}</div>
     );
 };
 
@@ -89,7 +91,7 @@ const EditTargetCount = ({
     setTargetCount,
 }: EditTargetCountContextType) => {
     return (
-        <>
+        <div className="flex flex-col items-center justify-center space-y-2">
             <InputField
                 label="目標数"
                 error={targetCountState.error}
@@ -97,7 +99,10 @@ const EditTargetCount = ({
                 value={targetCountState.input}
                 className="text-4xl font-mono w-30"
             />
-        </>
+            <span className="text-md font-medium text-gray-600">
+                ※空欄もしくは0にすると、目標数設定なしにできます
+            </span>
+        </div>
     );
 };
 
@@ -137,7 +142,7 @@ const PlusButtons = ({ onIncrement }: PlusButtonsProps) => {
     );
 
     return (
-        <div className="flex flex-row gap-2">
+        <div className="flex flex-row gap-1">
             {Chunk.map(buttonConfigs, (config) => (
                 <Button
                     key={config.label}
@@ -176,7 +181,7 @@ const MinusButtons = ({ disabled, onIncrement }: MinusButtonsProps) => {
     );
 
     return (
-        <div className="flex flex-row gap-2">
+        <div className="flex flex-row gap-1">
             {Chunk.map(buttonConfigs, (config) => (
                 <Button
                     key={config.label}

@@ -25,8 +25,8 @@ export const EnduranceUnitLabelSchema = Schema.String.pipe(
 );
 
 export const EnduranceTargetCountSchema = Schema.Number.pipe(
-    Schema.positive({
-        message: () => "0より大きいの数を入力してください",
+    Schema.nonNegative({
+        message: () => "0以上の数を入力してください",
     }),
     Schema.brand("EnduranceTargetCount"),
 );

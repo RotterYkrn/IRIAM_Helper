@@ -67,6 +67,9 @@ const CreateMultiEnduranceProjectLayout = () => {
             isSaving={isCreating}
             onSave={onSave}
         >
+            <span className="text-md font-medium text-gray-600">
+                ※目標数を空欄もしくは0にすると、目標数設定なしにできます
+            </span>
             <div className="grid grid-cols-3 gap-4">
                 {Chunk.map(editUnits, (unit) => (
                     <EditEnduranceUnitRow

@@ -185,21 +185,8 @@ const EnduranceProjectLayout = () => {
                     />
                 ) : (
                     <EnduranceView.CountProgress
-                        left={
-                            <div className="text-right text-4xl font-mono">
-                                {data.unit.current_count}
-                            </div>
-                        }
-                        center={
-                            <div className="text-5xl font-mono text-gray-400">
-                                /
-                            </div>
-                        }
-                        right={
-                            <div className="text-left text-4xl font-mono">
-                                {data.unit.target_count}
-                            </div>
-                        }
+                        target_count={data.unit.target_count}
+                        current_count={data.unit.current_count}
                     />
                 )}
                 <EnduranceView.NormalAction>
