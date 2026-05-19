@@ -109,7 +109,7 @@ const MultiEnduranceProjectLayout = ({ projectId }: Props) => {
         duplicate(
             { project_id: data.id },
             {
-                onSuccess: (id) => {
+                onSuccess: ({ id }) => {
                     successToast(`「${data.title}」がコピーされました`);
                     navigate(`/projects/multi-endurance/${id}`);
                 },

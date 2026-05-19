@@ -1,7 +1,7 @@
 import { useQueryClient, useMutation } from "@tanstack/react-query";
 import { Effect } from "effect";
 
-import { ProjectKey } from "../query-keys/projects";
+import { updateMultiEnduranceProjectQueryData } from "./utils";
 
 import type { CreateMultiEnduranceProjectArgs } from "@/domain/multi-endurances/rpcs/CreateMultiEnduranceProject";
 import { createMultiEnduranceProject } from "@/use-cases/multi-endurances/createMultiEnduranceProject";
@@ -21,8 +21,8 @@ export const useCreateMultiEnduranceProject = () => {
                 throw error;
             }
         },
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ProjectKey.list });
+        onSuccess: (createdProject) => {
+            updateMultiEnduranceProjectQueryData(queryClient, createdProject);
         },
     });
 

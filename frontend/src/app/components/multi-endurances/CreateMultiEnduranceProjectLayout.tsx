@@ -50,9 +50,9 @@ const CreateMultiEnduranceProjectLayout = () => {
         }
 
         create(validEditState, {
-            onSuccess: (projectId) => {
-                successToast(`「${validEditState.title}」を作成しました`);
-                navigate(`/projects/multi-endurance/${projectId}`);
+            onSuccess: ({ id, title }) => {
+                successToast(`「${title}」を作成しました`);
+                navigate(`/projects/multi-endurance/${id}`);
             },
             onError: (error) => {
                 console.error(error);

@@ -77,6 +77,13 @@ export type Database = {
             foreignKeyName: "fk_endurance_action_counts_project"
             columns: ["project_id"]
             isOneToOne: false
+            referencedRelation: "multi_endurance_project_dto"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_endurance_action_counts_project"
+            columns: ["project_id"]
+            isOneToOne: false
             referencedRelation: "projects"
             referencedColumns: ["id"]
           },
@@ -133,6 +140,13 @@ export type Database = {
             columns: ["project_id"]
             isOneToOne: false
             referencedRelation: "endurance_project_dto"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_endurance_histories_project"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "multi_endurance_project_dto"
             referencedColumns: ["id"]
           },
           {
@@ -200,6 +214,13 @@ export type Database = {
             foreignKeyName: "fk_action_project"
             columns: ["project_id"]
             isOneToOne: false
+            referencedRelation: "multi_endurance_project_dto"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_action_project"
+            columns: ["project_id"]
+            isOneToOne: false
             referencedRelation: "projects"
             referencedColumns: ["id"]
           },
@@ -249,6 +270,13 @@ export type Database = {
             columns: ["project_id"]
             isOneToOne: false
             referencedRelation: "endurance_project_dto"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_endurance_unit_project"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "multi_endurance_project_dto"
             referencedColumns: ["id"]
           },
           {
@@ -338,6 +366,13 @@ export type Database = {
             foreignKeyName: "fk_enter_unit_project"
             columns: ["project_id"]
             isOneToOne: false
+            referencedRelation: "multi_endurance_project_dto"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_enter_unit_project"
+            columns: ["project_id"]
+            isOneToOne: false
             referencedRelation: "projects"
             referencedColumns: ["id"]
           },
@@ -389,6 +424,18 @@ export type Database = {
           type: string | null
           unit:
             | Database["public"]["CompositeTypes"]["dto_endurance_unit"]
+            | null
+        }
+        Relationships: []
+      }
+      multi_endurance_project_dto: {
+        Row: {
+          id: string | null
+          status: string | null
+          title: string | null
+          type: string | null
+          units:
+            | Database["public"]["CompositeTypes"]["dto_multi_endurance_unit"][]
             | null
         }
         Relationships: []
@@ -453,7 +500,21 @@ export type Database = {
           p_title: string
           p_units: Database["public"]["CompositeTypes"]["create_unit_args"][]
         }
-        Returns: string
+        Returns: {
+          id: string | null
+          status: string | null
+          title: string | null
+          type: string | null
+          units:
+            | Database["public"]["CompositeTypes"]["dto_multi_endurance_unit"][]
+            | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "multi_endurance_project_dto"
+          isOneToOne: true
+          isSetofReturn: false
+        }
       }
       delete_project: { Args: { p_project_id: string }; Returns: undefined }
       duplicate_endurance_project: {
@@ -485,7 +546,21 @@ export type Database = {
       }
       duplicate_multi_endurance_project: {
         Args: { p_project_id: string }
-        Returns: string
+        Returns: {
+          id: string | null
+          status: string | null
+          title: string | null
+          type: string | null
+          units:
+            | Database["public"]["CompositeTypes"]["dto_multi_endurance_unit"][]
+            | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "multi_endurance_project_dto"
+          isOneToOne: true
+          isSetofReturn: false
+        }
       }
       finish_enter_unit: { Args: { p_unit_id: string }; Returns: string }
       finish_project: { Args: { p_project_id: string }; Returns: string }
@@ -556,7 +631,21 @@ export type Database = {
           p_title: string
           p_units: Database["public"]["CompositeTypes"]["update_unit_args"][]
         }
-        Returns: string
+        Returns: {
+          id: string | null
+          status: string | null
+          title: string | null
+          type: string | null
+          units:
+            | Database["public"]["CompositeTypes"]["dto_multi_endurance_unit"][]
+            | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "multi_endurance_project_dto"
+          isOneToOne: true
+          isSetofReturn: false
+        }
       }
     }
     Enums: {
@@ -592,6 +681,13 @@ export type Database = {
       }
       dto_endurance_unit: {
         id: string | null
+        target_count: number | null
+        current_count: number | null
+      }
+      dto_multi_endurance_unit: {
+        id: string | null
+        position: number | null
+        label: string | null
         target_count: number | null
         current_count: number | null
       }
