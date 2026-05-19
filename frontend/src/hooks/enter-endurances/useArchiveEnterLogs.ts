@@ -9,7 +9,7 @@ import { archiveEnterLogs } from "@/use-cases/enter-endurances/archiveEnterLogs"
 export const useArchiveEnterLogs = () => {
     const queryClient = useQueryClient();
 
-    return useMutation({
+    const mutation = useMutation({
         mutationFn: async (args: ArchiveEnterLogsArgs) => {
             try {
                 const result = await Effect.runPromise(archiveEnterLogs(args));
@@ -25,4 +25,10 @@ export const useArchiveEnterLogs = () => {
             });
         },
     });
+
+    return {
+        archiveEnterLogs: mutation.mutate,
+        isArchivingEnterLogs: mutation.isPending,
+        archiveEnterLogsError: mutation.error,
+    };
 };

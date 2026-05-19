@@ -9,7 +9,7 @@ import {
 } from "@/atoms/multi-endurances/EditUnitsAtom";
 import { Button } from "@/components/ui/button";
 import { Card } from "@/components/ui/card";
-import type { EnduranceUnitsSchema } from "@/domain/endurances-new/tables/EnduranceUnits";
+import type { EnduranceUnitsSchema } from "@/domain/endurances/tables/EnduranceUnits";
 
 type Props = {
     unitId: typeof EnduranceUnitsSchema.Type.id;

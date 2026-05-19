@@ -8,7 +8,7 @@ import { createEnterEnduranceProject } from "@/use-cases/enter-endurances/create
 export const useCreateEnterEnduranceProject = () => {
     const queryClient = useQueryClient();
 
-    return useMutation({
+    const mutation = useMutation({
         mutationFn: async () => {
             try {
                 const result = await Effect.runPromise(
@@ -24,4 +24,10 @@ export const useCreateEnterEnduranceProject = () => {
             queryClient.setQueryData(EnterEnduranceKey.projectId, projectId);
         },
     });
+
+    return {
+        create: mutation.mutate,
+        isCreating: mutation.isPending,
+        createError: mutation.error,
+    };
 };

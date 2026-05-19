@@ -22,7 +22,7 @@ import {
 import { useProjectContext } from "@/contexts/projects/useProjectContext";
 import type { MultiEnduranceUnitSchema } from "@/domain/multi-endurances/dto/MultiEnduranceProjectDto";
 import { type ProjectId } from "@/domain/projects/tables/Project";
-import { useDuplicateMultiEnduranceProjectNew } from "@/hooks/multi-endurances/useDuplicateMultiEnduranceProject";
+import { useDuplicateMultiEnduranceProject } from "@/hooks/multi-endurances/useDuplicateMultiEnduranceProject";
 import { useFetchMultiEnduranceProject } from "@/hooks/multi-endurances/useFetchMultiEnduranceProject";
 import { useUpdateMultiEnduranceProject } from "@/hooks/multi-endurances/useUpdateMultiEnduranceProject";
 import { EnduranceKey } from "@/hooks/query-keys/endurances";
@@ -40,34 +40,31 @@ const MultiEnduranceProjectLayout = ({ projectId }: Props) => {
     const navigate = useNavigate();
     const { isEdit, setIsEdit } = useProjectContext();
 
-    const projectQuery = useFetchMultiEnduranceProject(projectId);
-    const updateProject = useUpdateMultiEnduranceProject();
-    const duplicateMultiEnduranceProject =
-        useDuplicateMultiEnduranceProjectNew();
+    const { data, isFetching } = useFetchMultiEnduranceProject(projectId);
+    const { update, isUpdating } = useUpdateMultiEnduranceProject();
+    const { duplicate, isDuplicating } = useDuplicateMultiEnduranceProject();
 
     const editUnits = useAtomValue(editUnitsAtom);
     const validEditState = useAtomValue(validEditMultiEnduranceAtom);
     const initEditMultiEndurance = useSetAtom(initEditMultiEnduranceAtom);
     const createUnit = useSetAtom(createUnitAtom);
-    const disabled = !useAtomValue(isValidEditMultiEnduranceAtom);
+    const isValidState = useAtomValue(isValidEditMultiEnduranceAtom);
 
-    if (projectQuery.isLoading) {
+    if (isFetching) {
         return <div className="flex justify-center">読み込み中...</div>;
     }
 
-    if (!projectQuery.data) {
+    if (!data) {
         return (
             <div className="flex justify-center">企画の取得に失敗しました</div>
         );
     }
 
-    const project = projectQuery.data;
-
     const onEdit = () => {
         initEditMultiEndurance({
-            title: project.title,
+            title: data.title,
             units: pipe(
-                project.units,
+                data.units,
                 Chunk.map((id) =>
                     queryClient.getQueryData<
                         typeof MultiEnduranceUnitSchema.Type
@@ -87,9 +84,9 @@ const MultiEnduranceProjectLayout = ({ projectId }: Props) => {
             return;
         }
 
-        updateProject.mutate(
+        update(
             {
-                id: project.id,
+                id: data.id,
                 ...validEditState,
             },
             {
@@ -109,16 +106,16 @@ const MultiEnduranceProjectLayout = ({ projectId }: Props) => {
         if (!confirm("この企画をコピーしますか？")) {
             return;
         }
-        duplicateMultiEnduranceProject.mutate(
-            { project_id: project.id },
+        duplicate(
+            { project_id: data.id },
             {
-                onSuccess: (id) => {
-                    successToast(`「${project.title}」がコピーされました`);
+                onSuccess: ({ id }) => {
+                    successToast(`「${data.title}」がコピーされました`);
                     navigate(`/projects/multi-endurance/${id}`);
                 },
                 onError: (error) => {
                     console.error(error);
-                    errorToast(`「${project.title}」のコピーに失敗しました`);
+                    errorToast(`「${data.title}」のコピーに失敗しました`);
                 },
             },
         );
@@ -128,13 +125,15 @@ const MultiEnduranceProjectLayout = ({ projectId }: Props) => {
 
     return (
         <ProjectContainer
-            isSaveDisabled={disabled}
+            isPendingAction={isDuplicating}
+            canSave={isValidState}
+            isSaving={isUpdating}
             onEdit={onEdit}
             onSave={onSave}
             onDuplicate={onDuplicate}
         >
             <EnduranceView
-                projectStatus={project.status}
+                projectStatus={data.status}
                 isEdit={isEdit}
                 actionButtonCounts={actionButtonCounts}
             >
@@ -151,10 +150,10 @@ const MultiEnduranceProjectLayout = ({ projectId }: Props) => {
                         </>
                     ) : (
                         <>
-                            {Chunk.map(project.units, (id) => (
+                            {Chunk.map(data.units, (id) => (
                                 <EnduranceUnitRow
                                     key={id}
-                                    projectId={project.id}
+                                    projectId={data.id}
                                     unitId={id}
                                 />
                             ))}

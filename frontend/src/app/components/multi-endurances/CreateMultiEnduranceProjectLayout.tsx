@@ -28,8 +28,9 @@ const CreateMultiEnduranceProjectLayout = () => {
     const validEditState = useAtomValue(validEditMultiEnduranceAtom);
     const initEditEndurance = useSetAtom(initEditMultiEnduranceAtom);
     const createUnit = useSetAtom(createUnitAtom);
-    const disabled = !useAtomValue(isValidEditMultiEnduranceAtom);
-    const createMutation = useCreateMultiEnduranceProject();
+    const isValidState = useAtomValue(isValidEditMultiEnduranceAtom);
+
+    const { create, isCreating } = useCreateMultiEnduranceProject();
 
     const initEvent = useEffectEvent(() =>
         initEditEndurance({
@@ -48,10 +49,10 @@ const CreateMultiEnduranceProjectLayout = () => {
             return;
         }
 
-        createMutation.mutate(validEditState, {
-            onSuccess: (projectId) => {
-                successToast(`「${validEditState.title}」を作成しました`);
-                navigate(`/projects/multi-endurance/${projectId}`);
+        create(validEditState, {
+            onSuccess: ({ id, title }) => {
+                successToast(`「${title}」を作成しました`);
+                navigate(`/projects/multi-endurance/${id}`);
             },
             onError: (error) => {
                 console.error(error);
@@ -62,7 +63,8 @@ const CreateMultiEnduranceProjectLayout = () => {
 
     return (
         <CreateProjectContainer
-            isSaveDisabled={disabled}
+            canSave={isValidState}
+            isSaving={isCreating}
             onSave={onSave}
         >
             <div className="grid grid-cols-3 gap-4">
