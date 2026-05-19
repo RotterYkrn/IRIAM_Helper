@@ -19,7 +19,6 @@ export const useFetchMultiEnduranceProject = (projectId: ProjectId) => {
         queryKey: ProjectKey.detail(projectId),
         queryFn: async () => {
             try {
-                await new Promise((resolve) => setTimeout(resolve, 1000));
                 const result = await Effect.runPromise(
                     fetchMultiEnduranceProject(projectId),
                 );

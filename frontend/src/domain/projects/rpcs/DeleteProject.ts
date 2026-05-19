@@ -17,3 +17,12 @@ export const DeleteProjectArgsSchema: Schema.Schema<
 > = Schema.Struct({
     project_id: ProjectIdSchema.pipe(mapFrom("p_project_id")),
 });
+
+export type DeleteProjectReturnsEncoded = Readonly<
+    Database["public"]["Functions"]["delete_project"]["Returns"]
+>;
+export type DeleteProjectReturns = typeof ProjectSchema.Type.id;
+export const DeleteProjectReturnsSchema: Schema.Schema<
+    DeleteProjectReturns,
+    DeleteProjectReturnsEncoded
+> = ProjectIdSchema;

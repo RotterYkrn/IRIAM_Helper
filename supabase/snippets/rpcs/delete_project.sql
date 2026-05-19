@@ -3,7 +3,7 @@ DROP function if exists delete_project;
 create function delete_project(
     p_project_id uuid
 )
-returns void
+returns uuid
 language plpgsql
 SET search_path = public
 as $$
@@ -28,5 +28,7 @@ begin
     -- 削除（CASCADE で子も消える）
     delete from projects
     where id = p_project_id;
+
+    return p_project_id;
 end;
 $$;

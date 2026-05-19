@@ -1,8 +1,9 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Effect } from "effect";
+import { Chunk, Effect } from "effect";
 
 import { ProjectKey } from "../query-keys/projects";
 
+import type { ProjectDtoSchema } from "@/domain/projects/dto/ProjectDto";
 import type { ActivateProjectArgs } from "@/domain/projects/rpcs/ActivateProject";
 import { activateProject } from "@/use-cases/projects/activateProject";
 
@@ -32,6 +33,18 @@ export const useActivateProject = () => {
         },
         onSuccess: (projectId) => {
             // 一覧のリストグループにも影響するため、一覧も更新
+            queryClient.setQueryData<Chunk.Chunk<typeof ProjectDtoSchema.Type>>(
+                ProjectKey.list,
+                (old) =>
+                    old &&
+                    Chunk.map(old, (p) =>
+                        p.id === projectId ? { ...p, status: "active" } : p,
+                    ),
+            );
+            queryClient.setQueryData<typeof ProjectDtoSchema.Type>(
+                ProjectKey.detail(projectId),
+                (old) => old && { ...old, status: "active" },
+            );
             queryClient.invalidateQueries({ queryKey: ProjectKey.list });
             queryClient.invalidateQueries({
                 queryKey: ProjectKey.detail(projectId),

@@ -516,7 +516,7 @@ export type Database = {
           isSetofReturn: false
         }
       }
-      delete_project: { Args: { p_project_id: string }; Returns: undefined }
+      delete_project: { Args: { p_project_id: string }; Returns: string }
       duplicate_endurance_project: {
         Args: { p_project_id: string }
         Returns: {

@@ -2,6 +2,7 @@ import { Effect, pipe, Schema } from "effect";
 
 import {
     DeleteProjectArgsSchema,
+    DeleteProjectReturnsSchema,
     type DeleteProjectArgs,
 } from "@/domain/projects/rpcs/DeleteProject";
 import { supabase } from "@/lib/supabase";
@@ -23,5 +24,5 @@ export const deleteProject = (args: DeleteProjectArgs) =>
         Effect.flatMap(({ data, error }) =>
             error ? Effect.fail(error) : Effect.succeed(data),
         ),
-        Effect.flatMap(Schema.decodeUnknownEither(Schema.Void)),
+        Effect.flatMap(Schema.decodeUnknownEither(DeleteProjectReturnsSchema)),
     );

@@ -1,8 +1,9 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Effect } from "effect";
+import { Chunk, Effect } from "effect";
 
 import { ProjectKey } from "../query-keys/projects";
 
+import type { ProjectDtoSchema } from "@/domain/projects/dto/ProjectDto";
 import type { DeleteProjectArgs } from "@/domain/projects/rpcs/DeleteProject";
 import { deleteProject } from "@/use-cases/projects/deleteProject";
 
@@ -29,8 +30,11 @@ export const useDeleteProject = () => {
                 throw error;
             }
         },
-
-        onSuccess: () => {
+        onSuccess: (projectId) => {
+            queryClient.setQueryData<Chunk.Chunk<typeof ProjectDtoSchema.Type>>(
+                ProjectKey.list,
+                (old) => old && Chunk.filter(old, (p) => p.id !== projectId),
+            );
             queryClient.invalidateQueries({ queryKey: ProjectKey.list });
         },
     });
