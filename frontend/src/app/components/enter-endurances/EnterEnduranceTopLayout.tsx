@@ -38,7 +38,7 @@ type Props = {
 const EnterEnduranceTopLayout = ({ projectId }: Props) => {
     const navigate = useNavigate();
     const { data, isError } = useFetchEnterEnduranceProject(projectId);
-    const createEnterUnit = useCreateEnterUnit();
+    const { create, isCreating } = useCreateEnterUnit();
 
     const [searchParams, setSearchParams] = useSearchParams();
     const monthParam = searchParams.get("month");
@@ -114,8 +114,7 @@ const EnterEnduranceTopLayout = ({ projectId }: Props) => {
     };
 
     const onClickNone = (eventDate: Date) => () => {
-        console.log("onClickNone", eventDate);
-        createEnterUnit.mutate(
+        create(
             { project_id: projectId, event_date: eventDate },
             {
                 onSuccess: (unitId) => {
@@ -132,8 +131,9 @@ const EnterEnduranceTopLayout = ({ projectId }: Props) => {
 
     return (
         <div
-            className="flex flex-col items-center justify-center w-lg p-4
-                space-y-4"
+            className={`flex flex-col items-center justify-center w-lg p-4
+                space-y-4
+                ${isCreating ? "cursor-wait pointer-events-none" : ""}`}
         >
             <div className="flex w-xs items-center justify-between">
                 <Button

@@ -1,6 +1,6 @@
 import { Schema } from "effect";
 
-import { type Project, ProjectIdSchema } from "../tables/Project";
+import { ProjectIdSchema, ProjectSchema } from "../tables/Project";
 
 import type { Database } from "@/lib/database.types";
 import { mapFrom } from "@/utils/schema";
@@ -8,10 +8,21 @@ import { mapFrom } from "@/utils/schema";
 export type DeleteProjectArgsEncoded = Readonly<
     Database["public"]["Functions"]["delete_project"]["Args"]
 >;
-export type DeleteProjectArgs = Pick<Project, "id">;
+export type DeleteProjectArgs = Readonly<{
+    project_id: typeof ProjectSchema.Type.id;
+}>;
 export const DeleteProjectArgsSchema: Schema.Schema<
     DeleteProjectArgs,
     DeleteProjectArgsEncoded
 > = Schema.Struct({
-    id: ProjectIdSchema.pipe(mapFrom("p_project_id")),
+    project_id: ProjectIdSchema.pipe(mapFrom("p_project_id")),
 });
+
+export type DeleteProjectReturnsEncoded = Readonly<
+    Database["public"]["Functions"]["delete_project"]["Returns"]
+>;
+export type DeleteProjectReturns = typeof ProjectSchema.Type.id;
+export const DeleteProjectReturnsSchema: Schema.Schema<
+    DeleteProjectReturns,
+    DeleteProjectReturnsEncoded
+> = ProjectIdSchema;

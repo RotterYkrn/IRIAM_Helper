@@ -28,7 +28,7 @@ const InputEnterArchiveData = () => {
     const inputRef = useRef<HTMLInputElement>(null);
 
     const unitId = useEnterUnitId();
-    const archiveEnterLogs = useArchiveEnterLogs();
+    const { archiveEnterLogs, isArchivingEnterLogs } = useArchiveEnterLogs();
 
     const [enterLogs, setEnterLogs] = useAtom(enterLogsAtom);
     const initEditEnteredUserName = useSetAtom(initEditEnteredUserNameAtom);
@@ -127,7 +127,7 @@ const InputEnterArchiveData = () => {
             return;
         }
 
-        archiveEnterLogs.mutate(
+        archiveEnterLogs(
             {
                 unit_id: unitId,
                 enter_count: enterLogs.length,
@@ -147,7 +147,10 @@ const InputEnterArchiveData = () => {
     };
 
     return (
-        <div className="flex flex-col items-center justify-center gap-2">
+        <div
+            className={`flex flex-col items-center justify-center gap-2
+                ${isArchivingEnterLogs ? "cursor-wait pointer-events-none opacity-50" : ""}`}
+        >
             <div className="flex items-center justify-center gap-4">
                 <span>開始時刻:</span>
                 <DatePicker

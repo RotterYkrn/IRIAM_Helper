@@ -1,13 +1,17 @@
 import { Schema } from "effect";
 
 import {
+    MultiEnduranceProjectDtoSchema,
+    type MultiEnduranceProjectDto,
+} from "../dto/MultiEnduranceProjectDto";
+
+import {
     EnduranceTargetCountSchema,
     EnduranceUnitLabelSchema,
     EnduranceUnitPositionSchema,
     EnduranceUnitsSchema,
-} from "@/domain/endurances-new/tables/EnduranceUnits";
+} from "@/domain/endurances/tables/EnduranceUnits";
 import {
-    ProjectIdSchema,
     ProjectTitleSchema,
     type ProjectSchema,
 } from "@/domain/projects/tables/Project";
@@ -51,11 +55,11 @@ export const CreateMultiEnduranceProjectArgsSchema: Schema.Schema<
     units: CreateUnitArgsChunkSchema.pipe(mapFrom("p_units")),
 });
 
-export type CreateMultiEnduranceProjectReturnsEncoded = Readonly<
+export type CreateMultiEnduranceProjectReturnsEncoded = RecursiveReadonly<
     Database["public"]["Functions"]["create_multi_endurance_project"]["Returns"]
 >;
-export type CreateMultiEnduranceProjectReturns = typeof ProjectSchema.Type.id;
+export type CreateMultiEnduranceProjectReturns = MultiEnduranceProjectDto;
 export const CreateMultiEnduranceProjectReturnsSchema: Schema.Schema<
     CreateMultiEnduranceProjectReturns,
     CreateMultiEnduranceProjectReturnsEncoded
-> = ProjectIdSchema;
+> = MultiEnduranceProjectDtoSchema;

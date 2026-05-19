@@ -3,15 +3,15 @@ import { useQueryClient } from "@tanstack/react-query";
 import EnduranceView from "../ui/EnduranceView";
 
 import { Card } from "@/components/ui/card";
-import { type EnduranceActionHistoriesNewSchema } from "@/domain/endurances-new/tables/EnduranceActionHistoriesNew";
-import type { EnduranceActionsNewSchema } from "@/domain/endurances-new/tables/EnduranceActionsNew";
+import { type EnduranceActionHistoriesSchema } from "@/domain/endurances/tables/EnduranceActionHistories";
+import type { EnduranceActionsSchema } from "@/domain/endurances/tables/EnduranceActions";
 import type { MultiEnduranceUnitSchema } from "@/domain/multi-endurances/dto/MultiEnduranceProjectDto";
 import { useLogMultiEnduranceActionHistory } from "@/hooks/multi-endurances/useLogMultiEnduranceActionHistory";
 import { EnduranceKey } from "@/hooks/query-keys/endurances";
 
 type Props = {
-    projectId: typeof EnduranceActionsNewSchema.Type.project_id;
-    unitId: typeof EnduranceActionsNewSchema.Type.unit_id;
+    projectId: typeof EnduranceActionsSchema.Type.project_id;
+    unitId: typeof EnduranceActionsSchema.Type.unit_id;
 };
 
 /**
@@ -32,7 +32,7 @@ const EnduranceUnitRow = ({ projectId, unitId }: Props) => {
     }
 
     const onIncrement = (
-        actionCount: typeof EnduranceActionHistoriesNewSchema.Type.action_count,
+        actionCount: typeof EnduranceActionHistoriesSchema.Type.action_count,
     ) => {
         logActionHistory.mutate({
             project_id: projectId,

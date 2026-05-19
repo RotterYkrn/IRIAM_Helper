@@ -2,7 +2,8 @@ import { Effect, pipe, Schema } from "effect";
 
 import {
     DeleteProjectArgsSchema,
-    type DeleteProjectArgsEncoded,
+    DeleteProjectReturnsSchema,
+    type DeleteProjectArgs,
 } from "@/domain/projects/rpcs/DeleteProject";
 import { supabase } from "@/lib/supabase";
 
@@ -10,12 +11,10 @@ import { supabase } from "@/lib/supabase";
  * 企画を削除します。
  * @param args rpcに渡す引数
  */
-export const deleteProject = (args: DeleteProjectArgsEncoded) =>
+export const deleteProject = (args: DeleteProjectArgs) =>
     pipe(
-        args,
-        Schema.decodeEither(DeleteProjectArgsSchema),
-        Effect.tryMapPromise({
-            try: (args) =>
+        Effect.tryPromise({
+            try: () =>
                 supabase.rpc(
                     "delete_project",
                     Schema.encodeSync(DeleteProjectArgsSchema)(args),
@@ -25,5 +24,5 @@ export const deleteProject = (args: DeleteProjectArgsEncoded) =>
         Effect.flatMap(({ data, error }) =>
             error ? Effect.fail(error) : Effect.succeed(data),
         ),
-        Effect.flatMap(Schema.decodeUnknownEither(Schema.Void)),
+        Effect.flatMap(Schema.decodeUnknownEither(DeleteProjectReturnsSchema)),
     );

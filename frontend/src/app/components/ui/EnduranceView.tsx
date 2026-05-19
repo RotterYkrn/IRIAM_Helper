@@ -5,14 +5,14 @@ import React, { createContext, useContext } from "react";
 import InputField from "./InputField";
 
 import {
-    editRescueActionsAtomsNew,
-    editSabotageActionsAtomsNew,
-} from "@/atoms/endurances-new/EditActionAtom";
+    editRescueActionsAtoms,
+    editSabotageActionsAtoms,
+} from "@/atoms/endurances/EditActionAtom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import type { EnduranceActionCountsSchema } from "@/domain/endurances-new/tables/EnduranceActionCounts";
-import type { EnduranceActionHistoriesNewSchema } from "@/domain/endurances-new/tables/EnduranceActionHistoriesNew";
-import type { EnduranceActionsNewSchema } from "@/domain/endurances-new/tables/EnduranceActionsNew";
+import type { EnduranceActionCountsSchema } from "@/domain/endurances/tables/EnduranceActionCounts";
+import type { EnduranceActionHistoriesSchema } from "@/domain/endurances/tables/EnduranceActionHistories";
+import type { EnduranceActionsSchema } from "@/domain/endurances/tables/EnduranceActions";
 import type { ProjectSchema } from "@/domain/projects/tables/Project";
 
 /**
@@ -22,7 +22,7 @@ type EnduranceContextType = {
     projectStatus: typeof ProjectSchema.Type.status;
     isEdit: boolean;
     actionButtonCounts: Chunk.Chunk<
-        typeof EnduranceActionHistoriesNewSchema.Type.action_count
+        typeof EnduranceActionHistoriesSchema.Type.action_count
     >;
 };
 
@@ -104,7 +104,7 @@ const EditTargetCount = ({
 type ActionCountProps = {
     actionCount:
         | typeof EnduranceActionCountsSchema.Type.normal_count
-        | typeof EnduranceActionsNewSchema.Type.count;
+        | typeof EnduranceActionsSchema.Type.count;
 };
 
 const ActionCount = ({ actionCount }: ActionCountProps) => {
@@ -117,7 +117,7 @@ const ActionCount = ({ actionCount }: ActionCountProps) => {
 
 type PlusButtonsProps = {
     onIncrement: (
-        actionCount: typeof EnduranceActionHistoriesNewSchema.Encoded.action_count,
+        actionCount: typeof EnduranceActionHistoriesSchema.Encoded.action_count,
     ) => void;
 };
 
@@ -155,7 +155,7 @@ const PlusButtons = ({ onIncrement }: PlusButtonsProps) => {
 type MinusButtonsProps = {
     disabled: boolean;
     onIncrement: (
-        actionCount: typeof EnduranceActionHistoriesNewSchema.Encoded.action_count,
+        actionCount: typeof EnduranceActionHistoriesSchema.Encoded.action_count,
     ) => void;
 };
 
@@ -254,7 +254,7 @@ const RescueActionsField = ({
     isWide,
 }: RescueActionsFieldProps) => {
     const { projectStatus, isEdit } = useEndurance();
-    const createAction = useSetAtom(editRescueActionsAtomsNew.createAction);
+    const createAction = useSetAtom(editRescueActionsAtoms.createAction);
 
     const onAddAction = () => {
         createAction();
@@ -312,7 +312,7 @@ const SabotageActionsField = ({
     isWide,
 }: SabotageActionsFieldProps) => {
     const { projectStatus, isEdit } = useEndurance();
-    const createAction = useSetAtom(editSabotageActionsAtomsNew.createAction);
+    const createAction = useSetAtom(editSabotageActionsAtoms.createAction);
 
     const onAddAction = () => {
         createAction();
@@ -436,8 +436,8 @@ const EditLabel = ({ labelState, setLabel }: EditLabelProps) => {
 };
 
 type AmountProps = {
-    actionType: typeof EnduranceActionsNewSchema.Type.type;
-    amount: typeof EnduranceActionsNewSchema.Type.amount;
+    actionType: typeof EnduranceActionsSchema.Type.type;
+    amount: typeof EnduranceActionsSchema.Type.amount;
 };
 
 const Amount = ({ actionType, amount }: AmountProps) => {

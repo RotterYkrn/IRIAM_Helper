@@ -1,16 +1,11 @@
 import { useAtom } from "jotai";
-import { createContext, useContext } from "react";
-import { useNavigate } from "react-router-dom";
+import React, { createContext, useContext } from "react";
 
 import TitleInput from "./TitleInput";
 
 import { editTitleAtom } from "@/atoms/projects/EditTitleAtom";
 import { Button } from "@/components/ui/button";
 import type { ProjectDtoSchema } from "@/domain/projects/dto/ProjectDto";
-import { useActivateProject } from "@/hooks/projects/useActivateProject";
-import { useDeleteProject } from "@/hooks/projects/useDeleteProject";
-import { useFinishProject } from "@/hooks/projects/useFinishProject";
-import { successToast, errorToast } from "@/utils/toast";
 
 /**
  * コンポーネント描画に必要な状態を共有する Context
@@ -155,10 +150,11 @@ const Body = ({ children }: ChildrenProps) => {
 };
 
 type EditButtonProps = {
+    disabled: boolean;
     onEdit: () => void;
 };
 
-const EditButton = ({ onEdit }: EditButtonProps) => {
+const EditButton = ({ disabled, onEdit }: EditButtonProps) => {
     const context = useProjectViewContext();
 
     if (
@@ -174,7 +170,14 @@ const EditButton = ({ onEdit }: EditButtonProps) => {
         context.setIsEdit(true);
     };
 
-    return <Button onClick={handleEdit}>編集</Button>;
+    return (
+        <Button
+            disabled={disabled}
+            onClick={handleEdit}
+        >
+            編集
+        </Button>
+    );
 };
 
 type SaveButtonProps = {
@@ -201,37 +204,23 @@ const SaveButton = ({ disabled, onSave }: SaveButtonProps) => {
     );
 };
 
-const CancelButton = () => {
+const CancelButton = ({ ...props }: React.ComponentProps<"button">) => {
     const context = useProjectViewContext();
-    const navigate = useNavigate();
 
     if (context.type === "content" && !context.isEdit) {
         return null;
     }
 
-    const handleCancel = () => {
-        if (!confirm("変更を破棄しますか？")) {
-            return;
-        }
-        switch (context.type) {
-            case "create":
-                navigate("/");
-                break;
-            case "content":
-                context.setIsEdit(false);
-                break;
-        }
-    };
-
-    return <Button onClick={handleCancel}>キャンセル</Button>;
+    return <Button {...props}>キャンセル</Button>;
 };
 
 type DuplicateButtonProps = {
+    disabled: boolean;
     /** 企画の種類によって複製処理が違うので、外部から渡します。 */
     onDuplicate: () => void;
 };
 
-const DuplicateButton = ({ onDuplicate }: DuplicateButtonProps) => {
+const DuplicateButton = ({ disabled, onDuplicate }: DuplicateButtonProps) => {
     const context = useProjectViewContext();
 
     if (
@@ -241,64 +230,40 @@ const DuplicateButton = ({ onDuplicate }: DuplicateButtonProps) => {
     ) {
         return null;
     }
-
-    return <Button onClick={onDuplicate}>コピー</Button>;
-};
-
-const DeleteButton = () => {
-    const context = useProjectViewContext();
-    const deleteMutation = useDeleteProject();
-    const navigate = useNavigate();
-
-    if (
-        context.type === "create" ||
-        context.project.status === "active" ||
-        context.isEdit
-    ) {
-        return null;
-    }
-
-    const project = context.project;
-
-    const onDelete = () => {
-        if (!confirm("この企画を削除しますか？")) {
-            return;
-        }
-        // 開催済みの場合は 2 重で確認します。
-        if (
-            project.status === "finished" &&
-            !confirm("開催済みの企画です。本当に削除しますか？")
-        ) {
-            return;
-        }
-        deleteMutation.mutate(
-            { p_project_id: project.id },
-            {
-                onSuccess: () => {
-                    successToast(`「${project.title}」が削除されました`);
-                    navigate("/");
-                },
-                onError: (error) => {
-                    console.error(error);
-                    errorToast(`「${project.title}」の削除に失敗しました`);
-                },
-            },
-        );
-    };
 
     return (
         <Button
+            disabled={disabled}
+            onClick={onDuplicate}
+        >
+            コピー
+        </Button>
+    );
+};
+
+const DeleteButton = ({ ...props }: React.ComponentProps<"button">) => {
+    const context = useProjectViewContext();
+
+    if (
+        context.type === "create" ||
+        context.project.status === "active" ||
+        context.isEdit
+    ) {
+        return null;
+    }
+
+    return (
+        <Button
+            {...props}
             variant={"destructive"}
-            onClick={onDelete}
         >
             削除
         </Button>
     );
 };
 
-const ActivateButton = () => {
+const ActivateButton = ({ ...props }: React.ComponentProps<"button">) => {
     const context = useProjectViewContext();
-    const activateMutation = useActivateProject();
 
     if (
         context.type === "create" ||
@@ -308,41 +273,18 @@ const ActivateButton = () => {
         return null;
     }
 
-    const onActivate = () => {
-        if (
-            !confirm(
-                "企画を開催しますか？（開催すると、開催前に戻せなくなります。）",
-            )
-        ) {
-            return;
-        }
-        activateMutation.mutate(
-            { p_project_id: context.project.id },
-            {
-                onSuccess: () => {
-                    successToast("企画が開催されました");
-                },
-                onError: (error) => {
-                    console.error(error);
-                    errorToast("企画の開催に失敗しました");
-                },
-            },
-        );
-    };
-
     return (
         <Button
+            {...props}
             className="bg-green-600 hover:bg-green-600/80"
-            onClick={onActivate}
         >
             企画開始
         </Button>
     );
 };
 
-const FinishButton = () => {
+const FinishButton = ({ ...props }: React.ComponentProps<"button">) => {
     const context = useProjectViewContext();
-    const finishMutation = useFinishProject();
 
     if (
         context.type === "create" ||
@@ -352,32 +294,10 @@ const FinishButton = () => {
         return null;
     }
 
-    const onFinish = () => {
-        if (
-            !confirm(
-                "企画を終了しますか？（終了すると、終了前に戻せなくなります。）",
-            )
-        ) {
-            return;
-        }
-        finishMutation.mutate(
-            { p_project_id: context.project.id },
-            {
-                onSuccess: () => {
-                    successToast("企画が終了しました");
-                },
-                onError: (error) => {
-                    console.error(error);
-                    errorToast("企画の終了に失敗しました");
-                },
-            },
-        );
-    };
-
     return (
         <Button
-            className="bg-red-600 hover:bg-red-600/80"
-            onClick={onFinish}
+            {...props}
+            variant={"destructive"}
         >
             企画終了
         </Button>

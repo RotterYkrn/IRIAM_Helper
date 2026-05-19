@@ -11,13 +11,14 @@ create function create_multi_endurance_project (
     p_title text,
     p_units create_unit_args[]
 )
-returns uuid
+returns multi_endurance_project_dto
 language plpgsql
 SET search_path = public
 as $$
 declare
     v_project_id uuid;
     v_unit create_unit_args;
+    v_result_row multi_endurance_project_dto;
 begin
     -- projects 作成
     insert into projects (
@@ -49,7 +50,12 @@ begin
         );
     end loop;
 
-    return v_project_id;
+    SELECT * INTO v_result_row 
+    FROM multi_endurance_project_dto 
+    WHERE id = v_project_id 
+    LIMIT 1;
+
+    return v_result_row;
 end;
 $$;
 
