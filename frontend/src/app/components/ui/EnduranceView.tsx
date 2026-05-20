@@ -5,14 +5,15 @@ import React, { createContext, useContext } from "react";
 import InputField from "./InputField";
 
 import {
-    editRescueActionsAtomsNew,
-    editSabotageActionsAtomsNew,
-} from "@/atoms/endurances-new/EditActionAtom";
+    editRescueActionsAtoms,
+    editSabotageActionsAtoms,
+} from "@/atoms/endurances/EditActionAtom";
 import { Button } from "@/components/ui/button";
 import { Input } from "@/components/ui/input";
-import type { EnduranceActionCountsSchema } from "@/domain/endurances-new/tables/EnduranceActionCounts";
-import type { EnduranceActionHistoriesNewSchema } from "@/domain/endurances-new/tables/EnduranceActionHistoriesNew";
-import type { EnduranceActionsNewSchema } from "@/domain/endurances-new/tables/EnduranceActionsNew";
+import type { EnduranceActionCountsSchema } from "@/domain/endurances/tables/EnduranceActionCounts";
+import type { EnduranceActionHistoriesSchema } from "@/domain/endurances/tables/EnduranceActionHistories";
+import type { EnduranceActionsSchema } from "@/domain/endurances/tables/EnduranceActions";
+import type { EnduranceUnitsSchema } from "@/domain/endurances/tables/EnduranceUnits";
 import type { ProjectSchema } from "@/domain/projects/tables/Project";
 
 /**
@@ -22,7 +23,7 @@ type EnduranceContextType = {
     projectStatus: typeof ProjectSchema.Type.status;
     isEdit: boolean;
     actionButtonCounts: Chunk.Chunk<
-        typeof EnduranceActionHistoriesNewSchema.Type.action_count
+        typeof EnduranceActionHistoriesSchema.Type.action_count
     >;
 };
 
@@ -61,18 +62,19 @@ const EnduranceView = ({ children, ...contextValue }: Props) => {
 };
 
 type CountProgressProps = {
-    left: React.ReactNode;
-    center: React.ReactNode;
-    right: React.ReactNode;
+    target_count: typeof EnduranceUnitsSchema.Type.target_count;
+    current_count: typeof EnduranceUnitsSchema.Type.current_count;
 };
 
-const CountProgress = ({ left, center, right }: CountProgressProps) => {
-    return (
+const CountProgress = ({ target_count, current_count }: CountProgressProps) => {
+    return target_count !== 0 ? (
         <div className="w-full grid grid-cols-[1fr_auto_1fr] items-center gap-4">
-            {left}
-            {center}
-            {right}
+            <div className="text-right text-4xl font-mono">{current_count}</div>
+            <div className="text-5xl font-mono text-gray-400">/</div>
+            <div className="text-left text-4xl font-mono">{target_count}</div>
         </div>
+    ) : (
+        <div className="text-4xl font-mono">{current_count}</div>
     );
 };
 
@@ -89,7 +91,7 @@ const EditTargetCount = ({
     setTargetCount,
 }: EditTargetCountContextType) => {
     return (
-        <>
+        <div className="flex flex-col items-center justify-center space-y-2">
             <InputField
                 label="目標数"
                 error={targetCountState.error}
@@ -97,14 +99,17 @@ const EditTargetCount = ({
                 value={targetCountState.input}
                 className="text-4xl font-mono w-30"
             />
-        </>
+            <span className="text-md font-medium text-gray-600">
+                ※空欄もしくは0にすると、目標数なし設定にできます
+            </span>
+        </div>
     );
 };
 
 type ActionCountProps = {
     actionCount:
         | typeof EnduranceActionCountsSchema.Type.normal_count
-        | typeof EnduranceActionsNewSchema.Type.count;
+        | typeof EnduranceActionsSchema.Type.count;
 };
 
 const ActionCount = ({ actionCount }: ActionCountProps) => {
@@ -117,7 +122,7 @@ const ActionCount = ({ actionCount }: ActionCountProps) => {
 
 type PlusButtonsProps = {
     onIncrement: (
-        actionCount: typeof EnduranceActionHistoriesNewSchema.Encoded.action_count,
+        actionCount: typeof EnduranceActionHistoriesSchema.Encoded.action_count,
     ) => void;
 };
 
@@ -137,7 +142,7 @@ const PlusButtons = ({ onIncrement }: PlusButtonsProps) => {
     );
 
     return (
-        <div className="flex flex-row gap-2">
+        <div className="flex flex-row gap-1">
             {Chunk.map(buttonConfigs, (config) => (
                 <Button
                     key={config.label}
@@ -155,7 +160,7 @@ const PlusButtons = ({ onIncrement }: PlusButtonsProps) => {
 type MinusButtonsProps = {
     disabled: boolean;
     onIncrement: (
-        actionCount: typeof EnduranceActionHistoriesNewSchema.Encoded.action_count,
+        actionCount: typeof EnduranceActionHistoriesSchema.Encoded.action_count,
     ) => void;
 };
 
@@ -176,7 +181,7 @@ const MinusButtons = ({ disabled, onIncrement }: MinusButtonsProps) => {
     );
 
     return (
-        <div className="flex flex-row gap-2">
+        <div className="flex flex-row gap-1">
             {Chunk.map(buttonConfigs, (config) => (
                 <Button
                     key={config.label}
@@ -254,7 +259,7 @@ const RescueActionsField = ({
     isWide,
 }: RescueActionsFieldProps) => {
     const { projectStatus, isEdit } = useEndurance();
-    const createAction = useSetAtom(editRescueActionsAtomsNew.createAction);
+    const createAction = useSetAtom(editRescueActionsAtoms.createAction);
 
     const onAddAction = () => {
         createAction();
@@ -312,7 +317,7 @@ const SabotageActionsField = ({
     isWide,
 }: SabotageActionsFieldProps) => {
     const { projectStatus, isEdit } = useEndurance();
-    const createAction = useSetAtom(editSabotageActionsAtomsNew.createAction);
+    const createAction = useSetAtom(editSabotageActionsAtoms.createAction);
 
     const onAddAction = () => {
         createAction();
@@ -436,8 +441,8 @@ const EditLabel = ({ labelState, setLabel }: EditLabelProps) => {
 };
 
 type AmountProps = {
-    actionType: typeof EnduranceActionsNewSchema.Type.type;
-    amount: typeof EnduranceActionsNewSchema.Type.amount;
+    actionType: typeof EnduranceActionsSchema.Type.type;
+    amount: typeof EnduranceActionsSchema.Type.amount;
 };
 
 const Amount = ({ actionType, amount }: AmountProps) => {

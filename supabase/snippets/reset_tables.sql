@@ -1,11 +1,6 @@
-drop view endurance_action_stats_view;
-drop view endurance_project_view;
-
--- drop table multi_endurance_progress;
--- drop table multi_endurance_settings;
-drop table endurance_action_histories;
-drop table endurance_actions;
-drop table endurance_settings cascade;
-drop table endurance_progress;
-
-drop table projects;
+ALTER TABLE endurance_units 
+  -- ① 古い制約（0より大きい）を削除
+  DROP CONSTRAINT endurance_units_target_count_check,
+  
+  -- ② 新しい制約（0以上）を追加
+  ADD CONSTRAINT endurance_units_target_count_check CHECK (target_count >= 0);

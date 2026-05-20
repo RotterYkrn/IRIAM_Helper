@@ -9,28 +9,9 @@ export const fetchMultiEnduranceProject = (projectId: ProjectId) =>
         Effect.tryPromise({
             try: () =>
                 supabase
-                    .from("projects")
-                    .select(
-                        `
-                            id,
-                            type,
-                            title,
-                            status,
-                            units:endurance_units (
-                                id,
-                                position,
-                                label,
-                                target_count,
-                                current_count
-                            )
-                        `,
-                    )
+                    .from("multi_endurance_project_dto")
+                    .select("*")
                     .eq("id", projectId)
-                    .eq("type", "multi-endurance")
-                    .order("position", {
-                        referencedTable: "endurance_units",
-                        ascending: true,
-                    })
                     .single(),
             catch: (error) => error,
         }),

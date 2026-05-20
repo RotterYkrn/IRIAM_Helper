@@ -3,10 +3,10 @@ import { useCreateEnterEnduranceProject } from "@/hooks/enter-endurances/useCrea
 import { errorToast, successToast } from "@/utils/toast";
 
 const CreateEnterEnduranceProjectButton = () => {
-    const createProject = useCreateEnterEnduranceProject();
+    const { create, isCreating } = useCreateEnterEnduranceProject();
 
     const handleClick = () => {
-        createProject.mutate(void 0, {
+        create(void 0, {
             onSuccess: () => {
                 successToast("企画が正常に作成されました。");
             },
@@ -22,6 +22,7 @@ const CreateEnterEnduranceProjectButton = () => {
         <Button
             variant={"outline"}
             size={"lg"}
+            disabled={isCreating}
             onClick={handleClick}
         >
             入室耐久の企画IDを新規作成

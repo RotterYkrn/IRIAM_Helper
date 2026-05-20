@@ -10,7 +10,7 @@ import { logEnter } from "@/use-cases/enter-endurances/logEnter";
 export const useLogEnter = () => {
     const queryClient = useQueryClient();
 
-    return useMutation({
+    const mutation = useMutation({
         mutationFn: async (args: Omit<LogEnterArgs, "entered_at">) => {
             try {
                 const result = await Effect.runPromise(
@@ -25,7 +25,7 @@ export const useLogEnter = () => {
                 throw error;
             }
         },
-        onMutate: async (args) => {
+        onSuccess: async (_, args) => {
             await queryClient.setQueryData<EnterUnitDto>(
                 EnterEnduranceKey.unit(args.unit_id),
                 (old) =>
@@ -39,10 +39,11 @@ export const useLogEnter = () => {
                     },
             );
         },
-        onSettled: (_, __, { unit_id }) => {
-            queryClient.invalidateQueries({
-                queryKey: EnterEnduranceKey.unit(unit_id),
-            });
-        },
     });
+
+    return {
+        logEnter: mutation.mutate,
+        isLoggingEnter: mutation.isPending,
+        logEnterError: mutation.error,
+    };
 };

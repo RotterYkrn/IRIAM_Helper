@@ -17,5 +17,6 @@ export const normalizeNumber = (str: string): string => {
         )
         .replace(/[。]/g, ".")
         .replace(/[^0-9.]/g, "")
-        .replace(/(\..*)\./g, "$1");
+        .replace(/(\..*)\./g, "$1")
+        .replace(/^0+(?=\d)/, "");
 };

@@ -9,7 +9,7 @@ import {
     EnduranceUnitIdSchema,
     EnduranceUnitLabelSchema,
     type EnduranceUnitsSchema,
-} from "@/domain/endurances-new/tables/EnduranceUnits";
+} from "@/domain/endurances/tables/EnduranceUnits";
 import type { MultiEnduranceProjectDtoSchema } from "@/domain/multi-endurances/dto/MultiEnduranceProjectDto";
 import { normalizeNumber } from "@/utils/validations";
 
@@ -151,6 +151,7 @@ export const editUnitTargetCountAtom = atomFamily(
                                       normalized,
                                       result: pipe(
                                           normalized,
+                                          (s) => (s.trim() === "" ? "0" : s),
                                           Number,
                                           Schema.decodeEither(
                                               EnduranceTargetCountSchema,

@@ -1,5 +1,5 @@
-import type { EnduranceActionsNewSchema } from "@/domain/endurances-new/tables/EnduranceActionsNew";
-import type { EnduranceUnitsSchema } from "@/domain/endurances-new/tables/EnduranceUnits";
+import type { EnduranceActionsSchema } from "@/domain/endurances/tables/EnduranceActions";
+import type { EnduranceUnitsSchema } from "@/domain/endurances/tables/EnduranceUnits";
 import type { ProjectSchema } from "@/domain/projects/tables/Project";
 
 export const EnduranceKey = {
@@ -14,6 +14,6 @@ export const EnduranceKey = {
      * @param actionId 救済・妨害アクションのID
      * @returns QueryKey `["action", actionId]`
      */
-    action: (actionId: typeof EnduranceActionsNewSchema.Encoded.id) =>
+    action: (actionId: typeof EnduranceActionsSchema.Encoded.id) =>
         ["action", actionId] as const,
 };
