@@ -151,6 +151,7 @@ export const editUnitTargetCountAtom = atomFamily(
                                       normalized,
                                       result: pipe(
                                           normalized,
+                                          (s) => (s.trim() === "" ? "0" : s),
                                           Number,
                                           Schema.decodeEither(
                                               EnduranceTargetCountSchema,

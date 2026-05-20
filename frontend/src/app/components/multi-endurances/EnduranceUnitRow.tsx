@@ -42,20 +42,20 @@ const EnduranceUnitRow = ({ projectId, unitId }: Props) => {
     };
 
     return (
-        <Card className="w-45 gap-2">
-            <div className="flex-1 whitespace-nowrap text-2xl">
+        <Card className="w-45 gap-1">
+            <div className="whitespace-nowrap text-2xl font-semibold">
                 {unit.label}
             </div>
-            <p className="flex-1 font-mono text-2xl">
-                {unit.current_count}/{unit.target_count}
+            <p className="font-mono text-2xl">
+                {unit.target_count !== 0
+                    ? `${unit.current_count}/${unit.target_count}`
+                    : unit.current_count}
             </p>
-            <div className="flex-1 flex flex-col items-center gap-1">
-                <EnduranceView.PlusButtons onIncrement={onIncrement} />
-                <EnduranceView.MinusButtons
-                    disabled={unit.current_count <= 0}
-                    onIncrement={onIncrement}
-                />
-            </div>
+            <EnduranceView.PlusButtons onIncrement={onIncrement} />
+            <EnduranceView.MinusButtons
+                disabled={unit.current_count <= 0}
+                onIncrement={onIncrement}
+            />
         </Card>
     );
 };
