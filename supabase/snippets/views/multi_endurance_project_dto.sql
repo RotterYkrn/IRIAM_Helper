@@ -29,5 +29,4 @@ SELECT
     ) AS units
 
 FROM projects p
-LEFT JOIN endurance_units eu ON eu.project_id = p.id
 WHERE p.type = 'multi-endurance';
