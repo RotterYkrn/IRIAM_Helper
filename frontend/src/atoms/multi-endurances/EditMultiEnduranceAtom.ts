@@ -8,7 +8,7 @@ import { initUnitsAtom, validUnitsAtom } from "./EditUnitsAtom";
 import type { MultiEnduranceProjectDtoSchema } from "@/domain/multi-endurances/dto/MultiEnduranceProjectDto";
 import type { ProjectSchema } from "@/domain/projects/tables/Project";
 
-type EditMultiEnduranceStateNew = Readonly<{
+type EditMultiEnduranceState = Readonly<{
     title: typeof ProjectSchema.Type.title;
     units: typeof MultiEnduranceProjectDtoSchema.Type.units;
 }>;
@@ -45,7 +45,7 @@ export const isValidEditMultiEnduranceAtom = atom((get) =>
  */
 export const initEditMultiEnduranceAtom = atom(
     null,
-    (_, set, initial: EditMultiEnduranceStateNew) => {
+    (_, set, initial: EditMultiEnduranceState) => {
         set(editTitleAtom, initial.title);
         set(initUnitsAtom, initial.units);
     },

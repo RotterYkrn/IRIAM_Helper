@@ -1,7 +1,7 @@
 import { useQueryClient, useMutation } from "@tanstack/react-query";
 import { Effect } from "effect";
 
-import { ProjectKey } from "../query-keys/projects";
+import { updateMultiEnduranceProjectQueryData } from "./utils";
 
 import type { CreateMultiEnduranceProjectArgs } from "@/domain/multi-endurances/rpcs/CreateMultiEnduranceProject";
 import { createMultiEnduranceProject } from "@/use-cases/multi-endurances/createMultiEnduranceProject";
@@ -9,7 +9,7 @@ import { createMultiEnduranceProject } from "@/use-cases/multi-endurances/create
 export const useCreateMultiEnduranceProject = () => {
     const queryClient = useQueryClient();
 
-    return useMutation({
+    const mutation = useMutation({
         mutationFn: async (args: CreateMultiEnduranceProjectArgs) => {
             try {
                 const result = await Effect.runPromise(
@@ -21,8 +21,14 @@ export const useCreateMultiEnduranceProject = () => {
                 throw error;
             }
         },
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ProjectKey.list });
+        onSuccess: (createdProject) => {
+            updateMultiEnduranceProjectQueryData(queryClient, createdProject);
         },
     });
+
+    return {
+        create: mutation.mutate,
+        isCreating: mutation.isPending,
+        createError: mutation.error,
+    };
 };

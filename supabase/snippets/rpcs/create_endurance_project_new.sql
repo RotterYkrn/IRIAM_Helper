@@ -13,7 +13,7 @@ create function create_endurance_project_new(
     p_rescue_actions create_endurance_action_args[],
     p_sabotage_actions create_endurance_action_args[]
 )
-returns uuid
+returns endurance_project_dto
 language plpgsql
 SET search_path = public
 as $$
@@ -21,6 +21,7 @@ declare
     v_project_id uuid;
     v_unit_id uuid;
     v_action create_endurance_action_args;
+    v_result_row endurance_project_dto;
 begin
     -- projects 作成
     insert into projects (
@@ -58,49 +59,20 @@ begin
         v_unit_id
     );
 
-    -- 救済
-    foreach v_action in array p_rescue_actions
-    loop
-        insert into endurance_actions_new (
-            project_id,
-            unit_id,
-            type,
-            position,
-            label,
-            amount
-        )
-        values (
-            v_project_id,
-            v_unit_id,
-            'rescue',
-            v_action.position,
-            v_action.label,
-            v_action.amount
-        );
-    end loop;
+    insert into endurance_actions_new (project_id, unit_id, type, position, label, amount)
+    select v_project_id, v_unit_id, 'rescue', unnest.position, unnest.label, unnest.amount
+    from unnest(p_rescue_actions) as unnest;
 
-    -- 妨害
-    foreach v_action in array p_sabotage_actions
-    loop
-        insert into endurance_actions_new (
-            project_id,
-            unit_id,
-            type,
-            position,
-            label,
-            amount
-        )
-        values (
-            v_project_id,
-            v_unit_id,
-            'sabotage',
-            v_action.position,
-            v_action.label,
-            v_action.amount
-        );
-    end loop;
+    insert into endurance_actions_new (project_id, unit_id, type, position, label, amount)
+    select v_project_id, v_unit_id, 'sabotage', unnest.position, unnest.label, unnest.amount
+    from unnest(p_sabotage_actions) as unnest;
+    
+    SELECT * INTO v_result_row 
+    FROM endurance_project_dto 
+    WHERE id = v_project_id 
+    LIMIT 1;
 
-    return v_project_id;
+    RETURN v_result_row;
 end;
 $$;
 

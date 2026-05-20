@@ -3,6 +3,8 @@ import { Effect } from "effect";
 
 import { ProjectKey } from "../query-keys/projects";
 
+import { updateMultiEnduranceProjectQueryData } from "./utils";
+
 import type { DuplicateMultiEnduranceProjectArgs } from "@/domain/multi-endurances/rpcs/DuplicateMultiEnduranceProject";
 import { duplicateMultiEnduranceProject } from "@/use-cases/multi-endurances/duplicateMultiEnduranceProject";
 
@@ -16,10 +18,10 @@ import { duplicateMultiEnduranceProject } from "@/use-cases/multi-endurances/dup
  * @returns TanStack Query の Mutation オブジェクト。\
  * `mutate` 関数に {@link DuplicateMultiEnduranceProjectArgs} を渡して実行します。
  */
-export const useDuplicateMultiEnduranceProjectNew = () => {
+export const useDuplicateMultiEnduranceProject = () => {
     const queryClient = useQueryClient();
 
-    return useMutation({
+    const mutation = useMutation({
         mutationFn: async (args: DuplicateMultiEnduranceProjectArgs) => {
             try {
                 const result = await Effect.runPromise(
@@ -31,8 +33,14 @@ export const useDuplicateMultiEnduranceProjectNew = () => {
                 throw error;
             }
         },
-        onSuccess: () => {
-            queryClient.invalidateQueries({ queryKey: ProjectKey.list });
+        onSuccess: (newProject) => {
+            updateMultiEnduranceProjectQueryData(queryClient, newProject);
         },
     });
+
+    return {
+        duplicate: mutation.mutate,
+        isDuplicating: mutation.isPending,
+        duplicateError: mutation.error,
+    };
 };

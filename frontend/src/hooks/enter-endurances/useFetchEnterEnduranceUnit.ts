@@ -22,5 +22,6 @@ export const useFetchEnterEnduranceUnit = (
                 throw error;
             }
         },
+        staleTime: 60 * 1000,
     });
 };

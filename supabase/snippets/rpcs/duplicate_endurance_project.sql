@@ -3,13 +3,14 @@ drop function if exists duplicate_endurance_project cascade;
 create function duplicate_endurance_project(
     p_project_id uuid
 )
-returns uuid
+returns endurance_project_dto
 language plpgsql
 set search_path = public
 as $$
 declare
     v_new_project_id uuid;
     v_new_unit_id uuid;
+    v_result_row endurance_project_dto;
 begin
     -- ① project複製
     insert into projects (title, type, status)
@@ -64,6 +65,11 @@ begin
     from endurance_actions_new
     where project_id = p_project_id;
 
-    return v_new_project_id;
+    SELECT * INTO v_result_row 
+    FROM endurance_project_dto 
+    WHERE id = v_new_project_id 
+    LIMIT 1;
+
+    return v_result_row;
 end;
 $$;

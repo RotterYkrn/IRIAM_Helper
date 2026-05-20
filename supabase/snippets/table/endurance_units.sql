@@ -8,7 +8,7 @@ create table endurance_units (
 
     label text not null check(length(trim(label)) > 0),
 
-    target_count numeric(10, 2) not null check (target_count > 0),
+    target_count numeric(10, 2) not null check (target_count >= 0),
 
     current_count numeric(10, 2) not null default 0,
 

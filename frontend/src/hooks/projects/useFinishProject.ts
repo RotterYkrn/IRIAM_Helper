@@ -1,9 +1,10 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Effect } from "effect";
+import { Chunk, Effect } from "effect";
 
 import { ProjectKey } from "../query-keys/projects";
 
-import type { FinishProjectArgsEncoded } from "@/domain/projects/rpcs/FinishProject";
+import type { ProjectDtoSchema } from "@/domain/projects/dto/ProjectDto";
+import type { FinishProjectArgs } from "@/domain/projects/rpcs/FinishProject";
 import { finishProject } from "@/use-cases/projects/finishProject";
 
 /**
@@ -15,13 +16,13 @@ import { finishProject } from "@/use-cases/projects/finishProject";
  * {@link ProjectKey.detail}
  *
  * @returns TanStack Query の Mutation オブジェクト。\
- * `mutate` 関数に {@link ActivateProjectArgsEncoded} を渡して実行します。
+ * `mutate` 関数に {@link FinishProjectArgs} を渡して実行します。
  */
 export const useFinishProject = () => {
     const queryClient = useQueryClient();
 
-    return useMutation({
-        mutationFn: async (args: FinishProjectArgsEncoded) => {
+    const mutation = useMutation({
+        mutationFn: async (args: FinishProjectArgs) => {
             try {
                 const result = await Effect.runPromise(finishProject(args));
                 return result;
@@ -32,10 +33,28 @@ export const useFinishProject = () => {
         },
         onSuccess: (projectId) => {
             // 一覧のリストグループにも影響するため、一覧も更新
+            queryClient.setQueryData<Chunk.Chunk<typeof ProjectDtoSchema.Type>>(
+                ProjectKey.list,
+                (old) =>
+                    old &&
+                    Chunk.map(old, (p) =>
+                        p.id === projectId ? { ...p, status: "finished" } : p,
+                    ),
+            );
+            queryClient.setQueryData<typeof ProjectDtoSchema.Type>(
+                ProjectKey.detail(projectId),
+                (old) => old && { ...old, status: "finished" },
+            );
             queryClient.invalidateQueries({ queryKey: ProjectKey.list });
             queryClient.invalidateQueries({
                 queryKey: ProjectKey.detail(projectId),
             });
         },
     });
+
+    return {
+        finish: mutation.mutate,
+        isFinishing: mutation.isPending,
+        finishError: mutation.error,
+    };
 };

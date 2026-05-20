@@ -9,7 +9,7 @@ import { createEnterUnit } from "@/use-cases/enter-endurances/createEnterUnit";
 export const useCreateEnterUnit = () => {
     const queryClient = useQueryClient();
 
-    return useMutation({
+    const mutation = useMutation({
         mutationFn: async (args: CreateEnterUnitArgs) => {
             try {
                 const result = await Effect.runPromise(createEnterUnit(args));
@@ -23,4 +23,10 @@ export const useCreateEnterUnit = () => {
             queryClient.invalidateQueries({ queryKey: EnterEnduranceKey.list });
         },
     });
+
+    return {
+        create: mutation.mutate,
+        isCreating: mutation.isPending,
+        createError: mutation.error,
+    };
 };
