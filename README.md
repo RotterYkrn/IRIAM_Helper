@@ -23,7 +23,7 @@ IRIAMにおける配信活動では、リスナー参加型の企画（ギフト
 
 ### （実装予定）
 
-- 複数の対象を一度にカウントする耐久企画（汎用的なもの）
+- （実装済み）複数の対象を一度にカウントする耐久企画（汎用的なもの）
 - ラブカテ耐久
   - LOVE カテゴリーに分類されているギフトをすべて投げてもらうまで耐久する企画
   - 企画を新規作成するときに、あらかじめ対象のギフト一覧について用意したテンプレートを使用してもらう
@@ -38,7 +38,7 @@ IRIAMにおける配信活動では、リスナー参加型の企画（ギフト
 ### Frontend Core
 - Framework: React v19 / Vite v7
 - Language: TypeScript v5
-- Styling: Tailwind CSS v4
+- Styling: Tailwind CSS v4, radix-ui v1, shadcn v4
 - Routing: React Router v7
 
 ### Architecture & Paradigm (★こだわりポイント)
