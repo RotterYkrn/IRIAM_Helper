@@ -100,7 +100,7 @@ const EditTargetCount = ({
                 className="text-4xl font-mono w-30"
             />
             <span className="text-md font-medium text-gray-600">
-                ※空欄もしくは0にすると、目標数設定なしにできます
+                ※空欄もしくは0にすると、目標数なし設定にできます
             </span>
         </div>
     );

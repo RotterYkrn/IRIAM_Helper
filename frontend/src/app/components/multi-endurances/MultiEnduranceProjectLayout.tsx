@@ -139,7 +139,7 @@ const MultiEnduranceProjectLayout = ({ projectId }: Props) => {
             >
                 {isEdit && (
                     <span className="text-md font-medium text-gray-600">
-                        ※目標数を空欄もしくは0にすると、目標数設定なしにできます
+                        ※目標数を空欄もしくは0にすると、目標数なし設定にできます
                     </span>
                 )}
                 <div className="grid grid-cols-3 gap-4">
