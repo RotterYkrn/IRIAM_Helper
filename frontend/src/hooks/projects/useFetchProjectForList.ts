@@ -5,6 +5,7 @@ import { ProjectKey } from "../query-keys/projects";
 
 import { fetchProjectListOptions } from "./fetchProjectListOptions";
 
+import { useAppContext } from "@/contexts/apps/useAppContext";
 import { fetchProjects } from "@/use-cases/projects/fetchProjects";
 
 /**
@@ -19,8 +20,10 @@ import { fetchProjects } from "@/use-cases/projects/fetchProjects";
  *
  */
 export const useFetchProjectForList = () => {
+    const { runPromise } = useAppContext();
+
     return useQuery({
-        ...fetchProjectListOptions,
+        ...fetchProjectListOptions(runPromise),
         select: (projects) => ({
             scheduled: Chunk.filter(projects, (p) => p.status === "scheduled"),
             active: Chunk.filter(projects, (p) => p.status === "active"),

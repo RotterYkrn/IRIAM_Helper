@@ -1,11 +1,11 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Chunk, Effect } from "effect";
+import { Chunk } from "effect";
 
 import { ProjectKey } from "../query-keys/projects";
 
+import { useAppContext } from "@/contexts/apps/useAppContext";
 import type { ProjectDtoSchema } from "@/domain/projects/dto/ProjectDto";
 import type { FinishProjectArgs } from "@/domain/projects/rpcs/FinishProject";
-import { ProjectSupabase } from "@/repositories/projects/project.supabase";
 import { finishProject } from "@/use-cases/projects/finishProject";
 
 /**
@@ -21,13 +21,12 @@ import { finishProject } from "@/use-cases/projects/finishProject";
  */
 export const useFinishProject = () => {
     const queryClient = useQueryClient();
+    const { runPromise } = useAppContext();
 
     const mutation = useMutation({
         mutationFn: async (args: FinishProjectArgs) => {
             try {
-                const result = await Effect.runPromise(
-                    finishProject(args).pipe(Effect.provide(ProjectSupabase)),
-                );
+                const result = await runPromise(finishProject(args));
                 return result;
             } catch (error) {
                 console.error(error);

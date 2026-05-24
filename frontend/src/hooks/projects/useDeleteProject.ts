@@ -1,11 +1,11 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Chunk, Effect } from "effect";
+import { Chunk } from "effect";
 
 import { ProjectKey } from "../query-keys/projects";
 
+import { useAppContext } from "@/contexts/apps/useAppContext";
 import type { ProjectDtoSchema } from "@/domain/projects/dto/ProjectDto";
 import type { DeleteProjectArgs } from "@/domain/projects/rpcs/DeleteProject";
-import { ProjectSupabase } from "@/repositories/projects/project.supabase";
 import { deleteProject } from "@/use-cases/projects/deleteProject";
 
 /**
@@ -20,13 +20,12 @@ import { deleteProject } from "@/use-cases/projects/deleteProject";
  */
 export const useDeleteProject = () => {
     const queryClient = useQueryClient();
+    const { runPromise } = useAppContext();
 
     const mutation = useMutation({
         mutationFn: async (args: DeleteProjectArgs) => {
             try {
-                const result = await Effect.runPromise(
-                    deleteProject(args).pipe(Effect.provide(ProjectSupabase)),
-                );
+                const result = await runPromise(deleteProject(args));
                 return result;
             } catch (error) {
                 console.error(error);

@@ -4,24 +4,29 @@ import { Chunk } from "effect";
 
 import { ProjectKey } from "../query-keys/projects";
 
-import { ProjectSupabase } from "@/repositories/projects/project.supabase";
+import type { ProjectRepository } from "@/repositories/projects/project.repository";
 import { fetchProjects } from "@/use-cases/projects/fetchProjects";
 
-export const fetchProjectListOptions = queryOptions({
-    queryKey: ProjectKey.list,
-    queryFn: async () => {
-        try {
-            return await Effect.runPromise(
-                fetchProjects().pipe(
-                    Effect.map(
-                        Chunk.filter((p) => p.type !== "enter-endurance"),
+export const fetchProjectListOptions = (
+    runPromise: <A, E>(
+        effect: Effect.Effect<A, E, ProjectRepository>,
+    ) => Promise<A>,
+) => {
+    return queryOptions({
+        queryKey: ProjectKey.list,
+        queryFn: async () => {
+            try {
+                return await runPromise(
+                    fetchProjects().pipe(
+                        Effect.map(
+                            Chunk.filter((p) => p.type !== "enter-endurance"),
+                        ),
                     ),
-                    Effect.provide(ProjectSupabase),
-                ),
-            );
-        } catch (error) {
-            console.error(error);
-            throw error;
-        }
-    },
-});
+                );
+            } catch (error) {
+                console.error(error);
+                throw error;
+            }
+        },
+    });
+};
