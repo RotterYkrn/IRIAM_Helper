@@ -5,6 +5,7 @@ import { ProjectKey } from "../query-keys/projects";
 
 import type { ProjectDtoSchema } from "@/domain/projects/dto/ProjectDto";
 import type { ActivateProjectArgs } from "@/domain/projects/rpcs/ActivateProject";
+import { ProjectSupabase } from "@/repositories/projects/project.supabase";
 import { activateProject } from "@/use-cases/projects/activateProject";
 
 /**
@@ -24,7 +25,9 @@ export const useActivateProject = () => {
     const mutation = useMutation({
         mutationFn: async (args: ActivateProjectArgs) => {
             try {
-                const result = await Effect.runPromise(activateProject(args));
+                const result = await Effect.runPromise(
+                    activateProject(args).pipe(Effect.provide(ProjectSupabase)),
+                );
                 return result;
             } catch (error) {
                 console.error(error);

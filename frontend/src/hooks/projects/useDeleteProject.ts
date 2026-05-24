@@ -5,6 +5,7 @@ import { ProjectKey } from "../query-keys/projects";
 
 import type { ProjectDtoSchema } from "@/domain/projects/dto/ProjectDto";
 import type { DeleteProjectArgs } from "@/domain/projects/rpcs/DeleteProject";
+import { ProjectSupabase } from "@/repositories/projects/project.supabase";
 import { deleteProject } from "@/use-cases/projects/deleteProject";
 
 /**
@@ -23,7 +24,9 @@ export const useDeleteProject = () => {
     const mutation = useMutation({
         mutationFn: async (args: DeleteProjectArgs) => {
             try {
-                const result = await Effect.runPromise(deleteProject(args));
+                const result = await Effect.runPromise(
+                    deleteProject(args).pipe(Effect.provide(ProjectSupabase)),
+                );
                 return result;
             } catch (error) {
                 console.error(error);

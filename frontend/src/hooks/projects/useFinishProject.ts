@@ -5,6 +5,7 @@ import { ProjectKey } from "../query-keys/projects";
 
 import type { ProjectDtoSchema } from "@/domain/projects/dto/ProjectDto";
 import type { FinishProjectArgs } from "@/domain/projects/rpcs/FinishProject";
+import { ProjectSupabase } from "@/repositories/projects/project.supabase";
 import { finishProject } from "@/use-cases/projects/finishProject";
 
 /**
@@ -24,7 +25,9 @@ export const useFinishProject = () => {
     const mutation = useMutation({
         mutationFn: async (args: FinishProjectArgs) => {
             try {
-                const result = await Effect.runPromise(finishProject(args));
+                const result = await Effect.runPromise(
+                    finishProject(args).pipe(Effect.provide(ProjectSupabase)),
+                );
                 return result;
             } catch (error) {
                 console.error(error);

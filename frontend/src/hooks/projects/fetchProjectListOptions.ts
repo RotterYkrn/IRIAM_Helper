@@ -4,6 +4,7 @@ import { Chunk } from "effect";
 
 import { ProjectKey } from "../query-keys/projects";
 
+import { ProjectSupabase } from "@/repositories/projects/project.supabase";
 import { fetchProjects } from "@/use-cases/projects/fetchProjects";
 
 export const fetchProjectListOptions = queryOptions({
@@ -15,6 +16,7 @@ export const fetchProjectListOptions = queryOptions({
                     Effect.map(
                         Chunk.filter((p) => p.type !== "enter-endurance"),
                     ),
+                    Effect.provide(ProjectSupabase),
                 ),
             );
         } catch (error) {
