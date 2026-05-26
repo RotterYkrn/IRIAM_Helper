@@ -15,16 +15,16 @@ import type {
 } from "@/domain/projects/rpcs/FinishProject";
 
 export interface ProjectRepository {
-    readonly getAll: () => Effect.Effect<Chunk.Chunk<ProjectDto>, Error, never>;
+    readonly getAll: () => Effect.Effect<Chunk.Chunk<ProjectDto>, Error>;
     readonly activate: (
         args: ActivateProjectArgs,
-    ) => Effect.Effect<ActivateProjectReturns, Error, never>;
+    ) => Effect.Effect<ActivateProjectReturns, Error>;
     readonly finish: (
         args: FinishProjectArgs,
-    ) => Effect.Effect<FinishProjectReturns, Error, never>;
+    ) => Effect.Effect<FinishProjectReturns, Error>;
     readonly delete: (
         args: DeleteProjectArgs,
-    ) => Effect.Effect<DeleteProjectReturns, Error, never>;
+    ) => Effect.Effect<DeleteProjectReturns, Error>;
 }
 
 export const ProjectRepository = Context.GenericTag<ProjectRepository>(
