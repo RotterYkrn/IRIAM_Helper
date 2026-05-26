@@ -1,12 +1,7 @@
-import { Effect, pipe, Schema } from "effect";
+import { Effect } from "effect";
 
-import {
-    type LogEnduranceActionHistoryArgsEncoded,
-    LogEnduranceActionHistoryArgsSchema,
-    LogEnduranceActionHistoryReturnsSchema,
-} from "@/domain/endurances/rpcs/LogEnduranceActionHistory";
-import { type ProjectId } from "@/domain/projects/tables/Project";
-import { supabase } from "@/lib/supabase";
+import type { LogEnduranceActionHistoryArgs } from "@/domain/endurances/rpcs/LogEnduranceActionHistory";
+import { EnduranceRepository } from "@/repositories/endurances/endurance.repository";
 
 /**
  * カウントの履歴を記録します。
@@ -14,25 +9,9 @@ import { supabase } from "@/lib/supabase";
  * @returns 対応する企画のID
  */
 export const logEnduranceActionHistory = (
-    args: LogEnduranceActionHistoryArgsEncoded,
-): Effect.Effect<ProjectId, unknown> =>
-    pipe(
-        args,
-        Schema.decodeEither(LogEnduranceActionHistoryArgsSchema),
-        Effect.tryMapPromise({
-            try: (args) =>
-                supabase.rpc(
-                    "log_endurance_action_history_new",
-                    Schema.encodeSync(LogEnduranceActionHistoryArgsSchema)(
-                        args,
-                    ),
-                ),
-            catch: (error) => error,
-        }),
-        Effect.flatMap(({ data, error }) =>
-            error ? Effect.fail(error) : Effect.succeed(data),
-        ),
-        Effect.flatMap(
-            Schema.decodeUnknownEither(LogEnduranceActionHistoryReturnsSchema),
-        ),
-    );
+    args: LogEnduranceActionHistoryArgs,
+) =>
+    Effect.gen(function* () {
+        const repository = yield* EnduranceRepository;
+        return yield* repository.logActionHistory(args);
+    });

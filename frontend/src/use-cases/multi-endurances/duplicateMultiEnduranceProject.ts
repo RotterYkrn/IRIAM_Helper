@@ -1,11 +1,7 @@
-import { pipe, Effect, Schema } from "effect";
+import { Effect } from "effect";
 
-import {
-    type DuplicateMultiEnduranceProjectArgs,
-    DuplicateMultiEnduranceProjectArgsSchema,
-    DuplicateMultiEnduranceProjectReturnsSchema,
-} from "@/domain/multi-endurances/rpcs/DuplicateMultiEnduranceProject";
-import { supabase } from "@/lib/supabase";
+import { type DuplicateMultiEnduranceProjectArgs } from "@/domain/multi-endurances/rpcs/DuplicateMultiEnduranceProject";
+import { MultiEnduranceRepository } from "@/repositories/multi-endurances/multi-endurance.repository";
 
 /**
  * 耐久企画（複数）を複製します。
@@ -15,21 +11,7 @@ import { supabase } from "@/lib/supabase";
 export const duplicateMultiEnduranceProject = (
     args: DuplicateMultiEnduranceProjectArgs,
 ) =>
-    pipe(
-        Effect.tryPromise({
-            try: () =>
-                supabase.rpc(
-                    "duplicate_multi_endurance_project",
-                    Schema.encodeSync(DuplicateMultiEnduranceProjectArgsSchema)(
-                        args,
-                    ),
-                ),
-            catch: (error) => error,
-        }),
-        Effect.flatMap(({ data, error }) =>
-            error ? Effect.fail(error) : Effect.succeed(data),
-        ),
-        Effect.flatMap(
-            Schema.decodeEither(DuplicateMultiEnduranceProjectReturnsSchema),
-        ),
-    );
+    Effect.gen(function* () {
+        const repository = yield* MultiEnduranceRepository;
+        return yield* repository.duplicate(args);
+    });
