@@ -1,11 +1,11 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Effect } from "effect";
 
 import { ProjectKey } from "../query-keys/projects";
 
 import { updateEnduranceProjectQueryData } from "./utils";
 
 import type { CreateEnduranceProjectArgs } from "@/domain/endurances/rpcs/CreateEnduranceProject";
+import { runEffectWithThrow } from "@/lib/utils";
 import { createEnduranceProject } from "@/use-cases/endurances/createEnduranceProject";
 
 /**
@@ -22,17 +22,8 @@ export const useCreateEnduranceProject = () => {
     const queryClient = useQueryClient();
 
     const mutation = useMutation({
-        mutationFn: async (args: CreateEnduranceProjectArgs) => {
-            try {
-                const result = await Effect.runPromise(
-                    createEnduranceProject(args),
-                );
-                return result;
-            } catch (error) {
-                console.error(error);
-                throw error;
-            }
-        },
+        mutationFn: async (args: CreateEnduranceProjectArgs) =>
+            await runEffectWithThrow(createEnduranceProject(args)),
         onSuccess: async (createdProject) => {
             updateEnduranceProjectQueryData(queryClient, createdProject);
         },

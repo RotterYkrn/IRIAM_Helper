@@ -1,30 +1,24 @@
 import { useQueryClient, useMutation } from "@tanstack/react-query";
-import { Chunk, Effect } from "effect";
+import { Chunk } from "effect";
 
 import { EnterEnduranceKey } from "../query-keys/enterEndurances";
 
 import type { EnterUnitDto } from "@/domain/enter_endurances/dto/EnterUnitDto";
 import type { LogEnterArgs } from "@/domain/enter_endurances/rpcs/LogEnter";
+import { runEffectWithThrow } from "@/lib/utils";
 import { logEnter } from "@/use-cases/enter-endurances/logEnter";
 
 export const useLogEnter = () => {
     const queryClient = useQueryClient();
 
     const mutation = useMutation({
-        mutationFn: async (args: Omit<LogEnterArgs, "entered_at">) => {
-            try {
-                const result = await Effect.runPromise(
-                    logEnter({
-                        ...args,
-                        entered_at: new Date(),
-                    }),
-                );
-                return result;
-            } catch (error) {
-                console.error(error);
-                throw error;
-            }
-        },
+        mutationFn: async (args: Omit<LogEnterArgs, "entered_at">) =>
+            await runEffectWithThrow(
+                logEnter({
+                    ...args,
+                    entered_at: new Date(),
+                }),
+            ),
         onSuccess: async (_, args) => {
             await queryClient.setQueryData<EnterUnitDto>(
                 EnterEnduranceKey.unit(args.unit_id),

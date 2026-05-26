@@ -1,10 +1,11 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Chunk, Effect } from "effect";
+import { Chunk } from "effect";
 
 import { ProjectKey } from "../query-keys/projects";
 
 import type { ProjectDtoSchema } from "@/domain/projects/dto/ProjectDto";
 import type { FinishProjectArgs } from "@/domain/projects/rpcs/FinishProject";
+import { runEffectWithThrow } from "@/lib/utils";
 import { finishProject } from "@/use-cases/projects/finishProject";
 
 /**
@@ -22,15 +23,8 @@ export const useFinishProject = () => {
     const queryClient = useQueryClient();
 
     const mutation = useMutation({
-        mutationFn: async (args: FinishProjectArgs) => {
-            try {
-                const result = await Effect.runPromise(finishProject(args));
-                return result;
-            } catch (error) {
-                console.error(error);
-                throw error;
-            }
-        },
+        mutationFn: async (args: FinishProjectArgs) =>
+            await runEffectWithThrow(finishProject(args)),
         onSuccess: (projectId) => {
             // 一覧のリストグループにも影響するため、一覧も更新
             queryClient.setQueryData<Chunk.Chunk<typeof ProjectDtoSchema.Type>>(

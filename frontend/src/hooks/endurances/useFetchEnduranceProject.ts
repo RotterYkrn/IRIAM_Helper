@@ -3,14 +3,14 @@ import {
     useQuery,
     useQueryClient,
 } from "@tanstack/react-query";
-import { Effect } from "effect";
 
 import { EnduranceKey } from "../query-keys/endurances";
 import { ProjectKey } from "../query-keys/projects";
 
 import { setEnduranceProjectQueryData } from "./utils";
 
-import type { ProjectIdEncoded } from "@/domain/projects/tables/Project";
+import type { ProjectId } from "@/domain/projects/tables/Project";
+import { runEffectWithThrow } from "@/lib/utils";
 import { fetchEnduranceProject } from "@/use-cases/endurances/fetchEnduranceProject";
 
 /**
@@ -25,21 +25,16 @@ import { fetchEnduranceProject } from "@/use-cases/endurances/fetchEnduranceProj
  * @returns TanStack Query の Query オブジェクトの配列\
  * {@link fetchEnduranceProject} を実行する
  */
-export const useFetchEnduranceProject = (projectId: ProjectIdEncoded) => {
+export const useFetchEnduranceProject = (projectId: ProjectId) => {
     const queryClient = useQueryClient();
 
     const query = useQuery({
         queryKey: ProjectKey.detail(projectId),
         queryFn: async () => {
-            try {
-                const result = await Effect.runPromise(
-                    fetchEnduranceProject(projectId),
-                );
-                return setEnduranceProjectQueryData(queryClient, result);
-            } catch (error) {
-                console.error(error);
-                throw error;
-            }
+            const result = await runEffectWithThrow(
+                fetchEnduranceProject(projectId),
+            );
+            return setEnduranceProjectQueryData(queryClient, result);
         },
         staleTime: 5 * 60 * 1000,
         placeholderData: keepPreviousData,
