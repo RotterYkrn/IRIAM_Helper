@@ -1,4 +1,4 @@
-import { Layer, Schema } from "effect";
+import { Effect, Layer, Option, pipe, Schema } from "effect";
 
 import { EnterEnduranceRepository } from "./enter-endurance.repository";
 
@@ -29,27 +29,40 @@ import {
     LogEnterArgsSchema,
     LogEnterReturnsSchema,
 } from "@/domain/enter_endurances/rpcs/LogEnter";
+import { ProjectIdSchema } from "@/domain/projects/tables/Project";
 import { supabase } from "@/lib/supabase";
 import { queryAndDecode } from "@/utils/api";
 
 export const EnterEnduranceSupabase = Layer.succeed(
     EnterEnduranceRepository,
     EnterEnduranceRepository.of({
-        // isExistProject: () =>
-        //     pipe(
-        //         queryAndDecode(
-        //             () =>
-        //                 supabase
-        //                     .from("projects")
-        //                     .select("id")
-        //                     .eq("type", "enter-endurance")
-        //                     .maybeSingle(),
-        //             Schema.Struct({ id: ProjectIdSchema }),
-        //         ),
-        //         Effect.map((data) =>
-        //             data ? Option.some(data.id) : Option.none(),
-        //         ),
-        //     ),
+        isExistProject: () =>
+            pipe(
+                Effect.tryPromise({
+                    try: () =>
+                        supabase
+                            .from("projects")
+                            .select("id")
+                            .eq("type", "enter-endurance")
+                            .maybeSingle(),
+                    catch: (error) =>
+                        new Error(
+                            `Failed to execute Supabase query: ${String(error)}`,
+                        ),
+                }),
+                Effect.flatMap(({ data, error }) =>
+                    error ? Effect.fail(error) : Effect.succeed(data),
+                ),
+                Effect.flatMap((data) =>
+                    data
+                        ? pipe(
+                              data.id,
+                              Schema.decodeEither(ProjectIdSchema),
+                              Effect.map(Option.some),
+                          )
+                        : Effect.succeed(Option.none()),
+                ),
+            ),
         getProjectById: (projectId) =>
             queryAndDecode(
                 () =>

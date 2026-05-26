@@ -1,4 +1,4 @@
-import { Effect, Context } from "effect";
+import { Effect, Context, Option } from "effect";
 
 import type { EnterProjectDto } from "@/domain/enter_endurances/dto/EnterProjectDto";
 import type { EnterUnitDto } from "@/domain/enter_endurances/dto/EnterUnitDto";
@@ -31,10 +31,10 @@ import { EnterUnitIdSchema } from "@/domain/enter_endurances/tables/EnterUnit";
 import type { ProjectId } from "@/domain/projects/tables/Project";
 
 export interface EnterEnduranceRepository {
-    // readonly isExistProject: () => Effect.Effect<
-    //     Option.Option<ProjectId>,
-    //     Error
-    // >;
+    readonly isExistProject: () => Effect.Effect<
+        Option.Option<ProjectId>,
+        Error
+    >;
     readonly getProjectById: (
         projectId: ProjectId,
     ) => Effect.Effect<EnterProjectDto, Error>;
