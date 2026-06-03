@@ -2,6 +2,7 @@ import { useQueryClient, useMutation } from "@tanstack/react-query";
 
 import { EnduranceKey } from "../query-keys/endurances";
 
+import { useAppRuntimeContext } from "@/contexts/app-effect/useAppRuntimeContext";
 import type { MultiEnduranceUnitSchema } from "@/domain/multi-endurances/dto/MultiEnduranceProjectDto";
 import type { LogMultiEnduranceActionHistoryArgs } from "@/domain/multi-endurances/rpcs/LogMultiEnduranceActionHistory";
 import { runEffectWithThrow } from "@/lib/utils";
@@ -9,10 +10,13 @@ import { logMultiEnduranceActionHistory } from "@/use-cases/multi-endurances/log
 
 export const useLogMultiEnduranceActionHistory = () => {
     const queryClient = useQueryClient();
+    const runtime = useAppRuntimeContext();
 
     return useMutation({
         mutationFn: async (args: LogMultiEnduranceActionHistoryArgs) =>
-            await runEffectWithThrow(logMultiEnduranceActionHistory(args)),
+            await runEffectWithThrow(runtime)(
+                logMultiEnduranceActionHistory(args),
+            ),
         onMutate: (args) => {
             queryClient.setQueryData<typeof MultiEnduranceUnitSchema.Type>(
                 EnduranceKey.unit(args.unit_id),

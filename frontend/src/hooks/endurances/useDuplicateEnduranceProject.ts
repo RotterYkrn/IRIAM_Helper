@@ -4,6 +4,7 @@ import { ProjectKey } from "../query-keys/projects";
 
 import { updateEnduranceProjectQueryData } from "./utils";
 
+import { useAppRuntimeContext } from "@/contexts/app-effect/useAppRuntimeContext";
 import type { DuplicateEnduranceProjectArgs } from "@/domain/endurances/rpcs/DuplicateEnduranceProject";
 import { runEffectWithThrow } from "@/lib/utils";
 import { duplicateEnduranceProject } from "@/use-cases/endurances/duplicateEnduranceProject";
@@ -20,10 +21,11 @@ import { duplicateEnduranceProject } from "@/use-cases/endurances/duplicateEndur
  */
 export const useDuplicateEnduranceProject = () => {
     const queryClient = useQueryClient();
+    const runtime = useAppRuntimeContext();
 
     const mutation = useMutation({
         mutationFn: async (args: DuplicateEnduranceProjectArgs) =>
-            await runEffectWithThrow(duplicateEnduranceProject(args)),
+            await runEffectWithThrow(runtime)(duplicateEnduranceProject(args)),
         onSuccess: (newProject) => {
             updateEnduranceProjectQueryData(queryClient, newProject);
         },

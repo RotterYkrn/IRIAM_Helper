@@ -10,55 +10,59 @@ import EnterEnduranceTopPage from "./pages/EnterEnduranceTopPage";
 import MultiEnduranceProjectPage from "./pages/MultiEnduranceProjectPage";
 import TopPage from "./pages/TopPage";
 
+import { AppRuntimeProvider } from "@/contexts/app-effect/AppRuntimeProvider";
 import { AppProvider } from "@/contexts/apps/AppProvider";
+import { AppLayer } from "@/contexts/app-effect/AppLayer";
 
 const App = () => {
     return (
-        <AppProvider>
-            <Routes>
-                <Route element={<Layout />}>
-                    <Route
-                        path="/"
-                        element={<TopPage />}
-                    />
+        <AppRuntimeProvider layer={AppLayer}>
+            <AppProvider>
+                <Routes>
+                    <Route element={<Layout />}>
+                        <Route
+                            path="/"
+                            element={<TopPage />}
+                        />
 
-                    <Route
-                        path="/enter-endurance"
-                        element={<EnterEnduranceTopPage />}
-                    />
+                        <Route
+                            path="/enter-endurance"
+                            element={<EnterEnduranceTopPage />}
+                        />
 
-                    <Route
-                        path="/enter-endurance/:unitId"
-                        element={<EnterEnduranceDetailPage />}
-                    />
+                        <Route
+                            path="/enter-endurance/:unitId"
+                            element={<EnterEnduranceDetailPage />}
+                        />
 
-                    <Route
-                        path="/projects/create/endurance"
-                        element={<CreateEndurancePage />}
-                    />
+                        <Route
+                            path="/projects/create/endurance"
+                            element={<CreateEndurancePage />}
+                        />
 
-                    <Route
-                        path="/projects/create/multi-endurance"
-                        element={<CreateMultiEndurancePage />}
-                    />
+                        <Route
+                            path="/projects/create/multi-endurance"
+                            element={<CreateMultiEndurancePage />}
+                        />
 
-                    <Route
-                        path="/projects/endurance/:projectId"
-                        element={<EnduranceProjectPage />}
-                    />
+                        <Route
+                            path="/projects/endurance/:projectId"
+                            element={<EnduranceProjectPage />}
+                        />
 
-                    <Route
-                        path="/projects/multi-endurance/:projectId"
-                        element={<MultiEnduranceProjectPage />}
-                    />
+                        <Route
+                            path="/projects/multi-endurance/:projectId"
+                            element={<MultiEnduranceProjectPage />}
+                        />
 
-                    <Route
-                        path="*"
-                        element={<div>404 - Not Found</div>}
-                    />
-                </Route>
-            </Routes>
-        </AppProvider>
+                        <Route
+                            path="*"
+                            element={<div>404 - Not Found</div>}
+                        />
+                    </Route>
+                </Routes>
+            </AppProvider>
+        </AppRuntimeProvider>
     );
 };
 

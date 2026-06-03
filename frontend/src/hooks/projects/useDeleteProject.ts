@@ -3,6 +3,7 @@ import { Chunk } from "effect";
 
 import { ProjectKey } from "../query-keys/projects";
 
+import { useAppRuntimeContext } from "@/contexts/app-effect/useAppRuntimeContext";
 import type { ProjectDtoSchema } from "@/domain/projects/dto/ProjectDto";
 import type { DeleteProjectArgs } from "@/domain/projects/rpcs/DeleteProject";
 import { runEffectWithThrow } from "@/lib/utils";
@@ -20,10 +21,11 @@ import { deleteProject } from "@/use-cases/projects/deleteProject";
  */
 export const useDeleteProject = () => {
     const queryClient = useQueryClient();
+    const runtime = useAppRuntimeContext();
 
     const mutation = useMutation({
         mutationFn: async (args: DeleteProjectArgs) =>
-            await runEffectWithThrow(deleteProject(args)),
+            await runEffectWithThrow(runtime)(deleteProject(args)),
         onSuccess: (projectId) => {
             queryClient.setQueryData<Chunk.Chunk<typeof ProjectDtoSchema.Type>>(
                 ProjectKey.list,

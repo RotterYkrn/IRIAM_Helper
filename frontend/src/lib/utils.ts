@@ -1,20 +1,19 @@
 import { clsx, type ClassValue } from "clsx";
-import { Effect, Exit } from "effect";
+import { Effect, Exit, Runtime } from "effect";
 import { twMerge } from "tailwind-merge";
 
-import { AppEffect, type AppService } from "@/contexts/apps/AppService";
+import type { AppServices } from "@/contexts/app-effect/types";
 
 export function cn(...inputs: ClassValue[]) {
     return twMerge(clsx(inputs));
 }
 
-export const runEffectWithThrow = async <A, E>(
-    effect: Effect.Effect<A, E, AppService>,
-) => {
-    const result = await AppEffect.runPromiseExit(effect);
-    if (Exit.isFailure(result)) {
-        console.error(result.cause);
-        throw result.cause;
-    }
-    return result.value;
-};
+export const runEffectWithThrow =
+    (runtime: Runtime.Runtime<AppServices>) =>
+    async <A, E>(effect: Effect.Effect<A, E, AppServices>) => {
+        const result = await Runtime.runPromiseExit(runtime)(effect);
+        return Exit.getOrElse((c) => {
+            console.error(c.toJSON());
+            throw c;
+        })(result);
+    };

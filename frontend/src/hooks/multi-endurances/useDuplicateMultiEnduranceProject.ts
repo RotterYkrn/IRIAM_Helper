@@ -4,6 +4,7 @@ import { ProjectKey } from "../query-keys/projects";
 
 import { updateMultiEnduranceProjectQueryData } from "./utils";
 
+import { useAppRuntimeContext } from "@/contexts/app-effect/useAppRuntimeContext";
 import type { DuplicateMultiEnduranceProjectArgs } from "@/domain/multi-endurances/rpcs/DuplicateMultiEnduranceProject";
 import { runEffectWithThrow } from "@/lib/utils";
 import { duplicateMultiEnduranceProject } from "@/use-cases/multi-endurances/duplicateMultiEnduranceProject";
@@ -20,10 +21,13 @@ import { duplicateMultiEnduranceProject } from "@/use-cases/multi-endurances/dup
  */
 export const useDuplicateMultiEnduranceProject = () => {
     const queryClient = useQueryClient();
+    const runtime = useAppRuntimeContext();
 
     const mutation = useMutation({
         mutationFn: async (args: DuplicateMultiEnduranceProjectArgs) =>
-            await runEffectWithThrow(duplicateMultiEnduranceProject(args)),
+            await runEffectWithThrow(runtime)(
+                duplicateMultiEnduranceProject(args),
+            ),
         onSuccess: (newProject) => {
             updateMultiEnduranceProjectQueryData(queryClient, newProject);
         },

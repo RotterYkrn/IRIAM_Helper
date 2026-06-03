@@ -2,16 +2,18 @@ import { useQueryClient, useMutation } from "@tanstack/react-query";
 
 import { EnterEnduranceKey } from "../query-keys/enterEndurances";
 
+import { useAppRuntimeContext } from "@/contexts/app-effect/useAppRuntimeContext";
 import type { ArchiveEnterLogsArgs } from "@/domain/enter_endurances/rpcs/ArchiveEnterLogs";
 import { runEffectWithThrow } from "@/lib/utils";
 import { archiveEnterLogs } from "@/use-cases/enter-endurances/archiveEnterLogs";
 
 export const useArchiveEnterLogs = () => {
     const queryClient = useQueryClient();
+    const runtime = useAppRuntimeContext();
 
     const mutation = useMutation({
         mutationFn: async (args: ArchiveEnterLogsArgs) =>
-            await runEffectWithThrow(archiveEnterLogs(args)),
+            await runEffectWithThrow(runtime)(archiveEnterLogs(args)),
         onSuccess: (unitId) => {
             queryClient.invalidateQueries({
                 queryKey: EnterEnduranceKey.unit(unitId),

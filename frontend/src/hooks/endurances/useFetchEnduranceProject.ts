@@ -9,6 +9,7 @@ import { ProjectKey } from "../query-keys/projects";
 
 import { setEnduranceProjectQueryData } from "./utils";
 
+import { useAppRuntimeContext } from "@/contexts/app-effect/useAppRuntimeContext";
 import type { ProjectId } from "@/domain/projects/tables/Project";
 import { runEffectWithThrow } from "@/lib/utils";
 import { fetchEnduranceProject } from "@/use-cases/endurances/fetchEnduranceProject";
@@ -27,11 +28,12 @@ import { fetchEnduranceProject } from "@/use-cases/endurances/fetchEnduranceProj
  */
 export const useFetchEnduranceProject = (projectId: ProjectId) => {
     const queryClient = useQueryClient();
+    const runtime = useAppRuntimeContext();
 
     const query = useQuery({
         queryKey: ProjectKey.detail(projectId),
         queryFn: async () => {
-            const result = await runEffectWithThrow(
+            const result = await runEffectWithThrow(runtime)(
                 fetchEnduranceProject(projectId),
             );
             return setEnduranceProjectQueryData(queryClient, result);

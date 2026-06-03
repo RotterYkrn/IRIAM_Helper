@@ -3,6 +3,7 @@ import { Chunk } from "effect";
 
 import { ProjectKey } from "../query-keys/projects";
 
+import { useAppRuntimeContext } from "@/contexts/app-effect/useAppRuntimeContext";
 import type { ProjectDtoSchema } from "@/domain/projects/dto/ProjectDto";
 import type { ActivateProjectArgs } from "@/domain/projects/rpcs/ActivateProject";
 import { runEffectWithThrow } from "@/lib/utils";
@@ -21,10 +22,11 @@ import { activateProject } from "@/use-cases/projects/activateProject";
  */
 export const useActivateProject = () => {
     const queryClient = useQueryClient();
+    const runtime = useAppRuntimeContext();
 
     const mutation = useMutation({
         mutationFn: async (args: ActivateProjectArgs) =>
-            await runEffectWithThrow(activateProject(args)),
+            await runEffectWithThrow(runtime)(activateProject(args)),
         onSuccess: (projectId) => {
             // 一覧のリストグループにも影響するため、一覧も更新
             queryClient.setQueryData<Chunk.Chunk<typeof ProjectDtoSchema.Type>>(

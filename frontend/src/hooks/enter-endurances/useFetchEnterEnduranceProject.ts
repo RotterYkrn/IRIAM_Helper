@@ -2,6 +2,7 @@ import { useSuspenseQuery } from "@tanstack/react-query";
 
 import { EnterEnduranceKey } from "../query-keys/enterEndurances";
 
+import { useAppRuntimeContext } from "@/contexts/app-effect/useAppRuntimeContext";
 import type { ProjectSchema } from "@/domain/projects/tables/Project";
 import { runEffectWithThrow } from "@/lib/utils";
 import { fetchEnterEnduranceProject } from "@/use-cases/enter-endurances/fetchEnterEnduranceProject";
@@ -9,9 +10,13 @@ import { fetchEnterEnduranceProject } from "@/use-cases/enter-endurances/fetchEn
 export const useFetchEnterEnduranceProject = (
     projectId: typeof ProjectSchema.Type.id,
 ) => {
+    const runtime = useAppRuntimeContext();
+
     return useSuspenseQuery({
         queryKey: EnterEnduranceKey.list,
         queryFn: async () =>
-            await runEffectWithThrow(fetchEnterEnduranceProject(projectId)),
+            await runEffectWithThrow(runtime)(
+                fetchEnterEnduranceProject(projectId),
+            ),
     });
 };

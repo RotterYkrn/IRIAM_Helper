@@ -4,6 +4,7 @@ import { Effect, pipe, Schema } from "effect";
 import { EnduranceKey } from "../query-keys/endurances";
 import { ProjectKey } from "../query-keys/projects";
 
+import { useAppRuntimeContext } from "@/contexts/app-effect/useAppRuntimeContext";
 import type {
     EnduranceActionDtoSchema,
     EnduranceProjectDto,
@@ -49,10 +50,11 @@ type UseLogEnduranceActionHistoryArgs =
  */
 export const useLogEnduranceActionHistory = () => {
     const queryClient = useQueryClient();
+    const runtime = useAppRuntimeContext();
 
     return useMutation({
         mutationFn: async (args: UseLogEnduranceActionHistoryArgs) =>
-            await runEffectWithThrow(
+            await runEffectWithThrow(runtime)(
                 pipe(
                     args,
                     Schema.decodeEither(LogEnduranceActionHistoryArgsSchema),

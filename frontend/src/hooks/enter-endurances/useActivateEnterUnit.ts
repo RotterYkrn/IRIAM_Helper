@@ -2,16 +2,18 @@ import { useQueryClient, useMutation } from "@tanstack/react-query";
 
 import { EnterEnduranceKey } from "../query-keys/enterEndurances";
 
+import { useAppRuntimeContext } from "@/contexts/app-effect/useAppRuntimeContext";
 import type { EnterUnitSchema } from "@/domain/enter_endurances/tables/EnterUnit";
 import { runEffectWithThrow } from "@/lib/utils";
 import { activateEnterUnit } from "@/use-cases/enter-endurances/activateEnterUnit";
 
 export const useActivateEnterUnit = () => {
     const queryClient = useQueryClient();
+    const runtime = useAppRuntimeContext();
 
     const mutation = useMutation({
         mutationFn: async (unitId: typeof EnterUnitSchema.Type.id) =>
-            await runEffectWithThrow(
+            await runEffectWithThrow(runtime)(
                 activateEnterUnit({
                     unit_id: unitId,
                     started_at: new Date(Date.now()),
