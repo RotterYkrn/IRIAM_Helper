@@ -21,13 +21,10 @@
         "class-variance-authority": "^0.7.1",
         "clsx": "^2.1.1",
         "date-fns": "^4.4.0",
-        "drizzle-orm": "^0.45.2",
         "effect": "^3.21.4",
-        "hono": "^4.12.29",
         "jotai": "^2.20.1",
         "jotai-family": "^1.0.2",
         "lucide-react": "^1.24.0",
-        "postgres": "^3.4.9",
         "radix-ui": "^1.6.2",
         "react": "^19.2.7",
         "react-day-picker": "^10.0.1",
@@ -47,13 +44,11 @@
         "@testing-library/dom": "^10.4.1",
         "@testing-library/react": "^16.3.2",
         "@types/node": "^26.1.1",
-        "@types/pg": "^8.20.0",
         "@types/react": "^19.2.17",
         "@types/react-dom": "^19.2.3",
         "@types/react-router-dom": "^5.3.3",
         "@vitejs/plugin-react-swc": "^4.3.1",
         "@vitest/browser": "^4.1.10",
-        "drizzle-kit": "^0.31.10",
         "eslint": "^10.7.0",
         "eslint-config-prettier": "^10.1.8",
         "eslint-plugin-import": "^2.32.0",
@@ -73,12 +68,5 @@
         "vite": "^8.1.4",
         "vite-tsconfig-paths": "^6.1.1",
         "vitest": "^4.1.10"
-    },
-    "allowScripts": {
-        "esbuild@0.28.1": true,
-        "@swc/core@1.15.43": true
-    },
-    "overrides": {
-        "esbuild": ">=0.28.0"
     }
 }
