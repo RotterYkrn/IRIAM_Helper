@@ -45,6 +45,39 @@
       "label": "Dev: Stop All",
       "dependsOn": ["Stop Supabase (local)"],
       "problemMatcher": []
+    },
+    {
+      "label": "Generate Types from Supabase",
+      "type": "shell",
+      "command": "supabase gen types typescript --local > ./frontend/src/lib/database.types.ts",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "presentation": {
+        "reveal": "silent",
+        "close": true
+      }
+    },
+    {
+      "label": "Generate Migration File",
+      "type": "shell",
+      "command": "supabase db diff --local -f ${input:migrationName}",
+      "options": {
+        "cwd": "${workspaceFolder}"
+      },
+      "presentation": {
+        "reveal": "always",
+        "panel": "dedicated",
+        "close": true
+      }
+    }
+  ],
+  "inputs": [
+    {
+      "id": "migrationName",
+      "type": "promptString",
+      "description": "Enter the migration name",
+      "default": "new_migration"
     }
   ]
 }

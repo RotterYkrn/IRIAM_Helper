@@ -378,6 +378,78 @@ export type Database = {
           },
         ]
       }
+      gift_categories: {
+        Row: {
+          id: number
+          name: string
+        }
+        Insert: {
+          id?: never
+          name: string
+        }
+        Update: {
+          id?: never
+          name?: string
+        }
+        Relationships: []
+      }
+      gift_category_mappings: {
+        Row: {
+          category_id: number
+          gift_id: string
+        }
+        Insert: {
+          category_id: number
+          gift_id: string
+        }
+        Update: {
+          category_id?: number
+          gift_id?: string
+        }
+        Relationships: [
+          {
+            foreignKeyName: "gift_category_mappings_category_id_fkey"
+            columns: ["category_id"]
+            isOneToOne: false
+            referencedRelation: "gift_categories"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "gift_category_mappings_gift_id_fkey"
+            columns: ["gift_id"]
+            isOneToOne: false
+            referencedRelation: "gifts"
+            referencedColumns: ["id"]
+          },
+        ]
+      }
+      gifts: {
+        Row: {
+          created_at: string
+          id: string
+          name: string
+          nick_name: string | null
+          point: number
+          updated_at: string
+        }
+        Insert: {
+          created_at?: string
+          id?: string
+          name: string
+          nick_name?: string | null
+          point: number
+          updated_at?: string
+        }
+        Update: {
+          created_at?: string
+          id?: string
+          name?: string
+          nick_name?: string | null
+          point?: number
+          updated_at?: string
+        }
+        Relationships: []
+      }
       projects: {
         Row: {
           created_at: string
@@ -437,6 +509,20 @@ export type Database = {
           units:
             | Database["public"]["CompositeTypes"]["dto_multi_endurance_unit"][]
             | null
+        }
+        Insert: {
+          id?: string | null
+          status?: string | null
+          title?: string | null
+          type?: string | null
+          units?: never
+        }
+        Update: {
+          id?: string | null
+          status?: string | null
+          title?: string | null
+          type?: string | null
+          units?: never
         }
         Relationships: []
       }

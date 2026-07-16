@@ -11,6 +11,7 @@ import MultiEnduranceProjectPage from "./pages/MultiEnduranceProjectPage";
 import TopPage from "./pages/TopPage";
 
 import { AppProvider } from "@/contexts/apps/AppProvider";
+import GiftManagementPage from "./components/gifts/GiftManagementPage";
 
 const App = () => {
     return (
@@ -20,6 +21,11 @@ const App = () => {
                     <Route
                         path="/"
                         element={<TopPage />}
+                    />
+
+                    <Route
+                        path="/gifts"
+                        element={<GiftManagementPage />}
                     />
 
                     <Route
