@@ -598,6 +598,15 @@ export type Database = {
         Args: { p_event_date: string; p_project_id: string }
         Returns: string
       }
+      create_gift: {
+        Args: {
+          p_category_ids: number[]
+          p_name: string
+          p_nick_name?: string
+          p_point: number
+        }
+        Returns: string
+      }
       create_multi_endurance_project: {
         Args: {
           p_title: string
@@ -727,6 +736,16 @@ export type Database = {
           isOneToOne: true
           isSetofReturn: false
         }
+      }
+      update_gift: {
+        Args: {
+          p_category_ids: number[]
+          p_gift_id: string
+          p_name: string
+          p_nick_name?: string
+          p_point: number
+        }
+        Returns: undefined
       }
       update_multi_endurance_project: {
         Args: {

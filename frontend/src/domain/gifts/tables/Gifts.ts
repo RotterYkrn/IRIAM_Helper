@@ -1,5 +1,5 @@
 import type { Database } from "@/lib/database.types";
-import { Schema } from "effect";
+import { Option, Schema } from "effect";
 
 type GiftEncoded = Readonly<Database["public"]["Tables"]["gifts"]["Row"]>;
 
@@ -12,26 +12,42 @@ export const GiftName = Schema.String.pipe(
 );
 export type GiftName = typeof GiftName.Type;
 
-export const GiftNickName = Schema.String.pipe(
+const BaseGiftNickName = Schema.String.pipe(
     Schema.minLength(1),
     Schema.brand("GiftNickName"),
-    Schema.NullOr,
 );
+type BaseGiftNickName = typeof BaseGiftNickName.Type;
+
+export const GiftNickName = Schema.NullOr(BaseGiftNickName);
 export type GiftNickName = typeof GiftNickName.Type;
+
+export const GiftNickNameArg = Schema.optionalToRequired(
+    BaseGiftNickName,
+    Schema.NullOr(BaseGiftNickName),
+    {
+        decode: Option.getOrNull,
+        encode: (nickNameOrNull) => {
+            if (nickNameOrNull === null) {
+                return Option.none();
+            }
+            return Option.some(BaseGiftNickName.make(nickNameOrNull));
+        },
+    },
+);
 
 export const GiftPoint = Schema.Positive.pipe(Schema.brand("GiftPoint"));
 export type GiftPoint = typeof GiftPoint.Type;
 
-export type Gift = Readonly<{
-    id: GiftId;
-    name: GiftName;
-    nick_name: GiftNickName;
-    point: GiftPoint;
-    created_at: Date;
-    updated_at: Date;
-}>;
+// export type Gift = Readonly<{
+//     id: GiftId;
+//     name: GiftName;
+//     nick_name: GiftNickName;
+//     point: GiftPoint;
+//     created_at: Date;
+//     updated_at: Date;
+// }>;
 
-export const Gift: Schema.Schema<Gift, GiftEncoded> = Schema.Struct({
+export const Gift: Schema.Schema<any, GiftEncoded> = Schema.Struct({
     id: GiftId,
     name: GiftName,
     nick_name: GiftNickName,
@@ -39,3 +55,4 @@ export const Gift: Schema.Schema<Gift, GiftEncoded> = Schema.Struct({
     created_at: Schema.Date,
     updated_at: Schema.Date,
 });
+export type Gift = typeof Gift.Type;

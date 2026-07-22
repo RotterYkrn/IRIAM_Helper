@@ -1,7 +1,10 @@
-import { GiftDto, GiftDtoChunk } from "@/domain/gifts/dto/GiftDto";
+import { GiftDtoChunk } from "@/domain/gifts/dto/GiftDto";
 import { CreateGiftArgs } from "@/domain/gifts/rpc/CreateGift";
 import { UpdateGiftArgs } from "@/domain/gifts/rpc/UpdateGift";
-import { Effect, Either, Layer, pipe, Schema } from "effect";
+import { GiftId } from "@/domain/gifts/tables/Gifts";
+import { supabase } from "@/lib/supabase";
+import { queryAndDecode } from "@/utils/api";
+import { Layer, Schema } from "effect";
 import { GiftRepository } from "./gift.repository";
 
 const gifts: {
@@ -31,53 +34,42 @@ export const GiftSupabase = Layer.succeed(
     GiftRepository,
     GiftRepository.of({
         getAll: () =>
-            // queryAndDecode(
-            //     () => supabase.from("gifts_dto").select("*"),
-            //     GiftsDtoChunk,
-            // ),
-            pipe(gifts, Schema.decodeEither(GiftDtoChunk)),
+            queryAndDecode(
+                () => supabase.from("gifts_dto").select("*"),
+                GiftDtoChunk,
+            ),
         create: (args) =>
-            pipe(
-                args,
-                Schema.encodeEither(CreateGiftArgs),
-                Either.map((encoded) => ({
-                    id: crypto.randomUUID(),
-                    ...encoded,
-                })),
-                Effect.tap((gift) => {
-                    gifts.push(gift);
-                }),
-                Effect.flatMap(Schema.decodeEither(GiftDto)),
+            queryAndDecode(
+                () =>
+                    supabase.rpc(
+                        "create_gift",
+                        // 要求される型に readonly がついておらず渡すことができないため、
+                        // encodeSync を通したうえで any を使っています。
+                        Schema.encodeSync(CreateGiftArgs)(
+                            args,
+                            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                        ) as any,
+                    ),
+                GiftId,
             ),
         update: (args) =>
-            pipe(
-                args,
-                Schema.encodeEither(UpdateGiftArgs),
-                Effect.flatMap((encoded) =>
-                    Effect.gen(function* () {
-                        const index = gifts.findIndex(
-                            (gift) => gift.id === encoded.id,
-                        );
-                        if (index !== -1) {
-                            gifts[index] = { ...gifts[index], ...encoded };
-                            return gifts[index];
-                        } else {
-                            throw new Error("Gift not found");
-                        }
-                    }),
-                ),
-                Effect.flatMap(Schema.decodeEither(GiftDto)),
+            queryAndDecode(
+                () =>
+                    supabase.rpc(
+                        "update_gift",
+                        // 要求される型に readonly がついておらず渡すことができないため、
+                        // encodeSync を通したうえで any を使っています。
+                        Schema.encodeSync(UpdateGiftArgs)(
+                            args,
+                            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                        ) as any,
+                    ),
+                Schema.Void,
             ),
-        delete: (giftId) =>
-            pipe(
-                Effect.gen(function* () {
-                    const index = gifts.findIndex((gift) => gift.id === giftId);
-                    if (index !== -1) {
-                        gifts.splice(index, 1);
-                    } else {
-                        throw new Error("Gift not found");
-                    }
-                }),
+        delete: (id) =>
+            queryAndDecode(
+                () => supabase.from("gifts").delete().eq("id", id).single(),
+                Schema.Void,
             ),
     }),
 );
