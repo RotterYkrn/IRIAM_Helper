@@ -1,5 +1,4 @@
 import type {
-    GiftCategory,
     GiftCategoryChunk,
     GiftCategoryId,
     GiftCategoryName,
@@ -8,13 +7,11 @@ import { Context, type Effect } from "effect";
 
 export interface GiftCategoryRepository {
     readonly getAll: () => Effect.Effect<GiftCategoryChunk, Error>;
-    readonly create: (
-        name: GiftCategoryName,
-    ) => Effect.Effect<GiftCategory, Error>;
+    readonly create: (name: GiftCategoryName) => Effect.Effect<void, Error>;
     readonly update: (
         id: GiftCategoryId,
         name: GiftCategoryName,
-    ) => Effect.Effect<GiftCategory, Error>;
+    ) => Effect.Effect<void, Error>;
     readonly delete: (id: GiftCategoryId) => Effect.Effect<void, Error>;
 }
 
