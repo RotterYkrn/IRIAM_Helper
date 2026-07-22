@@ -421,6 +421,13 @@ export type Database = {
             referencedRelation: "gifts"
             referencedColumns: ["id"]
           },
+          {
+            foreignKeyName: "gift_category_mappings_gift_id_fkey"
+            columns: ["gift_id"]
+            isOneToOne: false
+            referencedRelation: "gifts_dto"
+            referencedColumns: ["id"]
+          },
         ]
       }
       gifts: {
@@ -497,6 +504,16 @@ export type Database = {
           unit:
             | Database["public"]["CompositeTypes"]["dto_endurance_unit"]
             | null
+        }
+        Relationships: []
+      }
+      gifts_dto: {
+        Row: {
+          category_ids: number[] | null
+          id: string | null
+          name: string | null
+          nick_name: string | null
+          point: number | null
         }
         Relationships: []
       }

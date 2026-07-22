@@ -2,10 +2,14 @@ import { Effect, Layer, Runtime } from "effect";
 
 import { EnduranceSupabase } from "@/repositories/endurances/endurance.supabase";
 import { EnterEnduranceSupabase } from "@/repositories/enter-endurances/enter-endurance.supabase";
+import { GiftCategorySupabase } from "@/repositories/gifts/gift-category.supabase";
+import { GiftSupabase } from "@/repositories/gifts/gift.supabase";
 import { MultiEnduranceSupabase } from "@/repositories/multi-endurances/multi-endurance.supabase";
 import { ProjectSupabase } from "@/repositories/projects/project.supabase";
 
 const AppLayer = Layer.mergeAll(
+    GiftSupabase,
+    GiftCategorySupabase,
     ProjectSupabase,
     EnduranceSupabase,
     MultiEnduranceSupabase,

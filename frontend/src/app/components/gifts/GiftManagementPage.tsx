@@ -1,56 +1,86 @@
-import React, { useState } from "react";
-import { Chunk } from "effect";
-import {
-    Plus,
-    Edit2,
-    Trash2,
-    FolderPlus,
-    Download,
-    Upload,
-    Check,
-    Settings2,
-    X,
-} from "lucide-react";
-import { Card, CardHeader, CardTitle, CardContent } from "@/components/ui/card";
-import { Button } from "@/components/ui/button";
-import { Input } from "@/components/ui/input";
 import { Badge } from "@/components/ui/badge";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent, CardHeader, CardTitle } from "@/components/ui/card";
 import {
     Dialog,
     DialogContent,
+    DialogFooter,
     DialogHeader,
     DialogTitle,
     DialogTrigger,
-    DialogFooter,
 } from "@/components/ui/dialog";
+import { Input } from "@/components/ui/input";
+import type { GiftDto } from "@/domain/gifts/dto/GiftDto";
+import type { CreateGiftArgs } from "@/domain/gifts/rpc/CreateGift";
+import type { UpdateGiftArgs } from "@/domain/gifts/rpc/UpdateGift";
+import {
+    GiftCategory,
+    GiftCategoryId,
+    GiftCategoryName,
+} from "@/domain/gifts/tables/Categories";
+import {
+    GiftId,
+    GiftName,
+    GiftNickName,
+    GiftPoint,
+} from "@/domain/gifts/tables/Gifts";
+import { giftKeys } from "@/hooks/query-keys/gifts";
+import { runEffectWithThrow } from "@/lib/utils";
+import { GiftCategoryRepository } from "@/repositories/gifts/gift-category.repository";
+import { GiftRepository } from "@/repositories/gifts/gift.repository";
+import { keepPreviousData, useMutation, useQuery } from "@tanstack/react-query";
+import { Chunk, Effect, Either, pipe, Schema } from "effect";
+import {
+    Check,
+    Download,
+    Edit2,
+    FolderPlus,
+    Plus,
+    Settings2,
+    Trash2,
+    Upload,
+    X,
+} from "lucide-react";
+import React, { useState } from "react";
 
 // ==========================================
 // 🔌 カスタムフック（データ操作用ダミー）
 // ==========================================
 const useGiftQuery = () => {
+    const giftsQuery = useQuery({
+        queryKey: giftKeys.lists(),
+        queryFn: async () => {
+            const result = await runEffectWithThrow(
+                Effect.gen(function* () {
+                    const repository = yield* GiftRepository;
+                    return yield* repository.getAll();
+                }),
+            );
+            return result;
+        },
+        staleTime: 5 * 60 * 1000,
+        placeholderData: keepPreviousData,
+    });
+
+    const categoriesQuery = useQuery({
+        queryKey: giftKeys.categories(),
+        queryFn: async () => {
+            const result = await runEffectWithThrow(
+                Effect.gen(function* () {
+                    const repository = yield* GiftCategoryRepository;
+                    return yield* repository.getAll();
+                }),
+            );
+            return result;
+        },
+        staleTime: 5 * 60 * 1000,
+        placeholderData: keepPreviousData,
+    });
+
     // 本来は Supabase からギフト＋所属カテゴリの配列を JOIN して取得する想定
     return {
-        gifts: Chunk.fromIterable([
-            {
-                id: "1",
-                name: "ひらめいた！",
-                nick_name: "ひらめき",
-                point: 10,
-                category_ids: [1, 2],
-            },
-            {
-                id: "2",
-                name: "いいね！",
-                nick_name: "",
-                point: 5,
-                category_ids: [1],
-            },
-        ]),
-        categories: Chunk.fromIterable([
-            { id: 1, name: "定番" },
-            { id: 2, name: "プチギフ" },
-            { id: 3, name: "イベント" },
-        ]),
+        gifts: giftsQuery.data ?? Chunk.empty(),
+        categories: categoriesQuery.data ?? Chunk.empty(),
         isLoading: false,
     };
 };
@@ -62,30 +92,112 @@ type Category = {
 
 const useGiftMutation = () => {
     return {
-        createGift: {
-            mutate: async (data: any) => console.log("Create Gift", data),
-        },
-        updateGift: {
-            mutate: async (id: string, data: any) =>
-                console.log("Update Gift", id, data),
-        },
-        deleteGift: {
-            mutate: async (id: string) => console.log("Delete Gift", id),
-        },
-        createCategory: {
-            mutate: async (data: any) => console.log("Create Category", data),
-        },
-        updateCategory: {
-            mutate: async (id: number, data: any) =>
-                console.log("Update Category", id, data),
-        },
-        deleteCategory: {
-            mutate: async (id: number) => console.log("Delete Category", id),
-        },
-        updateMappings: {
-            mutate: async (giftId: string, categoryIds: number[]) =>
-                console.log("Update Mappings", giftId, categoryIds),
-        },
+        createGift: useMutation({
+            mutationFn: async (args: CreateGiftArgs) => {
+                const result = await runEffectWithThrow(
+                    Effect.gen(function* () {
+                        const repository = yield* GiftRepository;
+                        return yield* repository.create(args);
+                    }),
+                );
+                return result;
+            },
+            onSuccess: (data, _vars, _onMutateResult, context) => {
+                console.log("Create Gift", data);
+                context.client.invalidateQueries({
+                    queryKey: giftKeys.lists(),
+                });
+            },
+        }),
+        updateGift: useMutation({
+            mutationFn: async (args: UpdateGiftArgs) => {
+                const result = await runEffectWithThrow(
+                    Effect.gen(function* () {
+                        const repository = yield* GiftRepository;
+                        return yield* repository.update(args);
+                    }),
+                );
+                return result;
+            },
+            onSuccess: (data, _vars, _onMutateResult, context) => {
+                console.log("Update Gift", data);
+                context.client.invalidateQueries({
+                    queryKey: giftKeys.lists(),
+                });
+            },
+        }),
+        deleteGift: useMutation({
+            mutationFn: async (id: GiftId) => {
+                const result = await runEffectWithThrow(
+                    Effect.gen(function* () {
+                        const repository = yield* GiftRepository;
+                        return yield* repository.delete(id);
+                    }),
+                );
+                return result;
+            },
+            onSuccess: (data, _vars, _onMutateResult, context) => {
+                console.log("Delete Gift", data);
+                context.client.invalidateQueries({
+                    queryKey: giftKeys.lists(),
+                });
+            },
+        }),
+        createCategory: useMutation({
+            mutationFn: async (name: GiftCategoryName) => {
+                const result = await runEffectWithThrow(
+                    Effect.gen(function* () {
+                        const repository = yield* GiftCategoryRepository;
+                        return yield* repository.create(name);
+                    }),
+                );
+                return result;
+            },
+            onSuccess: (data, _vars, _onMutateResult, context) => {
+                console.log("Create Category", data);
+                context.client.invalidateQueries({
+                    queryKey: giftKeys.categories(),
+                });
+            },
+        }),
+        updateCategory: useMutation({
+            mutationFn: async ({
+                id,
+                name,
+            }: {
+                id: GiftCategoryId;
+                name: GiftCategoryName;
+            }) => {
+                const result = await runEffectWithThrow(
+                    Effect.gen(function* () {
+                        const repository = yield* GiftCategoryRepository;
+                        return yield* repository.update(id, name);
+                    }),
+                );
+                return result;
+            },
+            onSuccess: (data, _vars, _onMutateResult, context) => {
+                console.log("Update Category", data);
+                context.client.invalidateQueries({
+                    queryKey: giftKeys.categories(),
+                });
+            },
+        }),
+        deleteCategory: useMutation({
+            mutationFn: async (id: GiftCategoryId) => {
+                const result = await runEffectWithThrow(
+                    Effect.gen(function* () {
+                        const repository = yield* GiftCategoryRepository;
+                        return yield* repository.delete(id);
+                    }),
+                );
+                return result;
+            },
+            onSuccess: (data, _vars, _onMutateResult, context) => {
+                console.log("Delete Category", data);
+                context.client.invalidateQueries({ queryKey: giftKeys.all });
+            },
+        }),
         importData: {
             mutate: async (data: any) => console.log("Import Data", data),
         },
@@ -100,12 +212,12 @@ const GiftManagementPage = () => {
     const mutation = useGiftMutation();
 
     // 状態管理（フォーム用）
-    const [giftForm, setGiftForm] = useState({
-        id: "",
-        name: "",
-        nick_name: "",
-        point: 0,
-        category_ids: [] as number[],
+    const [giftForm, setGiftForm] = useState<GiftDto>({
+        id: "" as GiftId,
+        name: GiftName.make("IRIAM"),
+        nick_name: null,
+        point: GiftPoint.make(1),
+        category_ids: Chunk.empty<GiftCategoryId>(),
     });
 
     // ダイアログ開閉管理
@@ -126,15 +238,32 @@ const GiftManagementPage = () => {
 
     // --- ハンドラー ---
     const handleCreate = () => {
-        if (!newCategoryName.trim()) return;
-        mutation.createCategory.mutate({ name: newCategoryName });
-        setNewCategoryName("");
+        pipe(
+            newCategoryName,
+            Schema.decodeEither(GiftCategoryName),
+            Either.match({
+                onLeft: () => {},
+                onRight: (name) => {
+                    mutation.createCategory.mutate(name);
+                    setNewCategoryName("");
+                },
+            }),
+        );
     };
 
     const handleUpdateSave = (id: number) => {
-        if (!editingCategoryName.trim()) return;
-        mutation.updateCategory.mutate(id, { name: editingCategoryName });
-        setEditingCategoryId(null);
+        pipe(
+            { id, name: editingCategoryName },
+            Schema.decodeEither(GiftCategory),
+            Either.match({
+                onLeft: () => {},
+                onRight: ({ id, name }) => {
+                    mutation.updateCategory.mutate({ id, name });
+                    setEditingCategoryId(null);
+                    setEditingCategoryName("");
+                },
+            }),
+        );
     };
 
     const handleEditStart = (cat: Category) => {
@@ -144,14 +273,18 @@ const GiftManagementPage = () => {
 
     // カテゴリ追加ハンドラ（ギフト編集中の動線を想定）
     const handleQuickAddCategory = async () => {
-        if (!quickCategoryName) return;
-
-        // 1. カテゴリ作成（実際はここでmutationを呼び出し、新しいIDを取得する）
-        await mutation.createCategory.mutate({ name: quickCategoryName });
-
-        // 2. 状態のリセット
-        setQuickCategoryName("");
-        setIsAddingQuickCategory(false);
+        pipe(
+            quickCategoryName,
+            Schema.decodeEither(GiftCategoryName),
+            Either.match({
+                onLeft: () => {},
+                onRight: (name) => {
+                    mutation.createCategory.mutate(name);
+                    setQuickCategoryName("");
+                    setIsAddingQuickCategory(false);
+                },
+            }),
+        );
         // 本来はここでリストを再取得（または楽観的更新）
     };
 
@@ -255,11 +388,12 @@ const GiftManagementPage = () => {
                                         text-white"
                                     onClick={() =>
                                         setGiftForm({
-                                            id: "",
-                                            name: "",
-                                            nick_name: "",
-                                            point: 0,
-                                            category_ids: [],
+                                            id: "" as GiftId,
+                                            name: GiftName.make("IRIAM"),
+                                            nick_name: null,
+                                            point: GiftPoint.make(1),
+                                            category_ids:
+                                                Chunk.empty<GiftCategoryId>(),
                                         })
                                     }
                                 >
@@ -284,7 +418,9 @@ const GiftManagementPage = () => {
                                             onChange={(e) =>
                                                 setGiftForm({
                                                     ...giftForm,
-                                                    name: e.target.value,
+                                                    name: GiftName.make(
+                                                        e.target.value,
+                                                    ),
                                                 })
                                             }
                                             placeholder="例: ひらめいた！"
@@ -295,11 +431,14 @@ const GiftManagementPage = () => {
                                             略称名 (任意)
                                         </label>
                                         <Input
-                                            value={giftForm.nick_name}
+                                            value={giftForm.nick_name || ""}
                                             onChange={(e) =>
                                                 setGiftForm({
                                                     ...giftForm,
-                                                    nick_name: e.target.value,
+                                                    nick_name:
+                                                        (e.target
+                                                            .value as GiftNickName) ||
+                                                        null,
                                                 })
                                             }
                                             placeholder="例: ひらめき"
@@ -315,8 +454,8 @@ const GiftManagementPage = () => {
                                             onChange={(e) =>
                                                 setGiftForm({
                                                     ...giftForm,
-                                                    point: Number(
-                                                        e.target.value,
+                                                    point: GiftPoint.make(
+                                                        Number(e.target.value),
                                                     ),
                                                 })
                                             }
@@ -333,7 +472,8 @@ const GiftManagementPage = () => {
                                         <div className="flex flex-wrap gap-2">
                                             {Chunk.map(categories, (cat) => {
                                                 const isSelected =
-                                                    giftForm.category_ids.includes(
+                                                    Chunk.contains(
+                                                        giftForm.category_ids,
                                                         cat.id,
                                                     );
                                                 return (
@@ -350,17 +490,18 @@ const GiftManagementPage = () => {
                                                         onClick={() => {
                                                             const next =
                                                                 isSelected
-                                                                    ? giftForm.category_ids.filter(
+                                                                    ? Chunk.filter(
+                                                                          giftForm.category_ids,
                                                                           (
                                                                               id,
                                                                           ) =>
                                                                               id !==
                                                                               cat.id,
                                                                       )
-                                                                    : [
-                                                                          ...giftForm.category_ids,
+                                                                    : Chunk.append(
+                                                                          giftForm.category_ids,
                                                                           cat.id,
-                                                                      ];
+                                                                      );
                                                             setGiftForm({
                                                                 ...giftForm,
                                                                 category_ids:
@@ -439,7 +580,6 @@ const GiftManagementPage = () => {
                                         onClick={() => {
                                             giftForm.id
                                                 ? mutation.updateGift.mutate(
-                                                      giftForm.id,
                                                       giftForm,
                                                   )
                                                 : mutation.createGift.mutate(
@@ -492,25 +632,29 @@ const GiftManagementPage = () => {
                                             </Badge>
                                         </div>
                                         <div className="flex flex-wrap gap-1">
-                                            {gift.category_ids.map((catId) => {
-                                                const cat = Chunk.findFirst(
-                                                    categories,
-                                                    (c) => c.id === catId,
-                                                );
-                                                return cat._tag === "Some" ? (
-                                                    <Badge
-                                                        key={catId}
-                                                        variant="outline"
-                                                        className="text-[10px]
-                                                            border-pink-200
-                                                            bg-white
-                                                            text-pink-600 px-1.5
-                                                            py-0"
-                                                    >
-                                                        {cat.value.name}
-                                                    </Badge>
-                                                ) : null;
-                                            })}
+                                            {Chunk.map(
+                                                gift.category_ids,
+                                                (catId) => {
+                                                    const cat = Chunk.findFirst(
+                                                        categories,
+                                                        (c) => c.id === catId,
+                                                    );
+                                                    return cat._tag ===
+                                                        "Some" ? (
+                                                        <Badge
+                                                            key={catId}
+                                                            variant="outline"
+                                                            className="text-[10px]
+                                                                border-pink-200
+                                                                bg-white
+                                                                text-pink-600
+                                                                px-1.5 py-0"
+                                                        >
+                                                            {cat.value.name}
+                                                        </Badge>
+                                                    ) : null;
+                                                },
+                                            )}
                                         </div>
                                     </div>
                                     <div className="flex gap-1">
@@ -711,11 +855,18 @@ const GiftManagementPage = () => {
                                                             className="h-8 w-8
                                                                 text-gray-400
                                                                 hover:text-red-600"
-                                                            onClick={() =>
+                                                            onClick={() => {
+                                                                if (
+                                                                    !confirm(
+                                                                        `カテゴリ「${cat.name}」を削除しますか？`,
+                                                                    )
+                                                                ) {
+                                                                    return;
+                                                                }
                                                                 mutation.deleteCategory.mutate(
                                                                     cat.id,
-                                                                )
-                                                            }
+                                                                );
+                                                            }}
                                                         >
                                                             <Trash2
                                                                 className="w-4

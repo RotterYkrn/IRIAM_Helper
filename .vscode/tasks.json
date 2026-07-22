@@ -8,7 +8,7 @@
       "problemMatcher": [],
       "presentation": {
         "reveal": "always",
-        "panel": "dedicated",
+        "panel": "shared",
         "close": true
       }
     },
@@ -32,14 +32,13 @@
       "isBackground": true,
       "presentation": {
         "reveal": "silent",
-        "panel": "dedicated"
+        "panel": "shared"
       }
     },
     {
       "label": "Dev: Start All",
       "dependsOn": ["Start Supabase (local)", "Start Vite"],
-      "dependsOrder": "sequence",
-      "problemMatcher": []
+      "dependsOrder": "parallel"
     },
     {
       "label": "Dev: Stop All",
