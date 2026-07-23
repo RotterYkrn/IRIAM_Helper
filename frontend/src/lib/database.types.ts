@@ -432,28 +432,22 @@ export type Database = {
       }
       gifts: {
         Row: {
-          created_at: string
           id: string
           name: string
           nick_name: string | null
           point: number
-          updated_at: string
         }
         Insert: {
-          created_at?: string
           id?: string
           name: string
           nick_name?: string | null
           point: number
-          updated_at?: string
         }
         Update: {
-          created_at?: string
           id?: string
           name?: string
           nick_name?: string | null
           point?: number
-          updated_at?: string
         }
         Relationships: []
       }
@@ -676,6 +670,14 @@ export type Database = {
       }
       finish_enter_unit: { Args: { p_unit_id: string }; Returns: string }
       finish_project: { Args: { p_project_id: string }; Returns: string }
+      import_gift_data: {
+        Args: {
+          p_categories: Database["public"]["Tables"]["gift_categories"]["Row"][]
+          p_gifts: Database["public"]["Tables"]["gifts"]["Row"][]
+          p_mappings: Database["public"]["Tables"]["gift_category_mappings"]["Row"][]
+        }
+        Returns: undefined
+      }
       log_endurance_action_history_new: {
         Args: {
           p_action_count: number

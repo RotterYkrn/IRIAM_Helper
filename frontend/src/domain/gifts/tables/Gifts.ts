@@ -44,8 +44,6 @@ export type Gift = Readonly<{
     name: GiftName;
     nick_name: GiftNickName;
     point: GiftPoint;
-    created_at: Date;
-    updated_at: Date;
 }>;
 
 export const Gift: Schema.Schema<Gift, GiftEncoded> = Schema.Struct({
@@ -53,8 +51,6 @@ export const Gift: Schema.Schema<Gift, GiftEncoded> = Schema.Struct({
     name: GiftName,
     nick_name: GiftNickName,
     point: GiftPoint,
-    created_at: Schema.Date,
-    updated_at: Schema.Date,
 });
 
 export const GiftChunk = Schema.Chunk(Gift);

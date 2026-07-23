@@ -19,8 +19,7 @@ BEGIN
     SET 
         name = p_name,
         nick_name = p_nick_name,
-        point = p_point,
-        updated_at = NOW()
+        point = p_point
     WHERE id = p_gift_id;
 
     -- 対象のギフトが存在しない場合は例外を発生させる

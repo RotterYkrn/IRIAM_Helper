@@ -1,5 +1,6 @@
 import type { GiftDtoChunk } from "@/domain/gifts/dto/GiftDto";
 import type { CreateGiftArgs } from "@/domain/gifts/rpc/CreateGift";
+import type { ImportExportGiftArgs } from "@/domain/gifts/rpc/ImportExportGift";
 import type { UpdateGiftArgs } from "@/domain/gifts/rpc/UpdateGift";
 import type { GiftId } from "@/domain/gifts/tables/Gifts";
 import { Context, type Effect } from "effect";
@@ -9,6 +10,7 @@ export interface GiftRepository {
     readonly create: (args: CreateGiftArgs) => Effect.Effect<GiftId, Error>;
     readonly update: (args: UpdateGiftArgs) => Effect.Effect<void, Error>;
     readonly delete: (id: GiftId) => Effect.Effect<void, Error>;
+    readonly import: (args: ImportExportGiftArgs) => Effect.Effect<void, Error>;
 }
 
 export const GiftRepository = Context.GenericTag<GiftRepository>(

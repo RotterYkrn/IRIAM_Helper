@@ -7,10 +7,8 @@ CREATE TABLE gifts (
     id uuid not null primary key default gen_random_uuid(),
     name text not null unique check(length(trim(name)) > 0),
     nick_name text null unique check(length(trim(nick_name)) > 0),
-    point integer not null check(point > 0),
+    point integer not null check(point > 0)
     -- image_url text null check(length(trim(image_url)) > 0),
-    created_at timestamp with time zone not null default now(),
-    updated_at timestamp with time zone not null default now()
 );
 
 -- 2. カテゴリマスタ（タブの管理）

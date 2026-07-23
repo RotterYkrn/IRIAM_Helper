@@ -43,7 +43,7 @@ import {
     Upload,
     X,
 } from "lucide-react";
-import React, { useState } from "react";
+import React, { useRef, useState } from "react";
 
 // ==========================================
 // 🔌 カスタムフック（データ操作用ダミー）
@@ -88,6 +88,7 @@ const useGiftQuery = () => {
                     return yield* repository.getAll();
                 }),
             );
+            console.log("mappings", result.toJSON());
             return result;
         },
         staleTime: 5 * 60 * 1000,
@@ -222,6 +223,7 @@ const useGiftMutation = () => {
                     args,
                     Schema.encodeSync(ImportExportGiftArgs),
                 );
+                console.log("Backup Data", backupData);
 
                 const blob = new Blob([JSON.stringify(backupData, null, 2)], {
                     type: "application/json",
@@ -234,14 +236,22 @@ const useGiftMutation = () => {
                 URL.revokeObjectURL(url);
                 a.remove();
             },
+        }),
+        importData: useMutation({
+            mutationFn: async (args: ImportExportGiftArgs) => {
+                const result = await runEffectWithThrow(
+                    Effect.gen(function* () {
+                        const repository = yield* GiftRepository;
+                        return yield* repository.import(args);
+                    }),
+                );
+                return result;
+            },
             onSuccess: (data, _vars, _onMutateResult, context) => {
-                console.log("Export Data", data);
+                console.log("Import Data", data);
                 context.client.invalidateQueries({ queryKey: giftKeys.all });
             },
         }),
-        importData: {
-            mutate: async (data: any) => console.log("Import Data", data),
-        },
     };
 };
 
@@ -276,6 +286,13 @@ const GiftManagementPage = () => {
         null,
     );
     const [editingCategoryName, setEditingCategoryName] = useState("");
+
+    const fileInputRef = useRef<HTMLInputElement>(null);
+
+    const handleImportButtonClick = () => {
+        // ボタンクリックで非表示のinputタグを起動
+        fileInputRef.current?.click();
+    };
 
     // --- ハンドラー ---
     const handleCreate = () => {
@@ -336,21 +353,36 @@ const GiftManagementPage = () => {
 
     // インポート処理
     const handleImport = (e: React.ChangeEvent<HTMLInputElement>) => {
-        const fileReader = new FileReader();
-        if (e.target.files && e.target.files[0]) {
-            fileReader.readAsText(e.target.files[0], "UTF-8");
-            fileReader.onload = (event) => {
-                try {
-                    const parsed = JSON.parse(event.target?.result as string);
-                    mutation.importData.mutate(parsed);
-                    alert(
-                        "インポートが完了しました（コンソールを確認してください）",
-                    );
-                } catch (err) {
-                    alert("JSONファイルの解析に失敗しました。");
-                }
-            };
+        if (!e.target.files || !e.target.files[0]) {
+            console.error("ファイルを選択して下さい");
+            return;
         }
+
+        const file = e.target.files[0];
+
+        const reader = new FileReader();
+        reader.onload = (event) => {
+            pipe(
+                JSON.parse(event.target?.result as string),
+                Schema.decodeUnknownEither(ImportExportGiftArgs),
+                Either.getOrThrowWith(() => {
+                    alert("JSONファイルの解析に失敗しました。");
+                    return new Error("JSONファイルの解析に失敗しました。");
+                }),
+                (args) =>
+                    mutation.importData.mutate(args, {
+                        onSuccess: () => {
+                            alert(
+                                "インポートが完了しました（コンソールを確認してください）",
+                            );
+                        },
+                        onError: () => {
+                            alert("インポートに失敗しました");
+                        },
+                    }),
+            );
+        };
+        reader.readAsText(file, "UTF-8");
     };
 
     return (
@@ -369,21 +401,20 @@ const GiftManagementPage = () => {
                     </p>
                 </div>
                 <div className="flex gap-2">
+                    <input
+                        type="file"
+                        accept=".json"
+                        onChange={handleImport}
+                        ref={fileInputRef}
+                        className="hidden"
+                    />
                     <Button
                         variant="outline"
                         className="border-pink-200 text-pink-700
                             hover:bg-pink-50"
-                        asChild
+                        onClick={handleImportButtonClick}
                     >
-                        <span>
-                            <Upload className="w-4 h-4 mr-2" /> インポート
-                            <input
-                                type="file"
-                                accept=".json"
-                                onChange={handleImport}
-                                className="hidden"
-                            />
-                        </span>
+                        <Upload className="w-4 h-4 mr-2" /> インポート
                     </Button>
                     <Button
                         variant="outline"
