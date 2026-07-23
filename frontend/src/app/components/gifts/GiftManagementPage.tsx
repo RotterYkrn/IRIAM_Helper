@@ -12,6 +12,7 @@ import {
 import { Input } from "@/components/ui/input";
 import type { GiftDto } from "@/domain/gifts/dto/GiftDto";
 import type { CreateGiftArgs } from "@/domain/gifts/rpc/CreateGift";
+import { ImportExportGiftArgs } from "@/domain/gifts/rpc/ImportExportGift";
 import type { UpdateGiftArgs } from "@/domain/gifts/rpc/UpdateGift";
 import {
     GiftCategory,
@@ -26,6 +27,7 @@ import {
 } from "@/domain/gifts/tables/Gifts";
 import { giftKeys } from "@/hooks/query-keys/gifts";
 import { runEffectWithThrow } from "@/lib/utils";
+import { GiftCategoryMappingRepository } from "@/repositories/gifts/gift-category-mapping.repository";
 import { GiftCategoryRepository } from "@/repositories/gifts/gift-category.repository";
 import { GiftRepository } from "@/repositories/gifts/gift.repository";
 import { keepPreviousData, useMutation, useQuery } from "@tanstack/react-query";
@@ -77,10 +79,26 @@ const useGiftQuery = () => {
         placeholderData: keepPreviousData,
     });
 
+    const mappingQuery = useQuery({
+        queryKey: giftKeys.mappings(),
+        queryFn: async () => {
+            const result = await runEffectWithThrow(
+                Effect.gen(function* () {
+                    const repository = yield* GiftCategoryMappingRepository;
+                    return yield* repository.getAll();
+                }),
+            );
+            return result;
+        },
+        staleTime: 5 * 60 * 1000,
+        placeholderData: keepPreviousData,
+    });
+
     // 本来は Supabase からギフト＋所属カテゴリの配列を JOIN して取得する想定
     return {
         gifts: giftsQuery.data ?? Chunk.empty(),
         categories: categoriesQuery.data ?? Chunk.empty(),
+        mappings: mappingQuery.data ?? Chunk.empty(),
         isLoading: false,
     };
 };
@@ -198,6 +216,29 @@ const useGiftMutation = () => {
                 context.client.invalidateQueries({ queryKey: giftKeys.all });
             },
         }),
+        exportData: useMutation({
+            mutationFn: async (args: ImportExportGiftArgs) => {
+                const backupData = pipe(
+                    args,
+                    Schema.encodeSync(ImportExportGiftArgs),
+                );
+
+                const blob = new Blob([JSON.stringify(backupData, null, 2)], {
+                    type: "application/json",
+                });
+                const url = URL.createObjectURL(blob);
+                const a = document.createElement("a");
+                a.href = url;
+                a.download = `iriam_gifts_raw_backup_${new Date().toISOString().slice(0, 10)}.json`;
+                a.click();
+                URL.revokeObjectURL(url);
+                a.remove();
+            },
+            onSuccess: (data, _vars, _onMutateResult, context) => {
+                console.log("Export Data", data);
+                context.client.invalidateQueries({ queryKey: giftKeys.all });
+            },
+        }),
         importData: {
             mutate: async (data: any) => console.log("Import Data", data),
         },
@@ -208,7 +249,7 @@ const useGiftMutation = () => {
 // 🎨 コンポーネント本体
 // ==========================================
 const GiftManagementPage = () => {
-    const { gifts, categories } = useGiftQuery();
+    const { gifts, categories, mappings } = useGiftQuery();
     const mutation = useGiftMutation();
 
     // 状態管理（フォーム用）
@@ -290,17 +331,7 @@ const GiftManagementPage = () => {
 
     // エクスポート処理
     const handleExport = () => {
-        const dataStr =
-            "data:text/json;charset=utf-8," +
-            encodeURIComponent(
-                JSON.stringify(Chunk.toReadonlyArray(gifts), null, 2),
-            );
-        const downloadAnchor = document.createElement("a");
-        downloadAnchor.setAttribute("href", dataStr);
-        downloadAnchor.setAttribute("download", "iriam_gifts_export.json");
-        document.body.appendChild(downloadAnchor);
-        downloadAnchor.click();
-        downloadAnchor.remove();
+        mutation.exportData.mutate({ gifts, categories, mappings });
     };
 
     // インポート処理

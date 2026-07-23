@@ -34,20 +34,21 @@ export const GiftNickNameArg = Schema.optionalToRequired(
         },
     },
 );
+export type GiftNickNameArg = GiftNickName;
 
 export const GiftPoint = Schema.Positive.pipe(Schema.brand("GiftPoint"));
 export type GiftPoint = typeof GiftPoint.Type;
 
-// export type Gift = Readonly<{
-//     id: GiftId;
-//     name: GiftName;
-//     nick_name: GiftNickName;
-//     point: GiftPoint;
-//     created_at: Date;
-//     updated_at: Date;
-// }>;
+export type Gift = Readonly<{
+    id: GiftId;
+    name: GiftName;
+    nick_name: GiftNickName;
+    point: GiftPoint;
+    created_at: Date;
+    updated_at: Date;
+}>;
 
-export const Gift: Schema.Schema<any, GiftEncoded> = Schema.Struct({
+export const Gift: Schema.Schema<Gift, GiftEncoded> = Schema.Struct({
     id: GiftId,
     name: GiftName,
     nick_name: GiftNickName,
@@ -55,4 +56,6 @@ export const Gift: Schema.Schema<any, GiftEncoded> = Schema.Struct({
     created_at: Schema.Date,
     updated_at: Schema.Date,
 });
-export type Gift = typeof Gift.Type;
+
+export const GiftChunk = Schema.Chunk(Gift);
+export type GiftChunk = typeof GiftChunk.Type;
