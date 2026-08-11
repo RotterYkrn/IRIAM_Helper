@@ -77,6 +77,13 @@ export type Database = {
             foreignKeyName: "fk_endurance_action_counts_project"
             columns: ["project_id"]
             isOneToOne: false
+            referencedRelation: "gift_category_endurance_project_dto"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_endurance_action_counts_project"
+            columns: ["project_id"]
+            isOneToOne: false
             referencedRelation: "multi_endurance_project_dto"
             referencedColumns: ["id"]
           },
@@ -140,6 +147,13 @@ export type Database = {
             columns: ["project_id"]
             isOneToOne: false
             referencedRelation: "endurance_project_dto"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_endurance_histories_project"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "gift_category_endurance_project_dto"
             referencedColumns: ["id"]
           },
           {
@@ -214,6 +228,13 @@ export type Database = {
             foreignKeyName: "fk_action_project"
             columns: ["project_id"]
             isOneToOne: false
+            referencedRelation: "gift_category_endurance_project_dto"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_action_project"
+            columns: ["project_id"]
+            isOneToOne: false
             referencedRelation: "multi_endurance_project_dto"
             referencedColumns: ["id"]
           },
@@ -270,6 +291,13 @@ export type Database = {
             columns: ["project_id"]
             isOneToOne: false
             referencedRelation: "endurance_project_dto"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_endurance_unit_project"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "gift_category_endurance_project_dto"
             referencedColumns: ["id"]
           },
           {
@@ -360,6 +388,13 @@ export type Database = {
             columns: ["project_id"]
             isOneToOne: false
             referencedRelation: "endurance_project_dto"
+            referencedColumns: ["id"]
+          },
+          {
+            foreignKeyName: "fk_enter_unit_project"
+            columns: ["project_id"]
+            isOneToOne: false
+            referencedRelation: "gift_category_endurance_project_dto"
             referencedColumns: ["id"]
           },
           {
@@ -501,6 +536,32 @@ export type Database = {
         }
         Relationships: []
       }
+      gift_category_endurance_project_dto: {
+        Row: {
+          id: string | null
+          status: string | null
+          title: string | null
+          type: string | null
+          units:
+            | Database["public"]["CompositeTypes"]["dto_gift_category_endurance_unit"][]
+            | null
+        }
+        Insert: {
+          id?: string | null
+          status?: string | null
+          title?: string | null
+          type?: string | null
+          units?: never
+        }
+        Update: {
+          id?: string | null
+          status?: string | null
+          title?: string | null
+          type?: string | null
+          units?: never
+        }
+        Relationships: []
+      }
       gifts_dto: {
         Row: {
           category_ids: number[] | null
@@ -600,6 +661,28 @@ export type Database = {
           p_point: number
         }
         Returns: string
+      }
+      create_gift_category_endurance_project: {
+        Args: {
+          p_target_count: number
+          p_title: string
+          p_units: Database["public"]["CompositeTypes"]["create_gift_category_unit_args"][]
+        }
+        Returns: {
+          id: string | null
+          status: string | null
+          title: string | null
+          type: string | null
+          units:
+            | Database["public"]["CompositeTypes"]["dto_gift_category_endurance_unit"][]
+            | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "gift_category_endurance_project_dto"
+          isOneToOne: true
+          isSetofReturn: false
+        }
       }
       create_multi_endurance_project: {
         Args: {
@@ -785,6 +868,10 @@ export type Database = {
         label: string | null
         amount: number | null
       }
+      create_gift_category_unit_args: {
+        position: number | null
+        gift_id: string | null
+      }
       create_unit_args: {
         position: number | null
         label: string | null
@@ -805,6 +892,13 @@ export type Database = {
       }
       dto_endurance_unit: {
         id: string | null
+        target_count: number | null
+        current_count: number | null
+      }
+      dto_gift_category_endurance_unit: {
+        id: string | null
+        position: number | null
+        gift_id: string | null
         target_count: number | null
         current_count: number | null
       }

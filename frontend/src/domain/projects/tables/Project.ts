@@ -24,6 +24,7 @@ export const ProjectTypeSchema = Schema.String.pipe(
             "enter-endurance",
             "endurance",
             "multi-endurance",
+            "gift-category-endurance",
             "panel_open",
         ),
     ),

@@ -141,9 +141,11 @@ const SelectProjectTypeDialog = ({ variant, className }: Props) => {
                                     variant={"outline"}
                                     size={"lg"}
                                     className="border-black"
-                                    disabled={true}
+                                    onClick={() =>
+                                        handleSelect("/gift-category-endurance")
+                                    }
                                 >
-                                    ギフト耐久（準備中）
+                                    ラブカテ耐久
                                 </Button>
 
                                 <Button
