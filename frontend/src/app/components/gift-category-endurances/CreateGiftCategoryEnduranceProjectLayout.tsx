@@ -85,7 +85,7 @@ const CreateGiftCategoryEnduranceProjectLayout = () => {
             isSaving={isCreating}
             onSave={onSave}
         >
-            <div className="flex flex-row gap-2">
+            <div className="flex flex-row gap-2 pl-8">
                 <InputField
                     label="周回数"
                     error={targetCountState.error}
@@ -112,7 +112,7 @@ const CreateGiftCategoryEnduranceProjectLayout = () => {
                         <p className="text-lg">
                             ({gift.point.toLocaleString()}pt)
                         </p>
-                        <p className="font-mono text-xl">
+                        <p className="font-mono text-2xl">
                             {Option.isSome(validTargetCount) &&
                             validTargetCount.value !== 0
                                 ? `0/${validTargetCount.value}`

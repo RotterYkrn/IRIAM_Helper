@@ -43,7 +43,7 @@ export type CreateGiftCategoryEnduranceProjectArgs = Readonly<{
     target_count: typeof EnduranceUnitsSchema.Type.target_count;
     units: typeof CreateGiftCategoryUnitArgsChunk.Type;
 }>;
-export const CreateGiftCategoryEnduranceProjectArgsSchema: Schema.Schema<
+export const CreateGiftCategoryEnduranceProjectArgs: Schema.Schema<
     CreateGiftCategoryEnduranceProjectArgs,
     CreateGiftCategoryEnduranceProjectArgsEncoded
 > = Schema.Struct({
@@ -58,7 +58,7 @@ export type CreateGiftCategoryEnduranceProjectReturnsEncoded =
     >;
 export type CreateGiftCategoryEnduranceProjectReturns =
     GiftCategoryEnduranceProjectDto;
-export const CreateGiftCategoryEnduranceProjectReturnsSchema: Schema.Schema<
+export const CreateGiftCategoryEnduranceProjectReturns: Schema.Schema<
     CreateGiftCategoryEnduranceProjectReturns,
     CreateGiftCategoryEnduranceProjectReturnsEncoded
 > = GiftCategoryEnduranceProjectDto;

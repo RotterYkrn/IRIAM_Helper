@@ -1,8 +1,12 @@
 import { GiftCategoryEnduranceProjectDto } from "@/domain/gift-category-endurances/dto/GiftCategoryEnduranceProjectDto";
 import {
-    CreateGiftCategoryEnduranceProjectArgsSchema,
-    CreateGiftCategoryEnduranceProjectReturnsSchema,
+    CreateGiftCategoryEnduranceProjectArgs,
+    CreateGiftCategoryEnduranceProjectReturns,
 } from "@/domain/gift-category-endurances/rpcs/CreateGiftCategoryEnduranceProject";
+import {
+    UpdateGiftCategoryEnduranceProjectArgs,
+    UpdateGiftCategoryEnduranceProjectReturns,
+} from "@/domain/gift-category-endurances/rpcs/UpdateGiftCategoryEnduranceProject";
 import { supabase } from "@/lib/supabase";
 import { queryAndDecode } from "@/utils/api";
 import { Layer, Schema } from "effect";
@@ -29,26 +33,26 @@ export const GiftCategoryEnduranceSupabase = Layer.succeed(
                         // 要求される型に readonly がついておらず渡すことができないため、
                         // encodeSync を通したうえで any を使っています。
                         Schema.encodeSync(
-                            CreateGiftCategoryEnduranceProjectArgsSchema,
+                            CreateGiftCategoryEnduranceProjectArgs,
                             // eslint-disable-next-line @typescript-eslint/no-explicit-any
                         )(args) as any,
                     ),
-                CreateGiftCategoryEnduranceProjectReturnsSchema,
+                CreateGiftCategoryEnduranceProjectReturns,
             ),
-        // update: (args) =>
-        //     queryAndDecode(
-        //         () =>
-        //             supabase.rpc(
-        //                 "update_gift_category_endurance_project",
-        //                 // 要求される型に readonly がついておらず渡すことができないため、
-        //                 // encodeSync を通したうえで any を使っています。
-        //                 Schema.encodeSync(
-        //                     UpdateGiftCategoryEnduranceProjectArgsSchema,
-        //                     // eslint-disable-next-line @typescript-eslint/no-explicit-any
-        //                 )(args) as any,
-        //             ),
-        //         UpdateGiftCategoryEnduranceProjectReturnsSchema,
-        //     ),
+        update: (args) =>
+            queryAndDecode(
+                () =>
+                    supabase.rpc(
+                        "update_gift_category_endurance_project",
+                        // 要求される型に readonly がついておらず渡すことができないため、
+                        // encodeSync を通したうえで any を使っています。
+                        Schema.encodeSync(
+                            UpdateGiftCategoryEnduranceProjectArgs,
+                            // eslint-disable-next-line @typescript-eslint/no-explicit-any
+                        )(args) as any,
+                    ),
+                UpdateGiftCategoryEnduranceProjectReturns,
+            ),
         // duplicate: (args) =>
         //     queryAndDecode(
         //         () =>

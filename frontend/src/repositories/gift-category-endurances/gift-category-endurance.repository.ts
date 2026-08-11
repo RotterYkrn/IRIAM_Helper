@@ -5,6 +5,10 @@ import type {
     CreateGiftCategoryEnduranceProjectArgs,
     CreateGiftCategoryEnduranceProjectReturns,
 } from "@/domain/gift-category-endurances/rpcs/CreateGiftCategoryEnduranceProject";
+import type {
+    UpdateGiftCategoryEnduranceProjectArgs,
+    UpdateGiftCategoryEnduranceProjectReturns,
+} from "@/domain/gift-category-endurances/rpcs/UpdateGiftCategoryEnduranceProject";
 import type { ProjectId } from "@/domain/projects/tables/Project";
 
 export interface GiftCategoryEnduranceRepository {
@@ -14,9 +18,9 @@ export interface GiftCategoryEnduranceRepository {
     readonly create: (
         args: CreateGiftCategoryEnduranceProjectArgs,
     ) => Effect.Effect<CreateGiftCategoryEnduranceProjectReturns, Error>;
-    // readonly update: (
-    //     args: UpdateMultiEnduranceProjectArgs,
-    // ) => Effect.Effect<UpdateMultiEnduranceProjectReturns, Error>;
+    readonly update: (
+        args: UpdateGiftCategoryEnduranceProjectArgs,
+    ) => Effect.Effect<UpdateGiftCategoryEnduranceProjectReturns, Error>;
     // readonly duplicate: (
     //     args: DuplicateMultiEnduranceProjectArgs,
     // ) => Effect.Effect<DuplicateMultiEnduranceProjectReturns, Error>;

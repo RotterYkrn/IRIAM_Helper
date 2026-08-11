@@ -25,6 +25,12 @@ export const setGiftCategoryEnduranceProjectQueryData = (
             }),
         ),
         units: Chunk.map(project.units, (unit) => unit.id),
+        allCurrentCount: pipe(
+            project.units,
+            Chunk.reduce(Number.POSITIVE_INFINITY, (acc, unit) => {
+                return Math.min(acc, unit.current_count);
+            }),
+        ),
     };
 };
 

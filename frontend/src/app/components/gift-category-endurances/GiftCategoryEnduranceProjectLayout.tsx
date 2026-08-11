@@ -1,5 +1,5 @@
 import { useQueryClient } from "@tanstack/react-query";
-import { Chunk } from "effect";
+import { Chunk, Order, pipe } from "effect";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { useNavigate } from "react-router-dom";
 
@@ -13,10 +13,13 @@ import {
     isValidEditGiftCategoryEnduranceAtom,
     validEditGiftCategoryEnduranceAtom,
 } from "@/atoms/gift-category-endurances/EditGiftCategoryEnduranceAtom";
-import { editUnitsAtom } from "@/atoms/gift-category-endurances/EditGiftCategoryEnduranceUnitsAtom";
 import { useProjectContext } from "@/contexts/projects/useProjectContext";
+import type { GiftDto } from "@/domain/gifts/dto/GiftDto";
 import type { ProjectId } from "@/domain/projects/tables/Project";
 import { useFetchGiftCategoryEnduranceProject } from "@/hooks/gift-category-endurances/useFetchEnduranceProject";
+import { useUpdateGiftCategoryEnduranceProject } from "@/hooks/gift-category-endurances/useUpdateEnduranceProject";
+import { useGiftQuery } from "@/hooks/gifts/useGiftQuery";
+import { errorToast, successToast } from "@/utils/toast";
 import InputField from "../ui/InputField";
 
 type Props = {
@@ -29,15 +32,15 @@ type Props = {
 const GiftCategoryEnduranceProjectLayout = ({ projectId }: Props) => {
     const queryClient = useQueryClient();
     const navigate = useNavigate();
+    const { gifts } = useGiftQuery();
     const { isEdit, setIsEdit } = useProjectContext();
 
     const { data, isFetching } =
         useFetchGiftCategoryEnduranceProject(projectId);
-    // const { update, isUpdating } = useUpdateGiftCategoryEnduranceProject();
+    const { update, isUpdating } = useUpdateGiftCategoryEnduranceProject();
     // const { duplicate, isDuplicating } =
     //     useDuplicateGiftCategoryEnduranceProject();
 
-    const editUnits = useAtomValue(editUnitsAtom);
     const [targetCountState, setTargetCount] = useAtom(editTargetCountAtom);
     const validEditState = useAtomValue(validEditGiftCategoryEnduranceAtom);
     const initEditGiftCategoryEndurance = useSetAtom(
@@ -55,6 +58,12 @@ const GiftCategoryEnduranceProjectLayout = ({ projectId }: Props) => {
         );
     }
 
+    const targetGifts = pipe(
+        gifts,
+        Chunk.filter((gift) => gift.point >= 200),
+        Chunk.sort(Order.mapInput(Order.number, (gift: GiftDto) => gift.point)),
+    );
+
     const onEdit = () => {
         initEditGiftCategoryEndurance({
             title: data.title,
@@ -62,29 +71,32 @@ const GiftCategoryEnduranceProjectLayout = ({ projectId }: Props) => {
         });
     };
 
-    // const onSave = () => {
-    //     if (!validEditState) {
-    //         errorToast(`無効なフィールドがあります`);
-    //         return;
-    //     }
+    const onSave = () => {
+        if (!validEditState) {
+            errorToast(`無効なフィールドがあります`);
+            return;
+        }
 
-    //     update(
-    //         {
-    //             id: data.id,
-    //             ...validEditState,
-    //         },
-    //         {
-    //             onSuccess: () => {
-    //                 successToast("更新しました");
-    //                 setIsEdit(false);
-    //             },
-    //             onError: (error) => {
-    //                 console.error(error);
-    //                 errorToast("更新に失敗しました");
-    //             },
-    //         },
-    //     );
-    // };
+        const updateArgs = {
+            ...validEditState,
+            project_id: data.id,
+            units: Chunk.map(targetGifts, (g, i) => ({
+                position: i,
+                gift_id: g.id,
+            })),
+        };
+
+        update(updateArgs, {
+            onSuccess: () => {
+                successToast("更新しました");
+                setIsEdit(false);
+            },
+            onError: (error) => {
+                console.error(error);
+                errorToast("更新に失敗しました");
+            },
+        });
+    };
 
     // const onDuplicate = () => {
     //     if (!confirm("この企画をコピーしますか？")) {
@@ -111,13 +123,11 @@ const GiftCategoryEnduranceProjectLayout = ({ projectId }: Props) => {
         <ProjectContainer
             // isPendingAction={isDuplicating}
             canSave={isValidState}
-            // isSaving={isUpdating}
+            isSaving={isUpdating}
             onEdit={onEdit}
-            // onSave={onSave}
+            onSave={onSave}
             // onDuplicate={onDuplicate}
             isPendingAction={false}
-            isSaving={false}
-            onSave={() => {}}
             onDuplicate={() => {}}
         >
             <EnduranceView
@@ -125,9 +135,9 @@ const GiftCategoryEnduranceProjectLayout = ({ projectId }: Props) => {
                 isEdit={isEdit}
                 actionButtonCounts={actionButtonCounts}
             >
-                {isEdit && (
+                {isEdit ? (
                     <>
-                        <div className="flex flex-row gap-2">
+                        <div className="flex flex-row gap-2 pl-8">
                             <InputField
                                 label="周回数"
                                 error={targetCountState.error}
@@ -141,6 +151,14 @@ const GiftCategoryEnduranceProjectLayout = ({ projectId }: Props) => {
                             ※目標数を空欄もしくは0にすると、∞周に設定にできます
                         </span>
                     </>
+                ) : (
+                    <div className="flex flex-row gap-6 pl-8">
+                        <EnduranceView.CountProgress
+                            target_count={data.target_count}
+                            current_count={data.allCurrentCount}
+                        />
+                        <div className="flex items-end text-3xl">周</div>
+                    </div>
                 )}
                 <div className="grid grid-cols-3 gap-4">
                     {Chunk.map(data.units, (id) => (

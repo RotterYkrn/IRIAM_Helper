@@ -832,6 +832,29 @@ export type Database = {
         }
         Returns: undefined
       }
+      update_gift_category_endurance_project: {
+        Args: {
+          p_project_id: string
+          p_target_count: number
+          p_title: string
+          p_units: Database["public"]["CompositeTypes"]["update_gift_category_unit_args"][]
+        }
+        Returns: {
+          id: string | null
+          status: string | null
+          title: string | null
+          type: string | null
+          units:
+            | Database["public"]["CompositeTypes"]["dto_gift_category_endurance_unit"][]
+            | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "gift_category_endurance_project_dto"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       update_multi_endurance_project: {
         Args: {
           p_project_id: string
@@ -914,6 +937,10 @@ export type Database = {
         position: number | null
         label: string | null
         amount: number | null
+      }
+      update_gift_category_unit_args: {
+        position: number | null
+        gift_id: string | null
       }
       update_unit_args: {
         id: string | null

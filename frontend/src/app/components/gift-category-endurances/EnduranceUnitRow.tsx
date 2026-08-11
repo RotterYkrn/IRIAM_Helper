@@ -2,14 +2,17 @@ import { useQueryClient } from "@tanstack/react-query";
 
 import EnduranceView from "../ui/EnduranceView";
 
+import { validEditTargetCountAtom } from "@/atoms/endurances/EditTargetCountAtom";
 import { Card } from "@/components/ui/card";
+import { useProjectContext } from "@/contexts/projects/useProjectContext";
 import { type EnduranceActionHistoriesSchema } from "@/domain/endurances/tables/EnduranceActionHistories";
 import type { EnduranceActionsSchema } from "@/domain/endurances/tables/EnduranceActions";
 import type { GiftCategoryEnduranceUnitDto } from "@/domain/gift-category-endurances/dto/GiftCategoryEnduranceProjectDto";
+import { useLogGiftCategoryEnduranceActionHistory } from "@/hooks/gift-category-endurances/useLogMultiEnduranceActionHistory";
 import { useGiftQuery } from "@/hooks/gifts/useGiftQuery";
-import { useLogMultiEnduranceActionHistory } from "@/hooks/multi-endurances/useLogMultiEnduranceActionHistory";
 import { EnduranceKey } from "@/hooks/query-keys/endurances";
 import { Chunk, Option, pipe } from "effect";
+import { useAtomValue } from "jotai";
 
 type Props = {
     projectId: typeof EnduranceActionsSchema.Type.project_id;
@@ -23,8 +26,10 @@ type Props = {
  */
 const EnduranceUnitRow = ({ projectId, unitId }: Props) => {
     const queryClient = useQueryClient();
+    const { isEdit } = useProjectContext();
     const { gifts } = useGiftQuery();
-    const logActionHistory = useLogMultiEnduranceActionHistory();
+    const logActionHistory = useLogGiftCategoryEnduranceActionHistory();
+    const validTargetCount = useAtomValue(validEditTargetCountAtom);
 
     const unit = queryClient.getQueryData<GiftCategoryEnduranceUnitDto>(
         EnduranceKey.unit(unitId),
@@ -65,9 +70,16 @@ const EnduranceUnitRow = ({ projectId, unitId }: Props) => {
                     disabled={unit.current_count <= 0}
                     onIncrement={onIncrement}
                 />
-                <p className="font-mono text-xl">
+                <p className="font-mono text-2xl">
                     {unit.current_count}/
-                    {unit.target_count === 0 ? "∞" : unit.target_count}
+                    {isEdit
+                        ? Option.isSome(validTargetCount) &&
+                          validTargetCount.value !== 0
+                            ? validTargetCount.value
+                            : "∞"
+                        : unit.target_count === 0
+                          ? "∞"
+                          : unit.target_count}
                 </p>
                 <EnduranceView.PlusButtons onIncrement={onIncrement} />
             </div>
