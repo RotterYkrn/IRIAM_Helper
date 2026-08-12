@@ -1,5 +1,5 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Effect } from "effect";
+import { Effect, pipe, Schema } from "effect";
 
 import { EnduranceKey } from "../query-keys/endurances";
 import { ProjectKey } from "../query-keys/projects";
@@ -8,9 +8,13 @@ import type {
     EnduranceActionDtoSchema,
     EnduranceProjectDto,
 } from "@/domain/endurances/dto/EnduranceProjectDto";
-import type { LogEnduranceActionHistoryArgsEncoded } from "@/domain/endurances/rpcs/LogEnduranceActionHistory";
+import {
+    LogEnduranceActionHistoryArgsSchema,
+    type LogEnduranceActionHistoryArgsEncoded,
+} from "@/domain/endurances/rpcs/LogEnduranceActionHistory";
 import type { EnduranceActionHistoriesSchema } from "@/domain/endurances/tables/EnduranceActionHistories";
 import { EnduranceActionsSchema } from "@/domain/endurances/tables/EnduranceActions";
+import { runEffectWithThrow } from "@/lib/utils";
 import { logEnduranceActionHistory } from "@/use-cases/endurances/logEnduranceActionHistory";
 
 /**
@@ -47,18 +51,14 @@ export const useLogEnduranceActionHistory = () => {
     const queryClient = useQueryClient();
 
     return useMutation({
-        mutationFn: async (args: UseLogEnduranceActionHistoryArgs) => {
-            try {
-                const result = await Effect.runPromise(
-                    logEnduranceActionHistory(args),
-                );
-
-                return result;
-            } catch (error) {
-                console.error(error);
-                throw error;
-            }
-        },
+        mutationFn: async (args: UseLogEnduranceActionHistoryArgs) =>
+            await runEffectWithThrow(
+                pipe(
+                    args,
+                    Schema.decodeEither(LogEnduranceActionHistoryArgsSchema),
+                    Effect.flatMap(logEnduranceActionHistory),
+                ),
+            ),
         onMutate: async (args: UseLogEnduranceActionHistoryArgs) => {
             // 楽観的更新
             switch (args.p_action_history_type) {

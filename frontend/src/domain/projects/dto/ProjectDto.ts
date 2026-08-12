@@ -18,3 +18,6 @@ export const ProjectDtoSchema = Schema.Struct({
     status: withStrictNullCheck(ProjectStatusSchema),
     title: withStrictNullCheck(ProjectTitleSchema),
 });
+
+export type ProjectDto = typeof ProjectDtoSchema.Type;
+export type ProjectDtoEncoded = typeof ProjectDtoSchema.Encoded;

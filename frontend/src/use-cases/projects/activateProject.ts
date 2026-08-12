@@ -1,11 +1,7 @@
-import { Effect, pipe, Schema } from "effect";
+import { Effect } from "effect";
 
-import {
-    ActivateProjectArgsSchema,
-    ActivateProjectReturnsSchema,
-    type ActivateProjectArgs,
-} from "@/domain/projects/rpcs/ActivateProject";
-import { supabase } from "@/lib/supabase";
+import { type ActivateProjectArgs } from "@/domain/projects/rpcs/ActivateProject";
+import { ProjectRepository } from "@/repositories/projects/project.repository";
 
 /**
  * 企画を開催状態にします。
@@ -13,19 +9,7 @@ import { supabase } from "@/lib/supabase";
  * @returns 開催状態にした企画のID
  */
 export const activateProject = (args: ActivateProjectArgs) =>
-    pipe(
-        Effect.tryPromise({
-            try: () =>
-                supabase.rpc(
-                    "activate_project",
-                    Schema.encodeSync(ActivateProjectArgsSchema)(args),
-                ),
-            catch: (error) => error,
-        }),
-        Effect.flatMap(({ data, error }) =>
-            error ? Effect.fail(error) : Effect.succeed(data),
-        ),
-        Effect.flatMap(
-            Schema.decodeUnknownEither(ActivateProjectReturnsSchema),
-        ),
-    );
+    Effect.gen(function* () {
+        const repository = yield* ProjectRepository;
+        return yield* repository.activate(args);
+    });
