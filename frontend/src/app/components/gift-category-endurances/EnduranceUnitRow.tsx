@@ -11,6 +11,7 @@ import type { GiftCategoryEnduranceUnitDto } from "@/domain/gift-category-endura
 import { useLogGiftCategoryEnduranceActionHistory } from "@/hooks/gift-category-endurances/useLogMultiEnduranceActionHistory";
 import { useGiftQuery } from "@/hooks/gifts/useGiftQuery";
 import { EnduranceKey } from "@/hooks/query-keys/endurances";
+import { cn } from "@/lib/utils";
 import { Chunk, Option, pipe } from "effect";
 import { useAtomValue } from "jotai";
 
@@ -59,8 +60,26 @@ const EnduranceUnitRow = ({ projectId, unitId }: Props) => {
         });
     };
 
+    const getCardBgColor = () => {
+        // 編集モード中は着色しない（デフォルトスタイル）
+        if (isEdit) return "";
+
+        // 目的値（表示上のターゲットカウント）を取得
+        const effectiveTargetCount = unit.target_count;
+
+        // 目標が0（無限）の場合は達成判定しない場合
+        if (effectiveTargetCount === 0) return "";
+
+        // 達成（緑）/ 未達成（赤）の判定
+        const isAchieved = unit.current_count >= effectiveTargetCount;
+
+        return isAchieved
+            ? "bg-emerald-50 border-emerald-300 text-emerald-950" // 達成：緑系
+            : "bg-rose-50 border-rose-300 text-rose-950"; // 未達成：赤系
+    };
+
     return (
-        <Card className="w-45">
+        <Card className={cn("w-45 transition-colors", getCardBgColor())}>
             <div className="whitespace-nowrap text-2xl font-semibold">
                 {gift.nick_name ?? gift.name}
             </div>

@@ -149,12 +149,17 @@ const GiftCategoryEnduranceProjectLayout = ({ projectId }: Props) => {
                         </span>
                     </>
                 ) : (
-                    <div className="flex flex-row gap-6 pl-8">
+                    <div className="flex flex-row gap-6 pl-25">
                         <EnduranceView.CountProgress
                             target_count={data.target_count}
                             current_count={data.allCurrentCount}
                         />
-                        <div className="flex items-end text-3xl">周</div>
+                        <div
+                            className="flex items-end text-3xl
+                                whitespace-nowrap"
+                        >
+                            周　達成
+                        </div>
                     </div>
                 )}
                 <div className="grid grid-cols-3 gap-4">
