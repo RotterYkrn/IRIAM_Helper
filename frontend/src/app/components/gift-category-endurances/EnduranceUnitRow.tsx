@@ -83,7 +83,9 @@ const EnduranceUnitRow = ({ projectId, unitId }: Props) => {
             <div className="whitespace-nowrap text-2xl font-semibold">
                 {gift.nick_name ?? gift.name}
             </div>
-            <p className="text-lg">({gift.point.toLocaleString()}pt)</p>
+            <p className="text-lg font-semibold">
+                ({gift.point.toLocaleString()}pt)
+            </p>
             <div className="flex flex-row gap-2 items-center">
                 <EnduranceView.MinusButtons
                     disabled={unit.current_count <= 0}

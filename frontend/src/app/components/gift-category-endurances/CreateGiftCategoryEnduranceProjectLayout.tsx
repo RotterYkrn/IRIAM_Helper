@@ -109,7 +109,7 @@ const CreateGiftCategoryEnduranceProjectLayout = () => {
                         >
                             {gift.nick_name ?? gift.name}
                         </div>
-                        <p className="text-lg">
+                        <p className="text-lg font-semibold">
                             ({gift.point.toLocaleString()}pt)
                         </p>
                         <p className="font-mono text-2xl">

@@ -67,7 +67,7 @@ const GiftList = ({ setIsGiftOpen, setGiftForm }: Props) => {
                                 className="bg-pink-100 text-pink-800
                                     font-semibold whitespace-nowrap"
                             >
-                                {gift.point} pt
+                                {gift.point.toLocaleString()} pt
                             </Badge>
                         </TableCell>
 
