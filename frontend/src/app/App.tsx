@@ -1,19 +1,19 @@
 import { Route, Routes } from "react-router-dom";
 import "../index.css";
 
+import GiftManagementPage from "./components/gifts/GiftManagementPage";
 import Layout from "./components/Layout";
 import CreateEndurancePage from "./pages/CreateEndurancePage";
+import CreateGiftCategoryEndurancePage from "./pages/CreateGiftCategoryEndurancePage";
 import CreateMultiEndurancePage from "./pages/CreateMultiEndurancePage";
 import EnduranceProjectPage from "./pages/EnduranceProjectPage";
 import EnterEnduranceDetailPage from "./pages/EnterEnduranceDetailPage";
 import EnterEnduranceTopPage from "./pages/EnterEnduranceTopPage";
+import GiftCategoryEndurancePage from "./pages/GiftCategoryEndurancePage";
 import MultiEnduranceProjectPage from "./pages/MultiEnduranceProjectPage";
 import TopPage from "./pages/TopPage";
 
 import { AppProvider } from "@/contexts/apps/AppProvider";
-import GiftManagementPage from "./components/gifts/GiftManagementPage";
-import CreateGiftCategoryEndurancePage from "./pages/CreateGiftCategoryEndurancePage";
-import GiftCategoryEndurancePage from "./pages/GiftCategoryEndurancePage";
 
 const App = () => {
     return (

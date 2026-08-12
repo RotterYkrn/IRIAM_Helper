@@ -3,16 +3,17 @@ import {
     useQuery,
     useQueryClient,
 } from "@tanstack/react-query";
+import { Effect } from "effect";
 
 import { EnduranceKey } from "../query-keys/endurances";
 import { ProjectKey } from "../query-keys/projects";
+
+import { setGiftCategoryEnduranceProjectQueryData } from "./utils";
 
 import type { ProjectId } from "@/domain/projects/tables/Project";
 import { runEffectWithThrow } from "@/lib/utils";
 import { GiftCategoryEnduranceRepository } from "@/repositories/gift-category-endurances/gift-category-endurance.repository";
 
-import { Effect } from "effect";
-import { setGiftCategoryEnduranceProjectQueryData } from "./utils";
 
 /**
  * 耐久企画の情報を取得するためのカスタムフック。

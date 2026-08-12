@@ -1,3 +1,7 @@
+import { Chunk, Either, pipe, Schema } from "effect";
+import { Plus } from "lucide-react";
+import { useState } from "react";
+
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -22,9 +26,6 @@ import {
 } from "@/domain/gifts/tables/Gifts";
 import { useGiftMutation } from "@/hooks/gifts/useGiftMutation";
 import { useGiftQuery } from "@/hooks/gifts/useGiftQuery";
-import { Chunk, Either, pipe, Schema } from "effect";
-import { Plus } from "lucide-react";
-import { useState } from "react";
 
 type Props = {
     isGiftOpen: boolean;
@@ -231,9 +232,11 @@ const GiftEditDialog = ({
                     <Button
                         className="bg-pink-500 hover:bg-pink-600 text-white"
                         onClick={() => {
-                            giftForm.id
-                                ? mutation.updateGift.mutate(giftForm)
-                                : mutation.createGift.mutate(giftForm);
+                            if (giftForm.id) {
+                                mutation.updateGift.mutate(giftForm);
+                            } else {
+                                mutation.createGift.mutate(giftForm);
+                            }
                             setIsGiftOpen(false);
                         }}
                     >

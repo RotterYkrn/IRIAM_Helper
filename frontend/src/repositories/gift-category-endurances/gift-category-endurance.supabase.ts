@@ -1,3 +1,7 @@
+import { Layer, Schema } from "effect";
+
+import { GiftCategoryEnduranceRepository } from "./gift-category-endurance.repository";
+
 import { GiftCategoryEnduranceProjectDto } from "@/domain/gift-category-endurances/dto/GiftCategoryEnduranceProjectDto";
 import {
     CreateGiftCategoryEnduranceProjectArgs,
@@ -13,8 +17,6 @@ import {
 } from "@/domain/gift-category-endurances/rpcs/UpdateGiftCategoryEnduranceProject";
 import { supabase } from "@/lib/supabase";
 import { queryAndDecode } from "@/utils/api";
-import { Layer, Schema } from "effect";
-import { GiftCategoryEnduranceRepository } from "./gift-category-endurance.repository";
 
 export const GiftCategoryEnduranceSupabase = Layer.succeed(
     GiftCategoryEnduranceRepository,

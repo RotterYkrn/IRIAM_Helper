@@ -1,10 +1,11 @@
 import type { useQueryClient } from "@tanstack/react-query";
 import { Chunk, Option, pipe } from "effect";
 
-import { EnduranceTargetCountSchema } from "@/domain/endurances/tables/EnduranceUnits";
-import type { GiftCategoryEnduranceProjectDto } from "@/domain/gift-category-endurances/dto/GiftCategoryEnduranceProjectDto";
 import { EnduranceKey } from "../query-keys/endurances";
 import { ProjectKey } from "../query-keys/projects";
+
+import { EnduranceTargetCountSchema } from "@/domain/endurances/tables/EnduranceUnits";
+import type { GiftCategoryEnduranceProjectDto } from "@/domain/gift-category-endurances/dto/GiftCategoryEnduranceProjectDto";
 
 export const setGiftCategoryEnduranceProjectQueryData = (
     queryClient: ReturnType<typeof useQueryClient>,

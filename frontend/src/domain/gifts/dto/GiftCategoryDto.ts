@@ -1,6 +1,8 @@
-import { withStrictNullCheck } from "@/utils/schema";
 import { Schema } from "effect";
+
 import { GiftCategoryId, GiftCategoryName } from "../tables/Categories";
+
+import { withStrictNullCheck } from "@/utils/schema";
 
 export const GiftCategoryDto = Schema.Struct({
     id: withStrictNullCheck(GiftCategoryId),

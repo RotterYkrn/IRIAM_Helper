@@ -1,3 +1,6 @@
+import { Chunk } from "effect";
+import { Edit2, Trash2 } from "lucide-react";
+
 import { Badge } from "@/components/ui/badge";
 import { Button } from "@/components/ui/button";
 import {
@@ -11,8 +14,6 @@ import {
 import type { GiftDto } from "@/domain/gifts/dto/GiftDto";
 import { useGiftMutation } from "@/hooks/gifts/useGiftMutation";
 import { useGiftQuery } from "@/hooks/gifts/useGiftQuery";
-import { Chunk } from "effect";
-import { Edit2, Trash2 } from "lucide-react";
 
 type Props = {
     setIsGiftOpen: (value: boolean) => void;

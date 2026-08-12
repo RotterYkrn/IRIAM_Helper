@@ -1,9 +1,10 @@
+import { Context, type Effect } from "effect";
+
 import type {
     GiftCategoryChunk,
     GiftCategoryId,
     GiftCategoryName,
 } from "@/domain/gifts/tables/Categories";
-import { Context, type Effect } from "effect";
 
 export interface GiftCategoryRepository {
     readonly getAll: () => Effect.Effect<GiftCategoryChunk, Error>;

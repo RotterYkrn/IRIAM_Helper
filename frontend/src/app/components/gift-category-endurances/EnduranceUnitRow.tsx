@@ -1,4 +1,6 @@
 import { useQueryClient } from "@tanstack/react-query";
+import { Chunk, Option, pipe } from "effect";
+import { useAtomValue } from "jotai";
 
 import EnduranceView from "../ui/EnduranceView";
 
@@ -12,8 +14,6 @@ import { useLogGiftCategoryEnduranceActionHistory } from "@/hooks/gift-category-
 import { useGiftQuery } from "@/hooks/gifts/useGiftQuery";
 import { EnduranceKey } from "@/hooks/query-keys/endurances";
 import { cn } from "@/lib/utils";
-import { Chunk, Option, pipe } from "effect";
-import { useAtomValue } from "jotai";
 
 type Props = {
     projectId: typeof EnduranceActionsSchema.Type.project_id;

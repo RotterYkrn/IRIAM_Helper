@@ -1,9 +1,10 @@
+import { Context, type Effect } from "effect";
+
 import type { GiftDtoChunk } from "@/domain/gifts/dto/GiftDto";
 import type { CreateGiftArgs } from "@/domain/gifts/rpc/CreateGift";
 import type { ImportExportGiftArgs } from "@/domain/gifts/rpc/ImportExportGift";
 import type { UpdateGiftArgs } from "@/domain/gifts/rpc/UpdateGift";
 import type { GiftId } from "@/domain/gifts/tables/Gifts";
-import { Context, type Effect } from "effect";
 
 export interface GiftRepository {
     readonly getAll: () => Effect.Effect<GiftDtoChunk, Error>;
