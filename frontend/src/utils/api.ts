@@ -1,5 +1,5 @@
 import type { PostgrestSingleResponse } from "@supabase/supabase-js";
-import { pipe, Effect, Schema } from "effect";
+import { Effect, pipe, Schema } from "effect";
 
 export const queryAndDecode = <A, I>(
     query: (signal: AbortSignal) => PromiseLike<PostgrestSingleResponse<I>>,

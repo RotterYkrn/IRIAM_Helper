@@ -1,5 +1,5 @@
+import { Route, Routes } from "react-router-dom";
 import "../index.css";
-import { Routes, Route } from "react-router-dom";
 
 import Layout from "./components/Layout";
 import CreateEndurancePage from "./pages/CreateEndurancePage";
@@ -11,6 +11,9 @@ import MultiEnduranceProjectPage from "./pages/MultiEnduranceProjectPage";
 import TopPage from "./pages/TopPage";
 
 import { AppProvider } from "@/contexts/apps/AppProvider";
+import GiftManagementPage from "./components/gifts/GiftManagementPage";
+import CreateGiftCategoryEndurancePage from "./pages/CreateGiftCategoryEndurancePage";
+import GiftCategoryEndurancePage from "./pages/GiftCategoryEndurancePage";
 
 const App = () => {
     return (
@@ -20,6 +23,11 @@ const App = () => {
                     <Route
                         path="/"
                         element={<TopPage />}
+                    />
+
+                    <Route
+                        path="/gifts"
+                        element={<GiftManagementPage />}
                     />
 
                     <Route
@@ -43,6 +51,11 @@ const App = () => {
                     />
 
                     <Route
+                        path="/projects/create/gift-category-endurance"
+                        element={<CreateGiftCategoryEndurancePage />}
+                    />
+
+                    <Route
                         path="/projects/endurance/:projectId"
                         element={<EnduranceProjectPage />}
                     />
@@ -50,6 +63,11 @@ const App = () => {
                     <Route
                         path="/projects/multi-endurance/:projectId"
                         element={<MultiEnduranceProjectPage />}
+                    />
+
+                    <Route
+                        path="/projects/gift-category-endurance/:projectId"
+                        element={<GiftCategoryEndurancePage />}
                     />
 
                     <Route
