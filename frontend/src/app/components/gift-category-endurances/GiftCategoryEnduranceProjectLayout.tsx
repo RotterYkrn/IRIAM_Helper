@@ -1,4 +1,3 @@
-import { useQueryClient } from "@tanstack/react-query";
 import { Chunk, Order, pipe } from "effect";
 import { useAtom, useAtomValue, useSetAtom } from "jotai";
 import { useNavigate } from "react-router-dom";
@@ -16,6 +15,7 @@ import {
 import { useProjectContext } from "@/contexts/projects/useProjectContext";
 import type { GiftDto } from "@/domain/gifts/dto/GiftDto";
 import type { ProjectId } from "@/domain/projects/tables/Project";
+import { useDuplicateGiftCategoryEnduranceProject } from "@/hooks/gift-category-endurances/useDuplicateGiftCategoryEnduranceProject";
 import { useFetchGiftCategoryEnduranceProject } from "@/hooks/gift-category-endurances/useFetchEnduranceProject";
 import { useUpdateGiftCategoryEnduranceProject } from "@/hooks/gift-category-endurances/useUpdateEnduranceProject";
 import { useGiftQuery } from "@/hooks/gifts/useGiftQuery";
@@ -30,7 +30,6 @@ type Props = {
  * 耐久企画ページのレイアウト
  */
 const GiftCategoryEnduranceProjectLayout = ({ projectId }: Props) => {
-    const queryClient = useQueryClient();
     const navigate = useNavigate();
     const { gifts } = useGiftQuery();
     const { isEdit, setIsEdit } = useProjectContext();
@@ -38,8 +37,8 @@ const GiftCategoryEnduranceProjectLayout = ({ projectId }: Props) => {
     const { data, isFetching } =
         useFetchGiftCategoryEnduranceProject(projectId);
     const { update, isUpdating } = useUpdateGiftCategoryEnduranceProject();
-    // const { duplicate, isDuplicating } =
-    //     useDuplicateGiftCategoryEnduranceProject();
+    const { duplicate, isDuplicating } =
+        useDuplicateGiftCategoryEnduranceProject();
 
     const [targetCountState, setTargetCount] = useAtom(editTargetCountAtom);
     const validEditState = useAtomValue(validEditGiftCategoryEnduranceAtom);
@@ -98,37 +97,35 @@ const GiftCategoryEnduranceProjectLayout = ({ projectId }: Props) => {
         });
     };
 
-    // const onDuplicate = () => {
-    //     if (!confirm("この企画をコピーしますか？")) {
-    //         return;
-    //     }
-    //     duplicate(
-    //         { project_id: data.id },
-    //         {
-    //             onSuccess: ({ id }) => {
-    //                 successToast(`「${data.title}」がコピーされました`);
-    //                 navigate(`/projects/multi-endurance/${id}`);
-    //             },
-    //             onError: (error) => {
-    //                 console.error(error);
-    //                 errorToast(`「${data.title}」のコピーに失敗しました`);
-    //             },
-    //         },
-    //     );
-    // };
+    const onDuplicate = () => {
+        if (!confirm("この企画をコピーしますか？")) {
+            return;
+        }
+        duplicate(
+            { project_id: data.id },
+            {
+                onSuccess: ({ id }) => {
+                    successToast(`「${data.title}」がコピーされました`);
+                    navigate(`/projects/gift-category-endurance/${id}`);
+                },
+                onError: (error) => {
+                    console.error(error);
+                    errorToast(`「${data.title}」のコピーに失敗しました`);
+                },
+            },
+        );
+    };
 
     const actionButtonCounts = Chunk.fromIterable([1]);
 
     return (
         <ProjectContainer
-            // isPendingAction={isDuplicating}
+            isPendingAction={isDuplicating}
             canSave={isValidState}
             isSaving={isUpdating}
             onEdit={onEdit}
             onSave={onSave}
-            // onDuplicate={onDuplicate}
-            isPendingAction={false}
-            onDuplicate={() => {}}
+            onDuplicate={onDuplicate}
         >
             <EnduranceView
                 projectStatus={data.status}

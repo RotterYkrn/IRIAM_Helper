@@ -6,6 +6,10 @@ import type {
     CreateGiftCategoryEnduranceProjectReturns,
 } from "@/domain/gift-category-endurances/rpcs/CreateGiftCategoryEnduranceProject";
 import type {
+    DuplicateGiftCategoryEnduranceProjectArgs,
+    DuplicateGiftCategoryEnduranceProjectReturns,
+} from "@/domain/gift-category-endurances/rpcs/DuplicateMultiEnduranceProject";
+import type {
     UpdateGiftCategoryEnduranceProjectArgs,
     UpdateGiftCategoryEnduranceProjectReturns,
 } from "@/domain/gift-category-endurances/rpcs/UpdateGiftCategoryEnduranceProject";
@@ -21,9 +25,9 @@ export interface GiftCategoryEnduranceRepository {
     readonly update: (
         args: UpdateGiftCategoryEnduranceProjectArgs,
     ) => Effect.Effect<UpdateGiftCategoryEnduranceProjectReturns, Error>;
-    // readonly duplicate: (
-    //     args: DuplicateMultiEnduranceProjectArgs,
-    // ) => Effect.Effect<DuplicateMultiEnduranceProjectReturns, Error>;
+    readonly duplicate: (
+        args: DuplicateGiftCategoryEnduranceProjectArgs,
+    ) => Effect.Effect<DuplicateGiftCategoryEnduranceProjectReturns, Error>;
     // readonly logActionHistory: (
     //     args: LogMultiEnduranceActionHistoryArgs,
     // ) => Effect.Effect<LogMultiEnduranceActionHistoryReturns, Error>;

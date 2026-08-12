@@ -4,6 +4,10 @@ import {
     CreateGiftCategoryEnduranceProjectReturns,
 } from "@/domain/gift-category-endurances/rpcs/CreateGiftCategoryEnduranceProject";
 import {
+    DuplicateGiftCategoryEnduranceProjectArgs,
+    DuplicateGiftCategoryEnduranceProjectReturns,
+} from "@/domain/gift-category-endurances/rpcs/DuplicateMultiEnduranceProject";
+import {
     UpdateGiftCategoryEnduranceProjectArgs,
     UpdateGiftCategoryEnduranceProjectReturns,
 } from "@/domain/gift-category-endurances/rpcs/UpdateGiftCategoryEnduranceProject";
@@ -53,17 +57,17 @@ export const GiftCategoryEnduranceSupabase = Layer.succeed(
                     ),
                 UpdateGiftCategoryEnduranceProjectReturns,
             ),
-        // duplicate: (args) =>
-        //     queryAndDecode(
-        //         () =>
-        //             supabase.rpc(
-        //                 "duplicate_gift_category_endurance_project",
-        //                 Schema.encodeSync(
-        //                     DuplicateGiftCategoryEnduranceProjectArgsSchema,
-        //                 )(args),
-        //             ),
-        //         DuplicateGiftCategoryEnduranceProjectReturnsSchema,
-        //     ),
+        duplicate: (args) =>
+            queryAndDecode(
+                () =>
+                    supabase.rpc(
+                        "duplicate_gift_category_endurance_project",
+                        Schema.encodeSync(
+                            DuplicateGiftCategoryEnduranceProjectArgs,
+                        )(args),
+                    ),
+                DuplicateGiftCategoryEnduranceProjectReturns,
+            ),
         // logActionHistory: (args) =>
         //     queryAndDecode(
         //         () =>

@@ -41,7 +41,7 @@ const EnduranceUnitRow = ({ projectId, unitId }: Props) => {
 
     const gift = pipe(
         gifts,
-        Chunk.findFirst((gift) => gift.id === unit.gift_id),
+        Chunk.findFirst((gift) => gift.id === unit.gift.id),
         Option.getOrNull,
     );
 

@@ -733,6 +733,24 @@ export type Database = {
           isSetofReturn: false
         }
       }
+      duplicate_gift_category_endurance_project: {
+        Args: { p_project_id: string }
+        Returns: {
+          id: string | null
+          status: string | null
+          title: string | null
+          type: string | null
+          units:
+            | Database["public"]["CompositeTypes"]["dto_gift_category_endurance_unit"][]
+            | null
+        }
+        SetofOptions: {
+          from: "*"
+          to: "gift_category_endurance_project_dto"
+          isOneToOne: true
+          isSetofReturn: false
+        }
+      }
       duplicate_multi_endurance_project: {
         Args: { p_project_id: string }
         Returns: {
@@ -921,7 +939,7 @@ export type Database = {
       dto_gift_category_endurance_unit: {
         id: string | null
         position: number | null
-        gift_id: string | null
+        gift: Database["public"]["Views"]["gifts_dto"]["Row"] | null
         target_count: number | null
         current_count: number | null
       }

@@ -5,7 +5,7 @@ drop type if exists dto_gift_category_endurance_unit;
 CREATE TYPE dto_gift_category_endurance_unit AS (
     id UUID,
     position integer,
-    gift_id text,
+    gift gifts_dto,
     target_count INT,
     current_count INT
 );
@@ -18,11 +18,20 @@ SELECT
     p.type,
     p.title,
     p.status,
-
-    COALESCE(
+COALESCE(
         (
-            SELECT array_agg(ROW(u.id, u.position, u.label, u.target_count, u.current_count)::dto_gift_category_endurance_unit ORDER BY u.position ASC)
+            SELECT array_agg(
+                ROW(
+                    u.id, 
+                    u.position, 
+                    g, -- 👈 gifts_dto の 1行（複合型）を渡す
+                    u.target_count, 
+                    u.current_count
+                )::dto_gift_category_endurance_unit 
+                ORDER BY u.position ASC
+            )
             FROM endurance_units u
+            LEFT JOIN gifts_dto g ON u.label::uuid = g.id
             WHERE u.project_id = p.id
         ),
         '{}'::dto_gift_category_endurance_unit[]

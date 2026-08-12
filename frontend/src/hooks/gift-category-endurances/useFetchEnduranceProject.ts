@@ -38,6 +38,7 @@ export const useFetchGiftCategoryEnduranceProject = (projectId: ProjectId) => {
                     return yield* repository.getById(projectId);
                 }),
             );
+            console.log(result.units.toJSON());
             return setGiftCategoryEnduranceProjectQueryData(
                 queryClient,
                 result,
