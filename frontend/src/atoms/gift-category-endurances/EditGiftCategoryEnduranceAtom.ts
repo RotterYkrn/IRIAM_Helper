@@ -1,14 +1,14 @@
 import { Option, pipe } from "effect";
 import { atom } from "jotai";
 
-import { editTitleAtom, validEditTitleAtom } from "../projects/EditTitleAtom";
-
-import type { EnduranceUnitsSchema } from "@/domain/endurances/tables/EnduranceUnits";
-import type { ProjectSchema } from "@/domain/projects/tables/Project";
 import {
     editTargetCountAtom,
     validEditTargetCountAtom,
 } from "../endurances/EditTargetCountAtom";
+import { editTitleAtom, validEditTitleAtom } from "../projects/EditTitleAtom";
+
+import type { EnduranceUnitsSchema } from "@/domain/endurances/tables/EnduranceUnits";
+import type { ProjectSchema } from "@/domain/projects/tables/Project";
 
 type EditGiftCategoryEnduranceState = Readonly<{
     title: typeof ProjectSchema.Type.title;

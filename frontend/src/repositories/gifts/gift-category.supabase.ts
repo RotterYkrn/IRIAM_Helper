@@ -1,8 +1,10 @@
+import { Layer, Schema } from "effect";
+
+import { GiftCategoryRepository } from "./gift-category.repository";
+
 import { GiftCategoryChunk } from "@/domain/gifts/tables/Categories";
 import { supabase } from "@/lib/supabase";
 import { queryAndDecode } from "@/utils/api";
-import { Layer, Schema } from "effect";
-import { GiftCategoryRepository } from "./gift-category.repository";
 
 export const GiftCategorySupabase = Layer.succeed(
     GiftCategoryRepository,

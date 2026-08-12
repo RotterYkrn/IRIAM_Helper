@@ -4,6 +4,7 @@ import { useEffectEvent, useLayoutEffect } from "react";
 import { useNavigate } from "react-router-dom";
 
 import CreateProjectContainer from "../projects/containers/CreateProjectContainer";
+import InputField from "../ui/InputField";
 
 import {
     editTargetCountAtom,
@@ -21,7 +22,6 @@ import { ProjectTitleSchema } from "@/domain/projects/tables/Project";
 import { useCreateGiftCategoryEnduranceProject } from "@/hooks/gift-category-endurances/useCreateEnduranceProject";
 import { useGiftQuery } from "@/hooks/gifts/useGiftQuery";
 import { errorToast, successToast } from "@/utils/toast";
-import InputField from "../ui/InputField";
 
 const CreateGiftCategoryEnduranceProjectLayout = () => {
     const navigate = useNavigate();

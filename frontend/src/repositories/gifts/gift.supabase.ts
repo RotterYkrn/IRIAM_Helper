@@ -1,3 +1,7 @@
+import { Layer, Schema } from "effect";
+
+import { GiftRepository } from "./gift.repository";
+
 import { GiftDtoChunk } from "@/domain/gifts/dto/GiftDto";
 import { CreateGiftArgs } from "@/domain/gifts/rpc/CreateGift";
 import { ImportExportGiftArgs } from "@/domain/gifts/rpc/ImportExportGift";
@@ -5,8 +9,6 @@ import { UpdateGiftArgs } from "@/domain/gifts/rpc/UpdateGift";
 import { GiftId } from "@/domain/gifts/tables/Gifts";
 import { supabase } from "@/lib/supabase";
 import { queryAndDecode } from "@/utils/api";
-import { Layer, Schema } from "effect";
-import { GiftRepository } from "./gift.repository";
 
 export const GiftSupabase = Layer.succeed(
     GiftRepository,

@@ -1,3 +1,7 @@
+import { Chunk, Either, pipe, Schema } from "effect";
+import { Check, Edit2, FolderPlus, Settings2, Trash2, X } from "lucide-react";
+import { useState } from "react";
+
 import { Button } from "@/components/ui/button";
 import {
     Dialog,
@@ -15,9 +19,6 @@ import {
 } from "@/domain/gifts/tables/Categories";
 import { useGiftMutation } from "@/hooks/gifts/useGiftMutation";
 import { useGiftQuery } from "@/hooks/gifts/useGiftQuery";
-import { Chunk, Either, pipe, Schema } from "effect";
-import { Check, Edit2, FolderPlus, Settings2, Trash2, X } from "lucide-react";
-import { useState } from "react";
 
 const CategoryListDialog = () => {
     const { categories } = useGiftQuery();

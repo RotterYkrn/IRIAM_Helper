@@ -1,8 +1,10 @@
-import type { Database } from "@/lib/database.types";
-import { withStrictNullCheck, type RecursiveReadonly } from "@/utils/schema";
 import { Chunk, Schema } from "effect";
+
 import { GiftCategoryId } from "../tables/Categories";
 import { GiftId, GiftName, GiftNickName, GiftPoint } from "../tables/Gifts";
+
+import type { Database } from "@/lib/database.types";
+import { withStrictNullCheck, type RecursiveReadonly } from "@/utils/schema";
 
 type GiftDtoEncoded = RecursiveReadonly<
     Database["public"]["Views"]["gifts_dto"]["Row"]

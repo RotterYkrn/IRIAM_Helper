@@ -1,10 +1,13 @@
+import { keepPreviousData, useQuery } from "@tanstack/react-query";
+import { Chunk, Effect } from "effect";
+
+import { giftKeys } from "../query-keys/gifts";
+
 import { runEffectWithThrow } from "@/lib/utils";
 import { GiftCategoryMappingRepository } from "@/repositories/gifts/gift-category-mapping.repository";
 import { GiftCategoryRepository } from "@/repositories/gifts/gift-category.repository";
 import { GiftRepository } from "@/repositories/gifts/gift.repository";
-import { keepPreviousData, useQuery } from "@tanstack/react-query";
-import { Chunk, Effect } from "effect";
-import { giftKeys } from "../query-keys/gifts";
+
 
 export const useGiftQuery = () => {
     const giftsQuery = useQuery({

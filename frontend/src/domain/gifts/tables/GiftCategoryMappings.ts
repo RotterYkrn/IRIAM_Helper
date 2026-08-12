@@ -1,7 +1,9 @@
-import type { Database } from "@/lib/database.types";
 import { Schema } from "effect";
+
 import { GiftCategoryId } from "./Categories";
 import { GiftId } from "./Gifts";
+
+import type { Database } from "@/lib/database.types";
 
 type GiftCategoryMappingEncoded = Readonly<
     Database["public"]["Tables"]["gift_category_mappings"]["Row"]

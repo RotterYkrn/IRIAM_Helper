@@ -4,6 +4,8 @@ import { useNavigate } from "react-router-dom";
 
 import ProjectContainer from "../projects/containers/ProjectContainer";
 import EnduranceView from "../ui/EnduranceView";
+import InputField from "../ui/InputField";
+
 import EnduranceUnitRow from "./EnduranceUnitRow";
 
 import { editTargetCountAtom } from "@/atoms/endurances/EditTargetCountAtom";
@@ -20,7 +22,6 @@ import { useFetchGiftCategoryEnduranceProject } from "@/hooks/gift-category-endu
 import { useUpdateGiftCategoryEnduranceProject } from "@/hooks/gift-category-endurances/useUpdateEnduranceProject";
 import { useGiftQuery } from "@/hooks/gifts/useGiftQuery";
 import { errorToast, successToast } from "@/utils/toast";
-import InputField from "../ui/InputField";
 
 type Props = {
     projectId: ProjectId;
@@ -155,10 +156,11 @@ const GiftCategoryEnduranceProjectLayout = ({ projectId }: Props) => {
                             current_count={data.allCurrentCount}
                         />
                         <div
-                            className="flex items-end text-3xl
+                            className="flex items-end gap-2 text-3xl
                                 whitespace-nowrap"
                         >
-                            周　達成
+                            <span>周</span>
+                            <span>達成</span>
                         </div>
                     </div>
                 )}

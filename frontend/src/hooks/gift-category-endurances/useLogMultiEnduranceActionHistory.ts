@@ -1,12 +1,12 @@
 import { useMutation } from "@tanstack/react-query";
 
 import { EnduranceKey } from "../query-keys/endurances";
+import { ProjectKey } from "../query-keys/projects";
 
 import type { GiftCategoryEnduranceUnitDto } from "@/domain/gift-category-endurances/dto/GiftCategoryEnduranceProjectDto";
 import type { LogMultiEnduranceActionHistoryArgs } from "@/domain/multi-endurances/rpcs/LogMultiEnduranceActionHistory";
 import { runEffectWithThrow } from "@/lib/utils";
 import { logMultiEnduranceActionHistory } from "@/use-cases/multi-endurances/logMultiEnduranceActionHistory";
-import { ProjectKey } from "../query-keys/projects";
 
 export const useLogGiftCategoryEnduranceActionHistory = () => {
     return useMutation({

@@ -1,8 +1,10 @@
-import type { Database } from "@/lib/database.types";
-import { mapFrom, type RecursiveReadonly } from "@/utils/schema";
 import { Chunk, Schema } from "effect";
+
 import { GiftCategoryId } from "../tables/Categories";
 import { GiftId, GiftName, GiftNickNameArg, GiftPoint } from "../tables/Gifts";
+
+import type { Database } from "@/lib/database.types";
+import { mapFrom, type RecursiveReadonly } from "@/utils/schema";
 
 type UpdateGiftArgsEncoded = RecursiveReadonly<
     Database["public"]["Functions"]["update_gift"]["Args"]

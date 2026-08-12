@@ -1,3 +1,7 @@
+import { Schema } from "effect";
+
+import { GiftCategoryEnduranceProjectDto } from "../dto/GiftCategoryEnduranceProjectDto";
+
 import {
     EnduranceTargetCountSchema,
     EnduranceUnitPositionSchema,
@@ -15,8 +19,6 @@ import {
     withStrictNullCheck,
     type RecursiveReadonly,
 } from "@/utils/schema";
-import { Schema } from "effect";
-import { GiftCategoryEnduranceProjectDto } from "../dto/GiftCategoryEnduranceProjectDto";
 
 type UpdateGiftCategoryUnitArgsEncoded = Readonly<
     Database["public"]["CompositeTypes"]["update_gift_category_unit_args"]
