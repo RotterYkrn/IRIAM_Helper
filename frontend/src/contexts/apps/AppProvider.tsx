@@ -10,7 +10,12 @@ export const AppProvider = ({ children }: Props) => {
     const [isOpenSideBar, setIsOpenSideBar] = useState(false);
 
     return (
-        <AppContext value={{ isOpenSideBar, setIsOpenSideBar }}>
+        <AppContext
+            value={{
+                isOpenSideBar,
+                setIsOpenSideBar,
+            }}
+        >
             {children}
         </AppContext>
     );

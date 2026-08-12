@@ -1,11 +1,11 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Effect } from "effect";
 
 import { ProjectKey } from "../query-keys/projects";
 
 import { updateEnduranceProjectQueryData } from "./utils";
 
 import type { DuplicateEnduranceProjectArgs } from "@/domain/endurances/rpcs/DuplicateEnduranceProject";
+import { runEffectWithThrow } from "@/lib/utils";
 import { duplicateEnduranceProject } from "@/use-cases/endurances/duplicateEnduranceProject";
 
 /**
@@ -22,17 +22,8 @@ export const useDuplicateEnduranceProject = () => {
     const queryClient = useQueryClient();
 
     const mutation = useMutation({
-        mutationFn: async (args: DuplicateEnduranceProjectArgs) => {
-            try {
-                const result = await Effect.runPromise(
-                    duplicateEnduranceProject(args),
-                );
-                return result;
-            } catch (error) {
-                console.error(error);
-                throw error;
-            }
-        },
+        mutationFn: async (args: DuplicateEnduranceProjectArgs) =>
+            await runEffectWithThrow(duplicateEnduranceProject(args)),
         onSuccess: (newProject) => {
             updateEnduranceProjectQueryData(queryClient, newProject);
         },

@@ -1,16 +1,9 @@
-import { pipe, Effect, Schema } from "effect";
+import { Effect } from "effect";
 
-import { CreateEnterEnduranceReturnsSchema } from "@/domain/enter_endurances/rpcs/CreateEnterEndurance";
-import { supabase } from "@/lib/supabase";
+import { EnterEnduranceRepository } from "@/repositories/enter-endurances/enter-endurance.repository";
 
 export const createEnterEnduranceProject = () =>
-    pipe(
-        Effect.tryPromise({
-            try: () => supabase.rpc("create_enter_endurance_project"),
-            catch: (error) => error,
-        }),
-        Effect.flatMap(({ data, error }) =>
-            error ? Effect.fail(error) : Effect.succeed(data),
-        ),
-        Effect.flatMap(Schema.decodeEither(CreateEnterEnduranceReturnsSchema)),
-    );
+    Effect.gen(function* () {
+        const repository = yield* EnterEnduranceRepository;
+        return yield* repository.createProject();
+    });

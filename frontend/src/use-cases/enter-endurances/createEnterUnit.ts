@@ -1,24 +1,10 @@
-import { pipe, Effect, Schema } from "effect";
+import { Effect } from "effect";
 
-import {
-    CreateEnterUnitArgsSchema,
-    CreateEnterUnitReturnsSchema,
-    type CreateEnterUnitArgs,
-} from "@/domain/enter_endurances/rpcs/CreateEnterUnit";
-import { supabase } from "@/lib/supabase";
+import { type CreateEnterUnitArgs } from "@/domain/enter_endurances/rpcs/CreateEnterUnit";
+import { EnterEnduranceRepository } from "@/repositories/enter-endurances/enter-endurance.repository";
 
 export const createEnterUnit = (args: CreateEnterUnitArgs) =>
-    pipe(
-        Effect.tryPromise({
-            try: () =>
-                supabase.rpc(
-                    "create_enter_unit",
-                    Schema.encodeSync(CreateEnterUnitArgsSchema)(args),
-                ),
-            catch: (error) => error,
-        }),
-        Effect.flatMap(({ data, error }) =>
-            error ? Effect.fail(error) : Effect.succeed(data),
-        ),
-        Effect.flatMap(Schema.decodeEither(CreateEnterUnitReturnsSchema)),
-    );
+    Effect.gen(function* () {
+        const repository = yield* EnterEnduranceRepository;
+        return yield* repository.createUnit(args);
+    });

@@ -1,26 +1,17 @@
 import { useQueryClient, useMutation } from "@tanstack/react-query";
-import { Effect } from "effect";
 
 import { updateMultiEnduranceProjectQueryData } from "./utils";
 
 import type { UpdateMultiEnduranceProjectArgs } from "@/domain/multi-endurances/rpcs/UpdateMultiEnduranceProject";
+import { runEffectWithThrow } from "@/lib/utils";
 import { updateMultiEnduranceProject } from "@/use-cases/multi-endurances/updateMultiEnduranceProject";
 
 export const useUpdateMultiEnduranceProject = () => {
     const queryClient = useQueryClient();
 
     const mutation = useMutation({
-        mutationFn: async (args: UpdateMultiEnduranceProjectArgs) => {
-            try {
-                const result = await Effect.runPromise(
-                    updateMultiEnduranceProject(args),
-                );
-                return result;
-            } catch (error) {
-                console.error(error);
-                throw error;
-            }
-        },
+        mutationFn: async (args: UpdateMultiEnduranceProjectArgs) =>
+            await runEffectWithThrow(updateMultiEnduranceProject(args)),
         onSuccess: (updatedProject) => {
             updateMultiEnduranceProjectQueryData(queryClient, updatedProject);
         },

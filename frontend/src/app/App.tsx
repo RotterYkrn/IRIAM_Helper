@@ -1,12 +1,15 @@
+import { Route, Routes } from "react-router-dom";
 import "../index.css";
-import { Routes, Route } from "react-router-dom";
 
+import GiftManagementPage from "./components/gifts/GiftManagementPage";
 import Layout from "./components/Layout";
 import CreateEndurancePage from "./pages/CreateEndurancePage";
+import CreateGiftCategoryEndurancePage from "./pages/CreateGiftCategoryEndurancePage";
 import CreateMultiEndurancePage from "./pages/CreateMultiEndurancePage";
 import EnduranceProjectPage from "./pages/EnduranceProjectPage";
 import EnterEnduranceDetailPage from "./pages/EnterEnduranceDetailPage";
 import EnterEnduranceTopPage from "./pages/EnterEnduranceTopPage";
+import GiftCategoryEndurancePage from "./pages/GiftCategoryEndurancePage";
 import MultiEnduranceProjectPage from "./pages/MultiEnduranceProjectPage";
 import TopPage from "./pages/TopPage";
 
@@ -20,6 +23,11 @@ const App = () => {
                     <Route
                         path="/"
                         element={<TopPage />}
+                    />
+
+                    <Route
+                        path="/gifts"
+                        element={<GiftManagementPage />}
                     />
 
                     <Route
@@ -43,6 +51,11 @@ const App = () => {
                     />
 
                     <Route
+                        path="/projects/create/gift-category-endurance"
+                        element={<CreateGiftCategoryEndurancePage />}
+                    />
+
+                    <Route
                         path="/projects/endurance/:projectId"
                         element={<EnduranceProjectPage />}
                     />
@@ -50,6 +63,11 @@ const App = () => {
                     <Route
                         path="/projects/multi-endurance/:projectId"
                         element={<MultiEnduranceProjectPage />}
+                    />
+
+                    <Route
+                        path="/projects/gift-category-endurance/:projectId"
+                        element={<GiftCategoryEndurancePage />}
                     />
 
                     <Route

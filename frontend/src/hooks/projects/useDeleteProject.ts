@@ -1,10 +1,11 @@
 import { useMutation, useQueryClient } from "@tanstack/react-query";
-import { Chunk, Effect } from "effect";
+import { Chunk } from "effect";
 
 import { ProjectKey } from "../query-keys/projects";
 
 import type { ProjectDtoSchema } from "@/domain/projects/dto/ProjectDto";
 import type { DeleteProjectArgs } from "@/domain/projects/rpcs/DeleteProject";
+import { runEffectWithThrow } from "@/lib/utils";
 import { deleteProject } from "@/use-cases/projects/deleteProject";
 
 /**
@@ -21,15 +22,8 @@ export const useDeleteProject = () => {
     const queryClient = useQueryClient();
 
     const mutation = useMutation({
-        mutationFn: async (args: DeleteProjectArgs) => {
-            try {
-                const result = await Effect.runPromise(deleteProject(args));
-                return result;
-            } catch (error) {
-                console.error(error);
-                throw error;
-            }
-        },
+        mutationFn: async (args: DeleteProjectArgs) =>
+            await runEffectWithThrow(deleteProject(args)),
         onSuccess: (projectId) => {
             queryClient.setQueryData<Chunk.Chunk<typeof ProjectDtoSchema.Type>>(
                 ProjectKey.list,
