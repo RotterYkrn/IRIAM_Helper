@@ -1,14 +1,10 @@
-drop function if exists import_gift_data cascade;
+set check_function_bodies = off;
 
-CREATE FUNCTION import_gift_data(
-    p_categories gift_categories[],
-    p_gifts gifts[],
-    p_mappings gift_category_mappings[]
-)
-RETURNS void
-LANGUAGE plpgsql
-SET search_path = public
-AS $$
+CREATE OR REPLACE FUNCTION public.import_gift_data(p_categories public.gift_categories[], p_gifts public.gifts[], p_mappings public.gift_category_mappings[])
+ RETURNS void
+ LANGUAGE plpgsql
+ SET search_path TO 'public'
+AS $function$
 DECLARE
     -- 旧ID -> 新ID の変換用マップ
     v_category_id_map jsonb := '{}'::jsonb;
@@ -96,4 +92,7 @@ BEGIN
     END IF;
 
 END;
-$$;
+$function$
+;
+
+
